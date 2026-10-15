@@ -1,5 +1,8 @@
 # Codex prompt — P0 on the NEW Historical Motion Studio main codebase
 
+**NON-NEGOTIABLE FIRST READ:** root `AGENTS.md` → `docs/history/CODING_RULES.md` (**only active coding rules**) → `.agents/skills/README.md` → `.agents/skills/clean-cut-migration/SKILL.md`, `.agents/skills/remotion-motion-graphics/SKILL.md`, `.agents/skills/implementation-audit/SKILL.md` and agent role instructions. No old YTB coding rules or skills; donor YTB README/source-of-truth is NOT instructional authority.
+
+
 ## UPDATED MANDATORY ARCHITECTURE — strict clean cut
 
 READ FIRST: docs/history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md. This v3 plan **supersedes v2** and is authoritative even when old README, 00_START_HERE, v1/v2 plans, sample code or prompt text says otherwise.
