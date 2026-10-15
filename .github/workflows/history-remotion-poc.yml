@@ -3,64 +3,86 @@ on:
   push:
     branches: [feat/p0-history-remotion-feasibility]
   pull_request:
-    paths: ['experiments/remotion-history-poc/**', '.github/workflows/history-remotion-poc.yml']
+    paths:
+      - 'experiments/remotion-history-poc/**'
+      - '.github/workflows/history-remotion-poc.yml'
 permissions:
   contents: read
 jobs:
   remotion-linux:
     runs-on: ubuntu-24.04
+    timeout-minutes: 100
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - name: Dependency lockfile gate
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: experiments/remotion-history-poc/package-lock.json
+      - name: Exact lockfile required
         working-directory: experiments/remotion-history-poc
         run: test -f package-lock.json
-      - name: Install pinned dependencies
+      - name: npm ci
         working-directory: experiments/remotion-history-poc
-        run: npm ci
-      - name: Validate motion plan
+        run: npm ci --no-audit --no-fund
+      - name: Motion Plan tests
         working-directory: experiments/remotion-history-poc
         run: npm test
-      - name: Build
+      - name: Vite build
         working-directory: experiments/remotion-history-poc
         run: npm run build
-      - name: Remotion browser
+      - name: Chromium prerequisites for Player
+        working-directory: experiments/remotion-history-poc
+        run: npx playwright install --with-deps chromium
+      - name: Actual browser Remotion Player smoke
+        working-directory: experiments/remotion-history-poc
+        run: npm run test:player
+      - name: Remotion Chrome Headless Shell
         working-directory: experiments/remotion-history-poc
         run: npx remotion browser ensure
-      - name: Render 1800 frames
+      - name: Render 1800 real frames
         working-directory: experiments/remotion-history-poc
         run: npm run render
-      - name: FFprobe and decode
+      - name: Independent FFprobe + full video decode
+        working-directory: experiments/remotion-history-poc
+        run: npm run verify:video
+      - name: Representative output frames
         working-directory: experiments/remotion-history-poc
         run: |
-          ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=codec_name,width,height,r_frame_rate,nb_read_frames -of json out/history-poc.mp4
-          ffmpeg -v error -i out/history-poc.mp4 -f null -
+          mkdir -p out/frames
+          for sec in 0 5 10 19 20 25 35 39 40 45 55 59; do
+            ffmpeg -v error -ss "$sec" -i out/history-poc.mp4 -frames:v 1 -y "out/frames/${sec}s.png"
+          done
+          ffmpeg -y -v error -pattern_type glob -i 'out/frames/*.png' -vf 'scale=480:270,tile=3x4' -frames:v 1 out/contact-sheet.png
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: p0-linux-output
+          name: p0-linux-${{ github.sha }}
           path: experiments/remotion-history-poc/out/
+          if-no-files-found: ignore
   remotion-windows:
     runs-on: windows-2022
+    timeout-minutes: 100
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - name: Lockfile
-        working-directory: experiments/remotion-history-poc
-        run: if (!(Test-Path package-lock.json)) { throw "Missing lockfile" }
-      - name: Install and test
+          node-version: '22'
+      - name: npm ci, tests and Vite
         working-directory: experiments/remotion-history-poc
         run: |
-          npm ci
+          npm ci --no-audit --no-fund
           npm test
           npm run build
-      - name: Windows Remotion render
+      - name: Windows Remotion render and FFprobe
         working-directory: experiments/remotion-history-poc
         run: |
           npx remotion browser ensure
           npm run render
-          ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate -of json out/history-poc.mp4
+          npm run verify:video
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p0-windows-${{ github.sha }}
+          path: experiments/remotion-history-poc/out/
+          if-no-files-found: ignore
