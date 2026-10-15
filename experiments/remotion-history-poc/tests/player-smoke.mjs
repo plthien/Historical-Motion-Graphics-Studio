@@ -3,7 +3,7 @@ import {spawn} from 'node:child_process';
 import {mkdir} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 
-const server=spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run','dev'], {stdio:'pipe', shell:process.platform==='win32'});
+const server=spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', '5174', '--strictPort'], {stdio:'ignore'});
 let browser;
 const sleep=t=>new Promise(r=>setTimeout(r,t));
 try {
@@ -42,5 +42,5 @@ try {
  console.log('PASS: actual @remotion/player playback, pause, 12 seeks, jumps and screenshots');
 }finally{
  if(browser)await browser.close();
- server.kill('SIGTERM');
+ if(server.exitCode===null)server.kill('SIGTERM');
 }
