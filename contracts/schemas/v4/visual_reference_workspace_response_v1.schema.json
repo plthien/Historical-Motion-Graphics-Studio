@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/schemas/v4/visual_reference_workspace_response_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project_id",
+    "generated",
+    "visual_reference_set_artifact_id",
+    "visual_reference_set",
+    "approval_set_artifact_id",
+    "approval_set",
+    "operation",
+    "readiness"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "pattern": "^project_[0-9a-f]{12}$"
+    },
+    "generated": {
+      "type": "boolean"
+    },
+    "visual_reference_set_artifact_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^artifact_[0-9a-f]{12}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "visual_reference_set": {
+      "oneOf": [
+        {
+          "$ref": "https://youtube-ai-studio.local/schemas/v4/visual_reference_set_v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "approval_set_artifact_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^artifact_[0-9a-f]{12}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "approval_set": {
+      "oneOf": [
+        {
+          "$ref": "https://youtube-ai-studio.local/schemas/v4/visual_reference_approval_set_v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_count",
+        "approved_count",
+        "ready",
+        "missing_anchor_keys"
+      ],
+      "properties": {
+        "required_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "approved_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "missing_anchor_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "operation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "operation_id",
+            "job_id",
+            "status",
+            "progress",
+            "media_progress",
+            "error_code",
+            "error_message"
+          ],
+          "properties": {
+            "operation_id": {
+              "type": "string",
+              "pattern": "^operation_[0-9a-f]{12}$"
+            },
+            "job_id": {
+              "type": "string",
+              "pattern": "^job_[0-9a-f]{12}$"
+            },
+            "status": {
+              "enum": [
+                "queued",
+                "generating",
+                "completed",
+                "failed"
+              ]
+            },
+            "progress": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "media_progress": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "batch_id",
+                "total",
+                "queued",
+                "submitted",
+                "provider_pending",
+                "provider_running",
+                "downloading",
+                "completed",
+                "failed",
+                "canceled",
+                "download_failed",
+                "effective_poll_interval_seconds",
+                "updated_at"
+              ],
+              "properties": {
+                "batch_id": {
+                  "type": "string",
+                  "pattern": "^media_batch_[0-9a-f]{12}$"
+                },
+                "total": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "queued": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "submitted": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "provider_pending": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "provider_running": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "downloading": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "completed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "failed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "canceled": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "download_failed": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "effective_poll_interval_seconds": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              }
+            },
+            "error_code": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "error_message": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

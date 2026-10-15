@@ -1,0 +1,103 @@
+{
+  "$defs": {
+    "TTSStoredProfileModel": {
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "provider": {
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "display_name": {
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "default_voice_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Voice Id"
+        },
+        "default_speaking_rate": {
+          "maximum": 2.0,
+          "minimum": 0.5,
+          "title": "Default Speaking Rate",
+          "type": "number"
+        },
+        "sample_rate_hz": {
+          "description": "Sample rate requested from the selected provider. Internal Voice artifacts are normalized separately to the canonical 48 kHz contract.",
+          "exclusiveMinimum": 0,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "output_format": {
+          "description": "Output format requested from the selected provider. Internal Voice artifacts are normalized separately to canonical mono PCM S16LE WAV.",
+          "minLength": 1,
+          "title": "Output Format",
+          "type": "string"
+        },
+        "maximum_segment_characters": {
+          "maximum": 10000,
+          "minimum": 16,
+          "title": "Maximum Segment Characters",
+          "type": "integer"
+        },
+        "provider_options": {
+          "title": "Provider Options",
+          "type": "object"
+        }
+      },
+      "required": [
+        "profile_id",
+        "provider",
+        "enabled",
+        "display_name",
+        "default_speaking_rate",
+        "sample_rate_hz",
+        "output_format",
+        "maximum_segment_characters"
+      ],
+      "title": "TTSStoredProfileModel",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "active_profile_id": {
+      "minLength": 1,
+      "title": "Active Profile Id",
+      "type": "string"
+    },
+    "profiles": {
+      "items": {
+        "$ref": "#/$defs/TTSStoredProfileModel"
+      },
+      "minItems": 1,
+      "title": "Profiles",
+      "type": "array"
+    }
+  },
+  "required": [
+    "active_profile_id",
+    "profiles"
+  ],
+  "title": "TTSStoredSettingsModel",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

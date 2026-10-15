@@ -1,0 +1,22 @@
+{
+  "section_context": {
+    "section_id": "sec_006",
+    "section_order": 6,
+    "section_title": "Regression section",
+    "section_role": "body",
+    "script_text": "The red thread appears.\nThe next idea starts clean."
+  },
+  "analysis_guidance": {
+    "pacing_density": "medium",
+    "important_narrative_markers": [
+      {
+        "marker_id": "marker_001",
+        "marker_type": "contrast",
+        "importance": "high",
+        "purpose": "marks the semantic turn between adjacent ideas",
+        "script_text": "The red thread appears."
+      }
+    ]
+  },
+  "previous_scene_purpose": null
+}

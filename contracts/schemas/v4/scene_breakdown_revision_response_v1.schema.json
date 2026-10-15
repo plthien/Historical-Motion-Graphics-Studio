@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_breakdown_revision_response_v1.schema.json",
+  "title": "Scene Breakdown Paired Revision Response V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scene_plan_artifact_id",
+    "scene_plan",
+    "visual_plan_artifact_id",
+    "visual_plan"
+  ],
+  "properties": {
+    "scene_plan_artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "scene_plan": {
+      "$ref": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_plan_v1.schema.json"
+    },
+    "visual_plan_artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "visual_plan": {
+      "$ref": "https://youtube-ai-studio.local/contracts/schemas/v4/visual_plan_v1.schema.json"
+    }
+  }
+}

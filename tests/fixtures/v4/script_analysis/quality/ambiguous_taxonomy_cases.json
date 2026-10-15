@@ -1,0 +1,54 @@
+{
+  "cases": [
+    {
+      "name": "named_person_to_character",
+      "source_phrase": "Dr. Lin returns to the lab.",
+      "expected_category": "characters"
+    },
+    {
+      "name": "anonymous_crowd_to_recurring_visual_subject",
+      "source_phrase": "The anonymous crowd moves as one.",
+      "expected_category": "recurring_visual_subjects"
+    },
+    {
+      "name": "physical_sword_to_prop",
+      "source_phrase": "The same sword is passed from hand to hand.",
+      "expected_category": "recurring_props"
+    },
+    {
+      "name": "symbolic_sword_to_motif",
+      "source_phrase": "The sword becomes the recurring symbol of war.",
+      "expected_category": "visual_motifs"
+    },
+    {
+      "name": "physical_fire_to_recurring_visual_subject",
+      "source_phrase": "The fire keeps returning across the valley.",
+      "expected_category": "recurring_visual_subjects"
+    },
+    {
+      "name": "symbolic_fire_to_motif",
+      "source_phrase": "Fire returns as the image of danger.",
+      "expected_category": "visual_motifs"
+    },
+    {
+      "name": "city_environment_to_location",
+      "source_phrase": "The city frames every choice.",
+      "expected_category": "locations"
+    },
+    {
+      "name": "miniature_building_model_to_prop",
+      "source_phrase": "She carries the miniature building model.",
+      "expected_category": "recurring_props"
+    },
+    {
+      "name": "stress_response_process_to_recurring_visual_subject",
+      "source_phrase": "The stress response rises again.",
+      "expected_category": "recurring_visual_subjects"
+    },
+    {
+      "name": "lingering_pressure_vs_immediate_danger_to_motif",
+      "source_phrase": "Lingering pressure keeps contrasting with immediate danger.",
+      "expected_category": "visual_motifs"
+    }
+  ]
+}

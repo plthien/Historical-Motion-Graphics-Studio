@@ -1,0 +1,136 @@
+{
+  "$defs": {
+    "RationalFrameRateModel": {
+      "additionalProperties": false,
+      "properties": {
+        "numerator": {
+          "maximum": 240000,
+          "minimum": 1,
+          "title": "Numerator",
+          "type": "integer"
+        },
+        "denominator": {
+          "maximum": 1001,
+          "minimum": 1,
+          "title": "Denominator",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "title": "RationalFrameRateModel",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "sha256": {
+      "title": "Sha256",
+      "type": "string"
+    },
+    "size_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Size Bytes",
+      "type": "integer"
+    },
+    "width": {
+      "exclusiveMinimum": 0,
+      "title": "Width",
+      "type": "integer"
+    },
+    "height": {
+      "exclusiveMinimum": 0,
+      "title": "Height",
+      "type": "integer"
+    },
+    "duration_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "video_codec": {
+      "const": "h264",
+      "title": "Video Codec",
+      "type": "string"
+    },
+    "pixel_format": {
+      "const": "yuv420p",
+      "title": "Pixel Format",
+      "type": "string"
+    },
+    "frame_rate": {
+      "$ref": "#/$defs/RationalFrameRateModel"
+    },
+    "frame_count": {
+      "exclusiveMinimum": 0,
+      "title": "Frame Count",
+      "type": "integer"
+    },
+    "audio_codec": {
+      "const": "aac",
+      "title": "Audio Codec",
+      "type": "string"
+    },
+    "audio_sample_rate_hz": {
+      "const": 48000,
+      "title": "Audio Sample Rate Hz",
+      "type": "integer"
+    },
+    "audio_channels": {
+      "const": 2,
+      "title": "Audio Channels",
+      "type": "integer"
+    },
+    "subtitle_mode": {
+      "enum": [
+        "embedded_mov_text",
+        "sidecar_only"
+      ],
+      "title": "Subtitle Mode",
+      "type": "string"
+    },
+    "subtitle_stream_count": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Subtitle Stream Count",
+      "type": "integer"
+    },
+    "faststart": {
+      "title": "Faststart",
+      "type": "boolean"
+    },
+    "decode_valid": {
+      "title": "Decode Valid",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "sha256",
+    "size_bytes",
+    "width",
+    "height",
+    "duration_seconds",
+    "video_codec",
+    "pixel_format",
+    "frame_rate",
+    "frame_count",
+    "audio_codec",
+    "audio_sample_rate_hz",
+    "audio_channels",
+    "subtitle_mode",
+    "subtitle_stream_count",
+    "faststart",
+    "decode_valid"
+  ],
+  "title": "FinalVideoMetadataModel",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/v4/final_video_metadata_v1.schema.json"
+}

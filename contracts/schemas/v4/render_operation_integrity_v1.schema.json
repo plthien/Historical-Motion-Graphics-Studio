@@ -1,0 +1,132 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "render_operation_id": {
+      "title": "Render Operation Id",
+      "type": "string"
+    },
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "operation_type": {
+      "enum": [
+        "render",
+        "rerender",
+        "retry"
+      ],
+      "title": "Operation Type",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "queued",
+        "running",
+        "rendering",
+        "probing",
+        "validating",
+        "finalizing",
+        "completed",
+        "failed",
+        "cancelled",
+        "superseded"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_assembly_plan_artifact_id": {
+      "title": "Source Assembly Plan Artifact Id",
+      "type": "string"
+    },
+    "source_subtitle_srt_artifact_id": {
+      "title": "Source Subtitle Srt Artifact Id",
+      "type": "string"
+    },
+    "source_subtitle_vtt_artifact_id": {
+      "title": "Source Subtitle Vtt Artifact Id",
+      "type": "string"
+    },
+    "expected_final_video_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Expected Final Video Artifact Id"
+    },
+    "render_profile_id": {
+      "title": "Render Profile Id",
+      "type": "string"
+    },
+    "render_profile_snapshot_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Render Profile Snapshot Sha256",
+      "type": "string"
+    },
+    "ffmpeg_capabilities_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Ffmpeg Capabilities Sha256",
+      "type": "string"
+    },
+    "command_graph_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Command Graph Sha256",
+      "type": "string"
+    },
+    "frame_quantization_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Frame Quantization Sha256",
+      "type": "string"
+    },
+    "attempt_no": {
+      "minimum": 1,
+      "title": "Attempt No",
+      "type": "integer"
+    },
+    "progress_percent": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Progress Percent",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "render_operation_id",
+    "job_id",
+    "project_id",
+    "operation_type",
+    "status",
+    "source_assembly_plan_artifact_id",
+    "source_subtitle_srt_artifact_id",
+    "source_subtitle_vtt_artifact_id",
+    "expected_final_video_artifact_id",
+    "render_profile_id",
+    "render_profile_snapshot_sha256",
+    "ffmpeg_capabilities_sha256",
+    "command_graph_sha256",
+    "frame_quantization_sha256",
+    "attempt_no",
+    "progress_percent"
+  ],
+  "title": "RenderOperationIntegrityModel",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/v4/render_operation_integrity_v1.schema.json"
+}

@@ -1,0 +1,72 @@
+name: Refresh deterministic release artifacts
+
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - MANIFEST.json
+      - contracts/openapi/youtube_ai_studio_api.openapi.yaml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-artifact-refresh-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  refresh-release-artifacts:
+    name: Refresh static OpenAPI and MANIFEST.json
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout branch head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Export canonical static OpenAPI
+        run: >-
+          python -c "import yaml; from app.main import app; open('contracts/openapi/youtube_ai_studio_api.openapi.yaml','w',encoding='utf-8').write(yaml.safe_dump(app.openapi(), sort_keys=False, allow_unicode=True))"
+
+      - name: Generate deterministic release manifest
+        run: python tools/package_manifest.py generate
+
+      - name: Verify refresh scope
+        shell: bash
+        run: |
+          changed="$(git diff --name-only)"
+          if [ -z "$changed" ]; then
+            echo "Generated release artifacts are already current."
+            exit 0
+          fi
+          unexpected="$(printf '%s\n' "$changed" | grep -v -E '^(MANIFEST\.json|contracts/openapi/youtube_ai_studio_api\.openapi\.yaml)$' || true)"
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected generated changes:"
+            printf '%s\n' "$unexpected"
+            exit 1
+          fi
+          test -z "$(git status --short -- app src tests)"
+
+      - name: Commit refreshed release artifacts
+        run: |
+          if git diff --quiet -- MANIFEST.json contracts/openapi/youtube_ai_studio_api.openapi.yaml; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add MANIFEST.json contracts/openapi/youtube_ai_studio_api.openapi.yaml
+          unexpected="$(git diff --cached --name-only | grep -v -E '^(MANIFEST\.json|contracts/openapi/youtube_ai_studio_api\.openapi\.yaml)$' || true)"
+          test -z "$unexpected"
+          git commit -m "chore: refresh deterministic release artifacts"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

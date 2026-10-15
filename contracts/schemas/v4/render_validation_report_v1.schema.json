@@ -1,0 +1,62 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "valid": {
+      "const": true,
+      "title": "Valid",
+      "type": "boolean"
+    },
+    "stream_metadata": {
+      "additionalProperties": true,
+      "title": "Stream Metadata",
+      "type": "object"
+    },
+    "durations": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Durations",
+      "type": "object"
+    },
+    "faststart": {
+      "const": true,
+      "title": "Faststart",
+      "type": "boolean"
+    },
+    "decode_valid": {
+      "const": true,
+      "title": "Decode Valid",
+      "type": "boolean"
+    },
+    "sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Sha256",
+      "type": "string"
+    },
+    "byte_count": {
+      "exclusiveMinimum": 0,
+      "title": "Byte Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "valid",
+    "stream_metadata",
+    "durations",
+    "faststart",
+    "decode_valid",
+    "sha256",
+    "byte_count"
+  ],
+  "title": "RenderValidationReportModel",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/v4/render_validation_report_v1.schema.json"
+}

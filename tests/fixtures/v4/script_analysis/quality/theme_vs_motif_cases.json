@@ -1,0 +1,22 @@
+{
+  "cases": [
+    {
+      "name": "repeated_thesis_only",
+      "source_phrase": "Compound growth increases over time.",
+      "expected_category": "omit",
+      "reason": "A repeated thesis alone does not require symbolic visual continuity."
+    },
+    {
+      "name": "clear_symbolic_pattern",
+      "source_phrase": "The script repeatedly returns to a snowball as the symbol of accumulating growth.",
+      "expected_category": "visual_motifs",
+      "reason": "The Script supports recurring symbolic visual meaning."
+    },
+    {
+      "name": "stable_process_representation",
+      "source_phrase": "The immune response rises, adapts, and returns across sections.",
+      "expected_category": "recurring_visual_subjects",
+      "reason": "A stable process representation is a recurring visual subject."
+    }
+  ]
+}

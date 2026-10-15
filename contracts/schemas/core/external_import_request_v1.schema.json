@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/core/external_import_request_v1.schema.json",
+  "title": "External Import Request V1",
+  "description": "Raw JSON text uploaded from ChatGPT. Artifact identity is read from the JSON itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["result_json"],
+  "properties": {
+    "result_json": {"type": "string", "minLength": 1, "description": "Complete UTF-8 JSON object returned by ChatGPT."}
+  }
+}

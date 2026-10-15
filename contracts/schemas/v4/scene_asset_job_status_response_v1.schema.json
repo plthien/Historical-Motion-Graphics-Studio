@@ -1,0 +1,206 @@
+{
+  "$defs": {
+    "MediaGenerationProgressV4": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "pattern": "^media_batch_[0-9a-f]{12}$",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "canceled": {
+          "minimum": 0,
+          "title": "Canceled",
+          "type": "integer"
+        },
+        "completed": {
+          "minimum": 0,
+          "title": "Completed",
+          "type": "integer"
+        },
+        "download_failed": {
+          "minimum": 0,
+          "title": "Download Failed",
+          "type": "integer"
+        },
+        "downloading": {
+          "minimum": 0,
+          "title": "Downloading",
+          "type": "integer"
+        },
+        "effective_poll_interval_seconds": {
+          "minimum": 1,
+          "title": "Effective Poll Interval Seconds",
+          "type": "integer"
+        },
+        "failed": {
+          "minimum": 0,
+          "title": "Failed",
+          "type": "integer"
+        },
+        "provider_pending": {
+          "minimum": 0,
+          "title": "Provider Pending",
+          "type": "integer"
+        },
+        "provider_running": {
+          "minimum": 0,
+          "title": "Provider Running",
+          "type": "integer"
+        },
+        "queued": {
+          "minimum": 0,
+          "title": "Queued",
+          "type": "integer"
+        },
+        "submitted": {
+          "minimum": 0,
+          "title": "Submitted",
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "title": "Total",
+          "type": "integer"
+        },
+        "updated_at": {
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id",
+        "total",
+        "queued",
+        "submitted",
+        "provider_pending",
+        "provider_running",
+        "downloading",
+        "completed",
+        "failed",
+        "canceled",
+        "download_failed",
+        "effective_poll_interval_seconds",
+        "updated_at"
+      ],
+      "title": "MediaGenerationProgressV4",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "error_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Error Code"
+    },
+    "error_message": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Error Message"
+    },
+    "job_id": {
+      "pattern": "^job_[0-9a-f]{12}$",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "manifest_artifact_id": {
+      "anyOf": [
+        {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Manifest Artifact Id"
+    },
+    "media_batch_id": {
+      "pattern": "^media_batch_[0-9a-f]{12}$",
+      "title": "Media Batch Id",
+      "type": "string"
+    },
+    "media_progress": {
+      "$ref": "#/$defs/MediaGenerationProgressV4"
+    },
+    "operation_id": {
+      "pattern": "^scene_asset_operation_[0-9a-f]{12}$",
+      "title": "Operation Id",
+      "type": "string"
+    },
+    "operation_type": {
+      "enum": [
+        "generate_all",
+        "generate_section",
+        "generate_beat",
+        "generate_missing",
+        "retry_failed",
+        "retry_beat",
+        "regenerate_beat",
+        "regenerate_section"
+      ],
+      "title": "Operation Type",
+      "type": "string"
+    },
+    "progress": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Progress",
+      "type": "integer"
+    },
+    "project_id": {
+      "pattern": "^project_[0-9a-f]{12}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "result": {
+      "additionalProperties": true,
+      "title": "Result",
+      "type": "object"
+    },
+    "status": {
+      "enum": [
+        "queued",
+        "running",
+        "waiting_for_media",
+        "finalizing",
+        "completed",
+        "partial",
+        "failed",
+        "superseded",
+        "cancelled"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "job_id",
+    "operation_id",
+    "operation_type",
+    "status",
+    "progress",
+    "manifest_artifact_id",
+    "media_batch_id",
+    "media_progress",
+    "result",
+    "error_code",
+    "error_message"
+  ],
+  "title": "SceneAssetJobStatusResponse",
+  "type": "object"
+}

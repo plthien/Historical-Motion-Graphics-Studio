@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/platform/generate_script_http_request.schema.json",
+  "title": "Script & Analysis External Prompt Request V3",
+  "description": "Request used to build the external ChatGPT prompt for one combined Script and Script Analysis response. The backend loads the currently selected Topic Idea from the project; topic content must not be supplied here. The optional selected_topic_idea_id is only an optimistic stale-state check.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "user_input"
+  ],
+  "properties": {
+    "user_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_duration_minutes",
+        "pov_style",
+        "avoid",
+        "section_count_mode",
+        "pacing_mode",
+        "narration_wpm"
+      ],
+      "properties": {
+        "target_duration_minutes": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Requested narration runtime. Each Script section chooses its own planned_narration_wpm inside user_input.narration_wpm; backend derives whole-video runtime diagnostics from those section plans."
+        },
+        "pov_style": {
+          "type": "string",
+          "minLength": 1,
+          "description": "User-supplied point of view and narration style for the Script that ChatGPT writes before analyzing it."
+        },
+        "avoid": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "User-supplied Script content or treatment to avoid. This is separate from Topic Ideas avoid_topics."
+        },
+        "section_count_mode": {
+          "type": "string",
+          "enum": [
+            "llm_decides",
+            "backend_plan"
+          ],
+          "description": "Controls section planning. 'llm_decides' lets ChatGPT choose the section count and roles inside backend safety bounds; 'backend_plan' requires the exact backend section plan."
+        },
+        "pacing_mode": {
+          "type": "string",
+          "enum": [
+            "fast",
+            "medium",
+            "slow"
+          ],
+          "description": "Per-video visual pacing mode. Topic Ideas may recommend a default, but the user explicitly chooses the mode for this Script build."
+        },
+        "narration_wpm": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 80,
+              "maximum": 300
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 80,
+              "maximum": 300
+            }
+          },
+          "description": "Inclusive narration WPM range selected in the Script & Analysis build form. The LLM must choose an exact planned_narration_wpm inside this range for every section."
+        }
+      }
+    },
+    "selected_topic_idea_id": {
+      "type": "string",
+      "pattern": "^idea_[0-9]{3}$",
+      "description": "Optional optimistic stale-state check. If provided and differs from the persisted selection, returns 409 TOPIC_IDEA_MISMATCH. Backend always uses the persisted selection regardless."
+    }
+  }
+}

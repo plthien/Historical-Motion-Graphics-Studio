@@ -1,0 +1,23 @@
+{
+  "domain": "product review",
+  "script_focus": "A recurring comparison between two product classes.",
+  "expected_candidates": [
+    {
+      "label": "budget laptops",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["budget laptops", "entry-level machines", "low-cost models"],
+      "invalid_occurrences": ["price pressure", "cheap build quality"]
+    },
+    {
+      "label": "flagship laptops",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["flagship laptops", "premium machines", "top-tier models"],
+      "invalid_occurrences": ["marketing claims", "high price"]
+    }
+  ],
+  "invariants": [
+    "Product classes can be recurring visual subjects.",
+    "Attributes or market claims are not occurrences of the product class.",
+    "A product review can require class-level continuity without a single persistent object."
+  ]
+}

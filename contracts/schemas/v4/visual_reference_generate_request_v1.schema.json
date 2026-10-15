@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/schemas/v4/visual_reference_generate_request_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "style_bible_artifact_id",
+    "expected_visual_reference_set_artifact_id"
+  ],
+  "properties": {
+    "style_bible_artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "expected_visual_reference_set_artifact_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^artifact_[0-9a-f]{12}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidate_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "default": 1
+    },
+    "aspect_ratio": {
+      "type": "string",
+      "enum": ["1:1", "3:4", "4:3", "9:16", "16:9"]
+    },
+    "aspect_ratios_by_anchor_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "character": {"type": "string", "enum": ["1:1", "3:4", "4:3", "9:16", "16:9"]},
+        "location": {"type": "string", "enum": ["1:1", "3:4", "4:3", "9:16", "16:9"]},
+        "prop": {"type": "string", "enum": ["1:1", "3:4", "4:3", "9:16", "16:9"]},
+        "recurring_visual_subject": {"type": "string", "enum": ["1:1", "3:4", "4:3", "9:16", "16:9"]}
+      }
+    }
+  }
+}

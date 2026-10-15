@@ -1,0 +1,161 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "architecture_version": {
+      "const": "voice_generation_providers_v1",
+      "default": "voice_generation_providers_v1",
+      "enum": [
+        "voice_generation_providers_v1"
+      ],
+      "title": "Architecture Version",
+      "type": "string"
+    },
+    "expected_narration_audio_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Expected Narration Audio Artifact Id"
+    },
+    "expected_narration_word_timing_map_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Expected Narration Word Timing Map Artifact Id"
+    },
+    "generation_settings_snapshot_sha256": {
+      "title": "Generation Settings Snapshot Sha256",
+      "type": "string"
+    },
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "operation_id": {
+      "title": "Operation Id",
+      "type": "string"
+    },
+    "operation_type": {
+      "enum": [
+        "generate_all",
+        "generate_missing",
+        "regenerate_section"
+      ],
+      "title": "Operation Type",
+      "type": "string"
+    },
+    "pacing_identity_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Pacing Identity Sha256",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "provider_identity_sha256": {
+      "title": "Provider Identity Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "4.0",
+      "enum": [
+        "4.0"
+      ],
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "script_artifact_id": {
+      "title": "Script Artifact Id",
+      "type": "string"
+    },
+    "segment_count": {
+      "minimum": 1,
+      "title": "Segment Count",
+      "type": "integer"
+    },
+    "segmentation_input_sha256": {
+      "title": "Segmentation Input Sha256",
+      "type": "string"
+    },
+    "segmentation_version": {
+      "const": "narration_segmentation_v2",
+      "enum": [
+        "narration_segmentation_v2"
+      ],
+      "title": "Segmentation Version",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "queued",
+        "running",
+        "waiting_for_provider",
+        "assembling",
+        "finalizing",
+        "completed",
+        "partial",
+        "failed",
+        "superseded",
+        "cancelled"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "tts_profile_id": {
+      "title": "Tts Profile Id",
+      "type": "string"
+    },
+    "voice_id": {
+      "title": "Voice Id",
+      "type": "string"
+    },
+    "voice_preset": {
+      "anyOf": [
+        {
+          "enum": [
+            "economy",
+            "quality_cloned_voice"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Voice Preset"
+    }
+  },
+  "required": [
+    "schema_version",
+    "operation_id",
+    "job_id",
+    "project_id",
+    "operation_type",
+    "status",
+    "script_artifact_id",
+    "expected_narration_audio_artifact_id",
+    "expected_narration_word_timing_map_artifact_id",
+    "voice_preset",
+    "tts_profile_id",
+    "voice_id",
+    "provider_identity_sha256",
+    "generation_settings_snapshot_sha256",
+    "pacing_identity_sha256",
+    "segmentation_version",
+    "segmentation_input_sha256",
+    "segment_count"
+  ],
+  "title": "VoiceOperationIntegrityModel",
+  "type": "object"
+}

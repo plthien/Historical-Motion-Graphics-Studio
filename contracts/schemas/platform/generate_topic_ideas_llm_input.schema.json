@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/platform/generate_topic_ideas_llm_input.schema.json",
+  "title": "Generate Topic Ideas LLM Input V3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "channel_context",
+    "narration_identity",
+    "pacing_profiles",
+    "user_input"
+  ],
+  "properties": {
+    "channel_context": {
+      "$ref": "#/$defs/channel_context"
+    },
+    "narration_identity": {
+      "$ref": "#/$defs/narration_identity"
+    },
+    "pacing_profiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fast",
+        "medium",
+        "slow"
+      ],
+      "description": "Project-snapshotted Channel DNA calibration for the three candidate pacing modes. Topic Ideas must use these exact channel-specific ranges when recommending a mode.",
+      "properties": {
+        "fast": {
+          "$ref": "#/$defs/pacing_mode_profile"
+        },
+        "medium": {
+          "$ref": "#/$defs/pacing_mode_profile"
+        },
+        "slow": {
+          "$ref": "#/$defs/pacing_mode_profile"
+        }
+      }
+    },
+    "user_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seed_topic",
+        "topic_count",
+        "focus_keywords",
+        "focus",
+        "avoid_topics"
+      ],
+      "properties": {
+        "seed_topic": {
+          "type": "string"
+        },
+        "topic_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "focus_keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "focus": {
+          "enum": [
+            "highest_ctr",
+            "most_evergreen",
+            "easiest_to_make",
+            "balanced",
+            "most_unique"
+          ]
+        },
+        "avoid_topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "channel_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "language",
+        "niche",
+        "audience"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "niche": {
+          "type": "string",
+          "minLength": 1
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "narration_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "voice",
+        "delivery",
+        "explanation_style",
+        "tone_boundaries",
+        "avoid"
+      ],
+      "properties": {
+        "voice": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "delivery": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "explanation_style": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "tone_boundaries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "avoid": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "pacing_hold_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "max"
+      ],
+      "properties": {
+        "min": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "pacing_density_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preferred_hold_seconds"
+      ],
+      "properties": {
+        "preferred_hold_seconds": {
+          "$ref": "#/$defs/pacing_hold_range"
+        }
+      }
+    },
+    "pacing_mode_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "properties": {
+        "high": {
+          "$ref": "#/$defs/pacing_density_profile"
+        },
+        "medium": {
+          "$ref": "#/$defs/pacing_density_profile"
+        },
+        "low": {
+          "$ref": "#/$defs/pacing_density_profile"
+        }
+      }
+    }
+  }
+}

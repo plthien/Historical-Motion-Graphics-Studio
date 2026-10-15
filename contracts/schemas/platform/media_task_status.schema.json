@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/platform/media_task_status.schema.json",
+  "title": "Media Task Status V3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "media_task_id",
+    "batch_id",
+    "external_provider",
+    "status",
+    "provider_status",
+    "external_task_id",
+    "provider_submitted_at",
+    "entity_type",
+    "entity_id",
+    "candidate_index",
+    "created_at",
+    "updated_at",
+    "poll_count",
+    "next_poll_after_seconds"
+  ],
+  "properties": {
+    "media_task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "batch_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "external_provider": {
+      "type": "string",
+      "enum": [
+        "glabs_webhook"
+      ]
+    },
+    "external_task_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "submitted",
+        "provider_pending",
+        "provider_running",
+        "downloading",
+        "completed",
+        "failed",
+        "canceled",
+        "download_failed"
+      ]
+    },
+    "provider_status": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "pending",
+        "running",
+        "completed",
+        "failed",
+        null
+      ]
+    },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "character",
+        "location",
+        "prop",
+        "recurring_visual_subject",
+        "beat"
+      ]
+    },
+    "entity_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_index": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updated_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "poll_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "next_poll_after_seconds": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "provider_submitted_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    }
+  }
+}

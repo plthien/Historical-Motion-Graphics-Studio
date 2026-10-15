@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/schemas/v4/visual_reference_clear_request_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "visual_reference_set_artifact_id",
+    "expected_approval_set_artifact_id"
+  ],
+  "properties": {
+    "visual_reference_set_artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "expected_approval_set_artifact_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^artifact_[0-9a-f]{12}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

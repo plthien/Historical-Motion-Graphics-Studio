@@ -1,0 +1,18 @@
+# Channel DNA
+
+Channel DNA stores structured channel context plus two independent creative identities:
+
+- `narration_identity`: free-form channel-level narration intent (`voice`, `delivery`, `explanation_style`, `tone_boundaries`, `avoid`);
+- `narration_wpm`: channel-owned inclusive spoken narration speed range `{min, max}` used to prefill Script & Analysis prompt builds;
+- `pacing_profiles`: channel-owned numeric calibration for the three per-video `fast | medium | slow` modes, each resolving section `high | medium | low` density to `preferred_hold_seconds`;
+- visual identity: medium, linework, rendering, palette, shapes, textures, required free-form `editorial_language`, entity-specific appearance/avoid rules and global negative constraints.
+
+The application validates only the structure of `narration_identity` and `visual_identity.editorial_language`. It does not define a closed narration-style taxonomy, representation-mode taxonomy, humor ratio, meme taxonomy, shot quota, or creative defaults. Arbitrary, hybrid, and previously unseen channel voices and editorial visual grammars remain valid as long as the strict Channel DNA contract is satisfied.
+
+When a Project is created, the complete Channel DNA is snapshotted into the Project. Topic Ideas receives the exact frozen `narration_identity` as channel-personality authority for candidate tone/POV recommendations. External Script authoring receives the same frozen identity as narration authority. The Project snapshot also freezes `narration_wpm`; the Script & Analysis screen displays that `{min, max}` range as its initial WPM envelope. The user may edit the range before building a prompt, but that edit is local to the build request and never mutates Channel DNA or the Project snapshot. Scene Breakdown receives that identity as visual-interpretation context, while Style Bible remains the deterministic visual projection of the Channel DNA visual fields plus reviewed Script Analysis continuity.
+
+`visual_identity.editorial_language` is now required Channel DNA authority. Style Bible deterministically preserves it and Scene Breakdown Step 2 receives it as visual-communication guidance. It may change how locked meaning is represented, compressed, staged, or visually emphasized, but it may not change what a Beat means or create new factual authority.
+
+Narration identity, video pacing mode, and visual style are independent axes. Channel DNA `pacing_profiles` define what FAST/MEDIUM/SLOW numerically mean for that Channel; the same mode label may intentionally use different ranges on another Channel. Topic Ideas receives the Project-snapshotted profiles and recommends one mode, and the user may override that recommendation before Script authoring. Runtime code validates and resolves the supplied profile but owns no global numeric pacing table. `narration_identity` controls how information should sound. Visual identity, including `editorial_language`, controls how generated images should look and visually communicate locked meaning. No one axis may silently infer another.
+
+Script & Analysis has exactly one model-facing WPM range input: `user_input.narration_wpm = {min, max}`. The UI initializes it from the Project-snapshotted Channel DNA range, then sends the final form range when the prompt is built. The LLM must choose one exact `planned_narration_wpm` per section inside that inclusive range before writing prose. Those section values are frozen into the normalized Script and become downstream Voice targets. Visual pacing remains an independent axis; the first hook section is always authored and analyzed at `high` visual pacing density.

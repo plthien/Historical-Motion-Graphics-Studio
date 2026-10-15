@@ -1,0 +1,704 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_plan_v1.schema.json",
+  "title": "Scene Plan V4 Atomic Breakdown V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "project_id",
+    "scene_plan_revision_id",
+    "parent_scene_plan_revision_id",
+    "revision_operation",
+    "source_script_revision_id",
+    "source_script_analysis_revision_id",
+    "source_style_bible_revision_id",
+    "source_run_artifact_id",
+    "status",
+    "scene_count",
+    "beat_count",
+    "total_expected_duration_seconds",
+    "sections",
+    "scenes",
+    "backend_qc"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "scene_plan"
+    },
+    "schema_version": {
+      "const": "2.0"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^project_[0-9a-f]{12}$"
+    },
+    "scene_plan_revision_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "parent_scene_plan_revision_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^artifact_[0-9a-f]{12}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "revision_operation": {
+      "type": "string",
+      "enum": [
+        "full_generation",
+        "section_regeneration",
+        "section_edit",
+        "approval"
+      ]
+    },
+    "source_script_revision_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "source_script_analysis_revision_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "source_style_bible_revision_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "source_run_artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft_ready",
+        "approved"
+      ]
+    },
+    "scene_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "beat_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "total_expected_duration_seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "section_id",
+          "section_order",
+          "section_title",
+          "section_role",
+          "resolved_script_span",
+          "pacing_density",
+          "scene_ids",
+          "beat_ids"
+        ],
+        "properties": {
+          "section_id": {
+            "type": "string",
+            "pattern": "^sec_[0-9]{3}$"
+          },
+          "section_order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "section_title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "section_role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resolved_script_span": {
+            "$ref": "#/$defs/span"
+          },
+          "pacing_density": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "scene_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^scene_[0-9]{3,}$"
+            }
+          },
+          "beat_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^beat_[0-9]{3,}$"
+            }
+          }
+        }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scene_id",
+          "scene_order",
+          "section_id",
+          "local_scene_order",
+          "resolved_script_span",
+          "start_quote",
+          "end_quote",
+          "beats"
+        ],
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "pattern": "^scene_[0-9]{3,}$"
+          },
+          "scene_order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "section_id": {
+            "type": "string",
+            "pattern": "^sec_[0-9]{3}$"
+          },
+          "local_scene_order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "resolved_script_span": {
+            "$ref": "#/$defs/span"
+          },
+          "start_quote": {
+            "type": "string",
+            "minLength": 1
+          },
+          "end_quote": {
+            "type": "string",
+            "minLength": 1
+          },
+          "beats": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/beat"
+            }
+          }
+        }
+      }
+    },
+    "backend_qc": {
+      "$ref": "#/$defs/backend_qc"
+    }
+  },
+  "$defs": {
+    "span": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "integer",
+          "minimum": 0
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "beat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "beat_id",
+        "beat_order",
+        "local_beat_order",
+        "script_quote",
+        "resolved_script_span",
+        "word_count",
+        "estimated_duration_seconds",
+        "narrative_marker_refs",
+        "narrative_marker_types",
+        "is_narrative_marker",
+        "turning_point",
+        "reveal",
+        "contrast",
+        "visual_priority",
+        "visual_context_ref",
+        "eligible_character_refs",
+        "eligible_location_refs",
+        "eligible_prop_refs",
+        "eligible_recurring_visual_subject_refs",
+        "eligible_motif_refs",
+        "pacing_density"
+      ],
+      "properties": {
+        "beat_id": {
+          "type": "string",
+          "pattern": "^beat_[0-9]{3,}$"
+        },
+        "beat_order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "local_beat_order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "script_quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolved_script_span": {
+          "$ref": "#/$defs/span"
+        },
+        "word_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimated_duration_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "narrative_marker_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^marker_[0-9]{3}$"
+          }
+        },
+        "narrative_marker_types": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "turning_point",
+              "reveal",
+              "contrast",
+              "payoff",
+              "emphasis"
+            ]
+          }
+        },
+        "is_narrative_marker": {
+          "type": "boolean"
+        },
+        "turning_point": {
+          "type": "boolean"
+        },
+        "reveal": {
+          "type": "boolean"
+        },
+        "contrast": {
+          "type": "boolean"
+        },
+        "visual_priority": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "normal"
+          ]
+        },
+        "visual_context_ref": {
+          "type": "string",
+          "pattern": "^ctx_[0-9]{3}$"
+        },
+        "eligible_character_refs": {
+          "$ref": "#/$defs/char_refs"
+        },
+        "eligible_location_refs": {
+          "$ref": "#/$defs/loc_refs"
+        },
+        "eligible_prop_refs": {
+          "$ref": "#/$defs/prop_refs"
+        },
+        "eligible_recurring_visual_subject_refs": {
+          "$ref": "#/$defs/subject_refs"
+        },
+        "eligible_motif_refs": {
+          "$ref": "#/$defs/motif_refs"
+        },
+        "pacing_density": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      }
+    },
+    "char_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^char_[0-9]{3}$"
+      }
+    },
+    "loc_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^loc_[0-9]{3}$"
+      }
+    },
+    "prop_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^prop_[0-9]{3}$"
+      }
+    },
+    "subject_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^subject_[0-9]{3}$"
+      }
+    },
+    "motif_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^motif_[0-9]{3}$"
+      }
+    },
+    "backend_qc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coverage_status",
+        "semantic_partition_status",
+        "order_status",
+        "source_integrity_status",
+        "timing_status",
+        "forbidden_field_status",
+        "reasoning_leakage_status",
+        "semantic_errors",
+        "errors",
+        "coverage_gaps",
+        "coverage_overlaps",
+        "timing_warnings",
+        "warnings",
+        "timing_policy_version",
+        "timing_metrics"
+      ],
+      "properties": {
+        "coverage_status": {
+          "$ref": "#/$defs/qc_status"
+        },
+        "semantic_partition_status": {
+          "$ref": "#/$defs/qc_status"
+        },
+        "order_status": {
+          "$ref": "#/$defs/qc_status"
+        },
+        "source_integrity_status": {
+          "$ref": "#/$defs/qc_status"
+        },
+        "forbidden_field_status": {
+          "$ref": "#/$defs/qc_status"
+        },
+        "reasoning_leakage_status": {
+          "$ref": "#/$defs/qc_status"
+        },
+        "semantic_errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/semantic_issue"
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/semantic_issue"
+          }
+        },
+        "coverage_gaps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/coverage_issue"
+          }
+        },
+        "coverage_overlaps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/coverage_issue"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timing_status": {
+          "$ref": "#/$defs/qc_status"
+        },
+        "timing_warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "timing_policy_version": {
+          "oneOf": [
+            {
+              "const": "approved_voice_static_image_v6"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timing_metrics": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timing_metrics"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timing_sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "section_id",
+              "pacing_density",
+              "timing_status",
+              "timing_metrics"
+            ],
+            "properties": {
+              "section_id": {
+                "type": "string",
+                "pattern": "^sec_[0-9]{3}$"
+              },
+              "pacing_density": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "timing_status": {
+                "$ref": "#/$defs/qc_status"
+              },
+              "timing_metrics": {
+                "$ref": "#/$defs/timing_metrics"
+              }
+            }
+          }
+        }
+      }
+    },
+    "qc_status": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "warning",
+        "failed"
+      ]
+    },
+    "semantic_issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "code",
+        "message"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "coverage_issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section_id",
+        "span",
+        "text"
+      ],
+      "properties": {
+        "section_id": {
+          "type": "string",
+          "pattern": "^sec_[0-9]{3}$"
+        },
+        "span": {
+          "$ref": "#/$defs/span"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "timing_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "planned_narration_wpm",
+        "beat_count",
+        "scene_count",
+        "estimated_section_duration_seconds",
+        "average_beat_duration_seconds",
+        "average_narration_duration_seconds",
+        "median_beat_duration_seconds",
+        "p90_beat_duration_seconds",
+        "max_beat_duration_seconds",
+        "average_scene_duration_seconds",
+        "max_scene_duration_seconds",
+        "single_beat_scene_count",
+        "preferred_hold_seconds",
+        "within_preferred_ratio",
+        "below_preferred_ratio",
+        "above_preferred_ratio",
+        "pacing_conformance"
+      ],
+      "properties": {
+        "beat_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scene_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimated_section_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "average_beat_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "average_narration_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "median_beat_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p90_beat_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_beat_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "average_scene_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_scene_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "single_beat_scene_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "planned_narration_wpm": {
+          "type": "integer",
+          "minimum": 80,
+          "maximum": 240,
+          "description": "Section-specific planned narration WPM retained as upstream provenance/diagnostic metadata; approved Voice timing is the duration authority."
+        },
+        "preferred_hold_seconds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "max": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        "within_preferred_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "below_preferred_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "above_preferred_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "pacing_conformance": {
+          "type": "string",
+          "enum": [
+            "passed",
+            "warning"
+          ]
+        }
+      }
+    }
+  }
+}

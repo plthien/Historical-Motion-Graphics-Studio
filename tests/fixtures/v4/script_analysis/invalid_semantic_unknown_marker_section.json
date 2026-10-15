@@ -1,0 +1,67 @@
+{
+  "artifact_type": "script_analysis_llm_output",
+  "schema_version": "1.0",
+  "project_id": "project_f478f551b97d",
+  "source_script_revision_id": "artifact_296d8d9b0ba7",
+  "section_guidance": [
+    {
+      "section_id": "sec_001",
+      "pacing_density": "medium"
+    },
+    {
+      "section_id": "sec_002",
+      "pacing_density": "high"
+    }
+  ],
+  "narrative_markers": [
+    {
+      "marker_type": "turning_point",
+      "section_id": "sec_999",
+      "anchor_quote": "The biggest fantasy",
+      "context_quote": "The biggest fantasy is the lone survivor.",
+      "importance": "high",
+      "purpose": "Shift production emphasis from individual endurance to cooperation."
+    }
+  ],
+  "continuity_catalog": {
+    "characters": [],
+    "locations": [],
+    "recurring_props": [],
+    "recurring_visual_subjects": [
+      {
+        "label": "Ancient humans",
+        "description": "The recurring collective human subject used across the survival argument.",
+        "visual_type": "social_group",
+        "explicit_visual_traits": [],
+        "continuity_notes": [
+          "Represent the same underlying collective referent across occurrences."
+        ],
+        "occurrences": [
+          {
+            "section_id": "sec_001",
+            "quote": "Ancient humans endured cold mornings.",
+            "context_quote": "Imagine waking up without modern shelter. Ancient humans endured cold mornings."
+          },
+          {
+            "section_id": "sec_002",
+            "quote": "Ancient humans survived because they cooperated.",
+            "context_quote": "The biggest fantasy is the lone survivor. Ancient humans survived because they cooperated."
+          }
+        ],
+        "presence_ranges": [
+          {
+            "section_id": "sec_001",
+            "start_quote": "Imagine waking up without modern shelter. Ancient humans endured cold mornings.",
+            "end_quote": "Imagine waking up without modern shelter. Ancient humans endured cold mornings."
+          },
+          {
+            "section_id": "sec_002",
+            "start_quote": "The biggest fantasy is the lone survivor. Ancient humans survived because they cooperated.",
+            "end_quote": "The biggest fantasy is the lone survivor. Ancient humans survived because they cooperated."
+          }
+        ]
+      }
+    ],
+    "visual_motifs": []
+  }
+}

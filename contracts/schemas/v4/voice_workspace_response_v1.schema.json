@@ -1,0 +1,1034 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "VoiceActiveOperationModel": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "title": "Operation Id",
+          "type": "string"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "queued",
+            "running",
+            "waiting_for_provider",
+            "assembling",
+            "finalizing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "operation_type": {
+          "enum": [
+            "generate_all",
+            "generate_missing",
+            "regenerate_section"
+          ],
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "target_section_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Section Id"
+        }
+      },
+      "required": [
+        "operation_id",
+        "job_id",
+        "status",
+        "operation_type"
+      ],
+      "title": "VoiceActiveOperationModel",
+      "type": "object"
+    },
+    "VoiceGenerationPresetStatusModel": {
+      "additionalProperties": false,
+      "properties": {
+        "ready": {
+          "title": "Ready",
+          "type": "boolean"
+        },
+        "issue": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VoiceReadinessIssueModel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ready",
+        "issue",
+        "model_id"
+      ],
+      "title": "VoiceGenerationPresetStatusModel",
+      "type": "object"
+    },
+    "VoiceGenerationPresetsModel": {
+      "additionalProperties": false,
+      "properties": {
+        "economy": {
+          "$ref": "#/$defs/VoiceGenerationPresetStatusModel"
+        },
+        "quality_cloned_voice": {
+          "$ref": "#/$defs/VoiceGenerationPresetStatusModel"
+        }
+      },
+      "required": [
+        "economy",
+        "quality_cloned_voice"
+      ],
+      "title": "VoiceGenerationPresetsModel",
+      "type": "object"
+    },
+    "VoiceGenerationProviderStatusModel": {
+      "additionalProperties": false,
+      "properties": {
+        "generation_provider": {
+          "enum": [
+            "elevenlabs",
+            "kokoro_local"
+          ],
+          "title": "Generation Provider",
+          "type": "string"
+        },
+        "display_name": {
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "ready": {
+          "title": "Ready",
+          "type": "boolean"
+        },
+        "issue": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VoiceReadinessIssueModel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "generation_ready": {
+          "title": "Generation Ready",
+          "type": "boolean"
+        },
+        "generation_issue": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VoiceReadinessIssueModel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "generation_presets": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VoiceGenerationPresetsModel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "alignment_ready": {
+          "title": "Alignment Ready",
+          "type": "boolean"
+        },
+        "alignment_issue": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VoiceReadinessIssueModel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "alignment_provider": {
+          "const": "elevenlabs",
+          "enum": [
+            "elevenlabs"
+          ],
+          "title": "Alignment Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "generation_provider",
+        "display_name",
+        "ready",
+        "issue",
+        "generation_ready",
+        "generation_issue",
+        "alignment_ready",
+        "alignment_issue",
+        "alignment_provider"
+      ],
+      "title": "VoiceGenerationProviderStatusModel",
+      "type": "object"
+    },
+    "VoiceReadinessIssueModel": {
+      "additionalProperties": false,
+      "properties": {
+        "error_code": {
+          "title": "Error Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "cause_error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cause Error Code"
+        }
+      },
+      "required": [
+        "error_code",
+        "message"
+      ],
+      "title": "VoiceReadinessIssueModel",
+      "type": "object"
+    },
+    "VoiceReadinessModel": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "ready",
+            "not_ready"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "issues": {
+          "items": {
+            "$ref": "#/$defs/VoiceReadinessIssueModel"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Id"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "voice_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voice Id"
+        },
+        "requires_ffmpeg": {
+          "title": "Requires Ffmpeg",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "issues",
+        "requires_ffmpeg"
+      ],
+      "title": "VoiceReadinessModel",
+      "type": "object"
+    },
+    "VoiceSectionWorkspaceModel": {
+      "additionalProperties": false,
+      "properties": {
+        "section_id": {
+          "title": "Section Id",
+          "type": "string"
+        },
+        "section_order": {
+          "title": "Section Order",
+          "type": "integer"
+        },
+        "segment_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Segment Ids",
+          "type": "array"
+        },
+        "target_wpm": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Wpm"
+        },
+        "raw_wpm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Wpm"
+        },
+        "pacing_status": {
+          "enum": [
+            "pending",
+            "pass",
+            "regeneration_required"
+          ],
+          "title": "Pacing Status",
+          "type": "string"
+        },
+        "correction_relative": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Correction Relative"
+        },
+        "current_provider_pacing_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Provider Pacing Value"
+        },
+        "recommended_provider_pacing_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recommended Provider Pacing Value"
+        },
+        "recommendation_policy_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recommendation Policy Version"
+        },
+        "recommendation_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recommendation Reason"
+        },
+        "remediation_identity": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remediation Identity"
+        },
+        "remediation_report_sha256": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remediation Report Sha256"
+        },
+        "source_remediation_operation_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Remediation Operation Id"
+        },
+        "regeneration_supported": {
+          "title": "Regeneration Supported",
+          "type": "boolean"
+        },
+        "can_regenerate": {
+          "title": "Can Regenerate",
+          "type": "boolean"
+        },
+        "can_accept_pacing_deviation": {
+          "title": "Can Accept Pacing Deviation",
+          "type": "boolean"
+        },
+        "remediation_block_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remediation Block Reason"
+        },
+        "issue": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue"
+        }
+      },
+      "required": [
+        "section_id",
+        "section_order",
+        "segment_ids",
+        "pacing_status",
+        "regeneration_supported",
+        "can_regenerate",
+        "can_accept_pacing_deviation"
+      ],
+      "title": "VoiceSectionWorkspaceModel",
+      "type": "object"
+    },
+    "VoiceSegmentWorkspaceModel": {
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "segment_order": {
+          "title": "Segment Order",
+          "type": "integer"
+        },
+        "section_id": {
+          "title": "Section Id",
+          "type": "string"
+        },
+        "source_start": {
+          "title": "Source Start",
+          "type": "integer"
+        },
+        "source_end": {
+          "title": "Source End",
+          "type": "integer"
+        },
+        "exact_text": {
+          "title": "Exact Text",
+          "type": "string"
+        },
+        "text_sha256": {
+          "title": "Text Sha256",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "segment_task_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment Task Id"
+        },
+        "segment_audio_artifact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment Audio Artifact Id"
+        },
+        "duration_seconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Seconds"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "audio_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audio Url"
+        },
+        "timing_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timing Source"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        },
+        "can_regenerate": {
+          "title": "Can Regenerate",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "segment_id",
+        "segment_order",
+        "section_id",
+        "source_start",
+        "source_end",
+        "exact_text",
+        "text_sha256",
+        "status",
+        "can_regenerate"
+      ],
+      "title": "VoiceSegmentWorkspaceModel",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "readiness": {
+      "$ref": "#/$defs/VoiceReadinessModel"
+    },
+    "script_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Script Artifact Id"
+    },
+    "selected_tts_profile_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Selected Tts Profile Id"
+    },
+    "selected_generation_provider": {
+      "anyOf": [
+        {
+          "enum": [
+            "elevenlabs",
+            "kokoro_local"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selected Generation Provider"
+    },
+    "selected_voice_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Selected Voice Id"
+    },
+    "selected_voice_label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selected Voice Label"
+    },
+    "speaking_rate": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Speaking Rate"
+    },
+    "available_generation_providers": {
+      "items": {
+        "$ref": "#/$defs/VoiceGenerationProviderStatusModel"
+      },
+      "title": "Available Generation Providers",
+      "type": "array"
+    },
+    "kokoro_voice_catalog": {
+      "items": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "title": "Kokoro Voice Catalog",
+      "type": "array"
+    },
+    "active_operation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VoiceActiveOperationModel"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "current_narration_audio_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Current Narration Audio Artifact Id"
+    },
+    "audio_duration_seconds": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Audio Duration Seconds"
+    },
+    "audio_mime_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Audio Mime Type"
+    },
+    "audio_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Audio Sha256"
+    },
+    "audio_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Audio Url"
+    },
+    "current_narration_word_timing_map_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Current Narration Word Timing Map Artifact Id"
+    },
+    "draft_narration_audio_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Draft Narration Audio Artifact Id"
+    },
+    "draft_narration_word_timing_map_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Draft Narration Word Timing Map Artifact Id"
+    },
+    "draft_operation_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Draft Operation Id"
+    },
+    "draft_generation_provider": {
+      "anyOf": [
+        {
+          "enum": [
+            "elevenlabs",
+            "kokoro_local"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Draft Generation Provider"
+    },
+    "draft_generation_voice_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Draft Generation Voice Id"
+    },
+    "draft_voice_preset": {
+      "anyOf": [
+        {
+          "enum": [
+            "economy",
+            "quality_cloned_voice"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Draft Voice Preset"
+    },
+    "draft_candidate_identity_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Draft Candidate Identity Sha256"
+    },
+    "draft_audio_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Draft Audio Url"
+    },
+    "alignment_status": {
+      "anyOf": [
+        {
+          "enum": [
+            "queued",
+            "submitting",
+            "running",
+            "completed",
+            "submit_outcome_unknown",
+            "failed"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Alignment Status"
+    },
+    "alignment_completed_section_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Alignment Completed Section Count",
+      "type": "integer"
+    },
+    "alignment_total_section_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Alignment Total Section Count",
+      "type": "integer"
+    },
+    "alignment_submit_outcome_unknown_section_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Alignment Submit Outcome Unknown Section Ids",
+      "type": "array"
+    },
+    "timing_map_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Timing Map Status"
+    },
+    "timing_source": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Timing Source"
+    },
+    "current_output_problem": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VoiceReadinessIssueModel"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "sections": {
+      "items": {
+        "$ref": "#/$defs/VoiceSectionWorkspaceModel"
+      },
+      "title": "Sections",
+      "type": "array"
+    },
+    "segments": {
+      "items": {
+        "$ref": "#/$defs/VoiceSegmentWorkspaceModel"
+      },
+      "title": "Segments",
+      "type": "array"
+    },
+    "approval_eligible": {
+      "title": "Approval Eligible",
+      "type": "boolean"
+    },
+    "available_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Available Actions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "readiness",
+    "script_artifact_id",
+    "selected_tts_profile_id",
+    "selected_voice_id",
+    "speaking_rate",
+    "active_operation",
+    "current_narration_audio_artifact_id",
+    "audio_duration_seconds",
+    "audio_mime_type",
+    "audio_sha256",
+    "audio_url",
+    "current_narration_word_timing_map_artifact_id",
+    "timing_map_status",
+    "timing_source",
+    "sections",
+    "segments",
+    "approval_eligible",
+    "available_actions"
+  ],
+  "title": "VoiceWorkspaceResponse",
+  "type": "object",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/voice_workspace_response_v1.schema.json"
+}

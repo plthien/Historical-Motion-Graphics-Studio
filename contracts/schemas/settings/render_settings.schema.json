@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/settings/render_settings.schema.json",
+  "title": "Render Settings V3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["active_profile_id", "profiles"],
+  "properties": {
+    "active_profile_id": {"type": "string", "minLength": 1},
+    "profiles": {
+      "type": "array", "minItems": 1, "maxItems": 32,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["profile_id", "display_name", "enabled", "width", "height", "frame_rate", "video_codec", "video_crf", "video_preset", "pixel_format", "audio_codec", "audio_bitrate_kbps", "audio_sample_rate_hz", "audio_channels", "subtitle_mode", "faststart", "deterministic_encoding", "encoder_threads", "clipping_policy"],
+        "properties": {
+          "profile_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$", "maxLength": 64},
+          "display_name": {"type": "string", "minLength": 1, "maxLength": 128},
+          "enabled": {"type": "boolean"},
+          "width": {"type": "integer", "minimum": 320, "maximum": 7680, "multipleOf": 2},
+          "height": {"type": "integer", "minimum": 240, "maximum": 4320, "multipleOf": 2},
+          "frame_rate": {"type": "object", "additionalProperties": false, "required": ["numerator", "denominator"], "properties": {"numerator": {"type": "integer", "minimum": 1, "maximum": 240000}, "denominator": {"type": "integer", "minimum": 1, "maximum": 1001}}},
+          "video_codec": {"const": "libx264"}, "video_crf": {"type": "integer", "minimum": 0, "maximum": 51},
+          "video_preset": {"enum": ["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"]},
+          "pixel_format": {"const": "yuv420p"}, "audio_codec": {"const": "aac"},
+          "audio_bitrate_kbps": {"type": "integer", "minimum": 64, "maximum": 512},
+          "audio_sample_rate_hz": {"const": 48000}, "audio_channels": {"const": 2},
+          "subtitle_mode": {"enum": ["embedded_mov_text", "sidecar_only"]}, "faststart": {"const": true},
+          "deterministic_encoding": {"type": "boolean"}, "encoder_threads": {"type": "integer", "minimum": 1, "maximum": 16},
+          "clipping_policy": {"const": "fail_on_detected_clipping"}
+        }
+      }
+    }
+  }
+}

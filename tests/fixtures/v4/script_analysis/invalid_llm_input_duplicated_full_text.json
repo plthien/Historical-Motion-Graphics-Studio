@@ -1,0 +1,23 @@
+{
+  "project_id": "project_f478f551b97d",
+  "source_script_revision_id": "artifact_296d8d9b0ba7",
+  "script": {
+    "sections": [
+      {
+        "section_id": "sec_001",
+        "section_order": 1,
+        "section_title": "Exposure",
+        "section_role": "hook",
+        "narration": "Imagine waking up without modern shelter. Ancient humans endured cold mornings. The biggest fantasy is comfort without cost."
+      },
+      {
+        "section_id": "sec_002",
+        "section_order": 2,
+        "section_title": "Cooperation",
+        "section_role": "development",
+        "narration": "The biggest fantasy is the lone survivor. Ancient humans survived because they cooperated."
+      }
+    ],
+    "full_text": "Imagine waking up without modern shelter. Ancient humans endured cold mornings. The biggest fantasy is comfort without cost.\n\nThe biggest fantasy is the lone survivor. Ancient humans survived because they cooperated."
+  }
+}

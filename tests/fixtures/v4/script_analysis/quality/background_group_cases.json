@@ -1,0 +1,22 @@
+{
+  "cases": [
+    {
+      "name": "one_time_commuters",
+      "source_phrase": "A few commuters pass behind the host once.",
+      "expected_action": "omit",
+      "reason": "The group is background context and has no recurring continuity need."
+    },
+    {
+      "name": "incidental_audience",
+      "source_phrase": "An audience is mentioned as an incidental example.",
+      "expected_action": "omit",
+      "reason": "A one-time anonymous group is not a continuity candidate."
+    },
+    {
+      "name": "central_comparison_groups",
+      "source_phrase": "Office workers and remote workers are compared across the script.",
+      "expected_action": "evaluate_each_group",
+      "reason": "Central compared groups may need separate recurring subject identities."
+    }
+  ]
+}

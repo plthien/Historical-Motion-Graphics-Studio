@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "expected_prompt_bundle_artifact_id": {
+      "anyOf": [
+        {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Expected Prompt Bundle Artifact Id"
+    },
+    "image_prompt": {
+      "minLength": 1,
+      "title": "Image Prompt",
+      "type": "string"
+    },
+    "negative_prompt": {
+      "minLength": 1,
+      "title": "Negative Prompt",
+      "type": "string"
+    },
+    "style_bible_artifact_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Style Bible Artifact Id",
+      "type": "string"
+    },
+    "visual_plan_artifact_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Visual Plan Artifact Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "style_bible_artifact_id",
+    "visual_plan_artifact_id",
+    "expected_prompt_bundle_artifact_id",
+    "image_prompt",
+    "negative_prompt"
+  ],
+  "title": "PromptBundleManualEditRequest",
+  "type": "object"
+}

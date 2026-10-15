@@ -1,0 +1,832 @@
+{
+  "$defs": {
+    "PromptReferenceBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "anchor_id": {
+          "pattern": "^(char|loc|prop|subject)_[0-9]{3}$",
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "anchor_type": {
+          "enum": [
+            "character",
+            "location",
+            "prop",
+            "recurring_visual_subject"
+          ],
+          "title": "Anchor Type",
+          "type": "string"
+        },
+        "approval_set_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Approval Set Artifact Id",
+          "type": "string"
+        },
+        "image_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Image Artifact Id",
+          "type": "string"
+        },
+        "media_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Media Artifact Id",
+          "type": "string"
+        },
+        "media_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Media Sha256",
+          "type": "string"
+        },
+        "mime_type": {
+          "minLength": 1,
+          "title": "Mime Type",
+          "type": "string"
+        },
+        "reference_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Reference Artifact Id",
+          "type": "string"
+        },
+        "source_definition_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Source Definition Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "anchor_type",
+        "anchor_id",
+        "reference_artifact_id",
+        "media_artifact_id",
+        "approval_set_artifact_id",
+        "source_definition_hash",
+        "media_sha256",
+        "mime_type",
+        "image_artifact_id"
+      ],
+      "title": "PromptReferenceBinding",
+      "type": "object"
+    },
+    "SceneAssetContinuitySource": {
+      "additionalProperties": false,
+      "properties": {
+        "mime_type": {
+          "minLength": 1,
+          "title": "Mime Type",
+          "type": "string"
+        },
+        "relation": {
+          "minLength": 1,
+          "title": "Relation",
+          "type": "string"
+        },
+        "source_asset_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Source Asset Artifact Id",
+          "type": "string"
+        },
+        "source_asset_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Asset Sha256",
+          "type": "string"
+        },
+        "source_beat_id": {
+          "pattern": "^beat_[0-9]{3,}$",
+          "title": "Source Beat Id",
+          "type": "string"
+        },
+        "source_kind": {
+          "const": "approved",
+          "title": "Source Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "relation",
+        "source_beat_id",
+        "source_asset_artifact_id",
+        "source_asset_sha256",
+        "mime_type",
+        "source_kind"
+      ],
+      "title": "SceneAssetContinuitySource",
+      "type": "object"
+    },
+    "SceneAssetError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "SceneAssetError",
+      "type": "object"
+    },
+    "SceneAssetGenerationLineage": {
+      "additionalProperties": false,
+      "properties": {
+        "generation_settings_snapshot_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Generation Settings Snapshot Hash",
+          "type": "string"
+        },
+        "prompt_bundle_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Prompt Bundle Artifact Id",
+          "type": "string"
+        },
+        "prompt_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Prompt Hash",
+          "type": "string"
+        },
+        "prompt_item_id": {
+          "pattern": "^prompt_[0-9]{3,}$",
+          "title": "Prompt Item Id",
+          "type": "string"
+        },
+        "reference_binding_snapshot_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Reference Binding Snapshot Hash",
+          "type": "string"
+        },
+        "scene_asset_operation_id": {
+          "pattern": "^scene_asset_operation_[0-9a-f]{12}$",
+          "title": "Scene Asset Operation Id",
+          "type": "string"
+        },
+        "scene_plan_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Scene Plan Artifact Id",
+          "type": "string"
+        },
+        "visual_plan_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Visual Plan Artifact Id",
+          "type": "string"
+        },
+        "visual_reference_approval_set_artifact_id": {
+          "anyOf": [
+            {
+              "pattern": "^artifact_[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Visual Reference Approval Set Artifact Id"
+        }
+      },
+      "required": [
+        "scene_asset_operation_id",
+        "scene_plan_artifact_id",
+        "visual_plan_artifact_id",
+        "prompt_bundle_artifact_id",
+        "prompt_item_id",
+        "prompt_hash",
+        "visual_reference_approval_set_artifact_id",
+        "reference_binding_snapshot_hash",
+        "generation_settings_snapshot_hash"
+      ],
+      "title": "SceneAssetGenerationLineage",
+      "type": "object"
+    },
+    "SceneAssetManifestBeatEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "beat_id": {
+          "pattern": "^beat_[0-9]{3,}$",
+          "title": "Beat Id",
+          "type": "string"
+        },
+        "beat_order": {
+          "minimum": 1,
+          "title": "Beat Order",
+          "type": "integer"
+        },
+        "candidate_asset_artifact_ids": {
+          "items": {
+            "pattern": "^artifact_[0-9a-f]{12}$",
+            "type": "string"
+          },
+          "title": "Candidate Asset Artifact Ids",
+          "type": "array"
+        },
+        "computed_duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Computed Duration Seconds",
+          "type": "number"
+        },
+        "continuity_group_id": {
+          "pattern": "^continuity_[0-9]{3,}$",
+          "title": "Continuity Group Id",
+          "type": "string"
+        },
+        "continuity_source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SceneAssetContinuitySource"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current_draft_asset_artifact_id": {
+          "anyOf": [
+            {
+              "pattern": "^artifact_[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Current Draft Asset Artifact Id"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SceneAssetError"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "generation_lineage": {
+          "$ref": "#/$defs/SceneAssetGenerationLineage"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Height"
+        },
+        "local_beat_order": {
+          "minimum": 1,
+          "title": "Local Beat Order",
+          "type": "integer"
+        },
+        "media_task_ids": {
+          "items": {
+            "pattern": "^media_task_[0-9a-f]{12}$",
+            "type": "string"
+          },
+          "title": "Media Task Ids",
+          "type": "array"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Mime Type"
+        },
+        "reference_bindings": {
+          "items": {
+            "$ref": "#/$defs/PromptReferenceBinding"
+          },
+          "title": "Reference Bindings",
+          "type": "array"
+        },
+        "resolution_status": {
+          "enum": [
+            "pending",
+            "generating",
+            "candidate_ready",
+            "approved",
+            "failed"
+          ],
+          "title": "Resolution Status",
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "unreviewed",
+            "current_draft",
+            "approved",
+            "rejected"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "scene_id": {
+          "pattern": "^scene_[0-9]{3,}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "selected_asset_artifact_id": {
+          "anyOf": [
+            {
+              "pattern": "^artifact_[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Selected Asset Artifact Id"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sha256"
+        },
+        "source_prompt_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Source Prompt Hash",
+          "type": "string"
+        },
+        "source_prompt_item_id": {
+          "pattern": "^prompt_[0-9]{3,}$",
+          "title": "Source Prompt Item Id",
+          "type": "string"
+        },
+        "treatment": {
+          "$ref": "#/$defs/SceneAssetTreatment"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Width"
+        }
+      },
+      "required": [
+        "scene_id",
+        "beat_id",
+        "beat_order",
+        "local_beat_order",
+        "continuity_group_id",
+        "computed_duration_seconds",
+        "resolution_status",
+        "review_status",
+        "selected_asset_artifact_id",
+        "current_draft_asset_artifact_id",
+        "candidate_asset_artifact_ids",
+        "source_prompt_item_id",
+        "source_prompt_hash",
+        "media_task_ids",
+        "width",
+        "height",
+        "mime_type",
+        "sha256",
+        "generation_lineage",
+        "continuity_source",
+        "treatment",
+        "reference_bindings",
+        "error"
+      ],
+      "title": "SceneAssetManifestBeatEntry",
+      "type": "object"
+    },
+    "SceneAssetManifestScene": {
+      "additionalProperties": false,
+      "properties": {
+        "entries": {
+          "items": {
+            "$ref": "#/$defs/SceneAssetManifestBeatEntry"
+          },
+          "minItems": 1,
+          "title": "Entries",
+          "type": "array"
+        },
+        "scene_id": {
+          "pattern": "^scene_[0-9]{3,}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "scene_order": {
+          "minimum": 1,
+          "title": "Scene Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scene_id",
+        "scene_order",
+        "entries"
+      ],
+      "title": "SceneAssetManifestScene",
+      "type": "object"
+    },
+    "SceneAssetTreatment": {
+      "additionalProperties": false,
+      "properties": {
+        "camera_angle": {
+          "minLength": 1,
+          "title": "Camera Angle",
+          "type": "string"
+        },
+        "camera_movement": {
+          "minLength": 1,
+          "title": "Camera Movement",
+          "type": "string"
+        },
+        "color_emphasis": {
+          "minLength": 1,
+          "title": "Color Emphasis",
+          "type": "string"
+        },
+        "composition": {
+          "minLength": 1,
+          "title": "Composition",
+          "type": "string"
+        },
+        "continuity_notes": {
+          "minLength": 1,
+          "title": "Continuity Notes",
+          "type": "string"
+        },
+        "continuity_with_previous": {
+          "minLength": 1,
+          "title": "Continuity With Previous",
+          "type": "string"
+        },
+        "environment_emphasis": {
+          "minLength": 1,
+          "title": "Environment Emphasis",
+          "type": "string"
+        },
+        "framing": {
+          "minLength": 1,
+          "title": "Framing",
+          "type": "string"
+        },
+        "lighting_direction": {
+          "minLength": 1,
+          "title": "Lighting Direction",
+          "type": "string"
+        },
+        "motion_guidance": {
+          "minLength": 1,
+          "title": "Motion Guidance",
+          "type": "string"
+        },
+        "negative_requirements": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Negative Requirements",
+          "type": "array"
+        },
+        "production_notes": {
+          "minLength": 1,
+          "title": "Production Notes",
+          "type": "string"
+        },
+        "subject_action": {
+          "minLength": 1,
+          "title": "Subject Action",
+          "type": "string"
+        },
+        "visible_text": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Visible Text",
+          "type": "array"
+        },
+        "visual_concept": {
+          "minLength": 1,
+          "title": "Visual Concept",
+          "type": "string"
+        }
+      },
+      "required": [
+        "visual_concept",
+        "subject_action",
+        "environment_emphasis",
+        "framing",
+        "camera_angle",
+        "camera_movement",
+        "composition",
+        "lighting_direction",
+        "color_emphasis",
+        "motion_guidance",
+        "continuity_with_previous",
+        "continuity_notes",
+        "production_notes",
+        "negative_requirements",
+        "visible_text"
+      ],
+      "title": "SceneAssetTreatment",
+      "type": "object"
+    },
+    "SceneAssetValidationIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "path": {
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "code",
+        "message"
+      ],
+      "title": "SceneAssetValidationIssue",
+      "type": "object"
+    },
+    "SceneAssetValidationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_eligibility_status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Approval Eligibility Status",
+          "type": "string"
+        },
+        "asset_integrity_status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Asset Integrity Status",
+          "type": "string"
+        },
+        "coverage_status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Coverage Status",
+          "type": "string"
+        },
+        "issues": {
+          "items": {
+            "$ref": "#/$defs/SceneAssetValidationIssue"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "lineage_status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Lineage Status",
+          "type": "string"
+        },
+        "ordering_status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Ordering Status",
+          "type": "string"
+        },
+        "prompt_bundle_parity_status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Prompt Bundle Parity Status",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "coverage_status",
+        "ordering_status",
+        "prompt_bundle_parity_status",
+        "asset_integrity_status",
+        "lineage_status",
+        "approval_eligibility_status",
+        "issues",
+        "warnings"
+      ],
+      "title": "SceneAssetValidationReport",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "approved_asset_count": {
+      "minimum": 0,
+      "title": "Approved Asset Count",
+      "type": "integer"
+    },
+    "artifact_type": {
+      "const": "scene_asset_manifest",
+      "title": "Artifact Type",
+      "type": "string"
+    },
+    "backend_qc": {
+      "$ref": "#/$defs/SceneAssetValidationReport"
+    },
+    "beat_count": {
+      "minimum": 0,
+      "title": "Beat Count",
+      "type": "integer"
+    },
+    "failed_beat_count": {
+      "minimum": 0,
+      "title": "Failed Beat Count",
+      "type": "integer"
+    },
+    "parent_scene_asset_manifest_revision_id": {
+      "anyOf": [
+        {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Parent Scene Asset Manifest Revision Id"
+    },
+    "project_id": {
+      "pattern": "^project_[0-9a-f]{12}$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "revision_operation": {
+      "enum": [
+        "generation",
+        "media_progress",
+        "candidate_decision",
+        "candidate_upload",
+        "beat_regeneration",
+        "approval",
+        "failure",
+        "supersession"
+      ],
+      "title": "Revision Operation",
+      "type": "string"
+    },
+    "scene_asset_manifest_revision_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Scene Asset Manifest Revision Id",
+      "type": "string"
+    },
+    "scene_count": {
+      "minimum": 0,
+      "title": "Scene Count",
+      "type": "integer"
+    },
+    "scenes": {
+      "items": {
+        "$ref": "#/$defs/SceneAssetManifestScene"
+      },
+      "title": "Scenes",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_operation_id": {
+      "pattern": "^scene_asset_operation_[0-9a-f]{12}$",
+      "title": "Source Operation Id",
+      "type": "string"
+    },
+    "source_prompt_bundle_revision_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Source Prompt Bundle Revision Id",
+      "type": "string"
+    },
+    "source_scene_plan_revision_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Source Scene Plan Revision Id",
+      "type": "string"
+    },
+    "source_script_analysis_revision_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Source Script Analysis Revision Id",
+      "type": "string"
+    },
+    "source_script_revision_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Source Script Revision Id",
+      "type": "string"
+    },
+    "source_style_bible_revision_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Source Style Bible Revision Id",
+      "type": "string"
+    },
+    "source_visual_plan_revision_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Source Visual Plan Revision Id",
+      "type": "string"
+    },
+    "source_visual_reference_approval_set_artifact_id": {
+      "anyOf": [
+        {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Source Visual Reference Approval Set Artifact Id"
+    },
+    "status": {
+      "enum": [
+        "generating",
+        "partial",
+        "draft_ready",
+        "approved",
+        "failed",
+        "superseded"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "project_id",
+    "scene_asset_manifest_revision_id",
+    "parent_scene_asset_manifest_revision_id",
+    "revision_operation",
+    "source_script_revision_id",
+    "source_script_analysis_revision_id",
+    "source_style_bible_revision_id",
+    "source_scene_plan_revision_id",
+    "source_visual_plan_revision_id",
+    "source_prompt_bundle_revision_id",
+    "source_visual_reference_approval_set_artifact_id",
+    "source_operation_id",
+    "status",
+    "scene_count",
+    "beat_count",
+    "approved_asset_count",
+    "failed_beat_count",
+    "scenes",
+    "backend_qc"
+  ],
+  "title": "SceneAssetManifestModel",
+  "type": "object"
+}

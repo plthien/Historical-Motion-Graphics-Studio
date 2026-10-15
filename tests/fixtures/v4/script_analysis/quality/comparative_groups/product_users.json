@@ -1,0 +1,23 @@
+{
+  "domain": "product_users",
+  "script_focus": "A product review comparing two user groups.",
+  "expected_candidates": [
+    {
+      "label": "beginner users",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["beginner users", "first-time users", "new users"],
+      "invalid_occurrences": ["onboarding friction", "simple mode"]
+    },
+    {
+      "label": "professional users",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["professional users", "expert users", "power users"],
+      "invalid_occurrences": ["advanced workflow", "premium feature"]
+    }
+  ],
+  "invariants": [
+    "User groups can be recurring visual subjects.",
+    "Feature names are not occurrences of user groups.",
+    "Continuity can preserve a recognizable cohort, not the same individual."
+  ]
+}

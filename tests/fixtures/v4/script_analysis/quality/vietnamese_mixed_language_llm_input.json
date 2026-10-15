@@ -1,0 +1,22 @@
+{
+  "project_id": "project_cccccccccccc",
+  "source_script_revision_id": "artifact_dddddddddddd",
+  "script": {
+    "sections": [
+      {
+        "section_id": "sec_001",
+        "section_order": 1,
+        "section_title": "Mo dau",
+        "section_role": "hook",
+        "narration": "Ha Noi thuc day trong ap luc cham. Atlas Labs xuat hien nhu mot loi hua. \"Keep moving,\" nguoi dan noi."
+      },
+      {
+        "section_id": "sec_002",
+        "section_order": 2,
+        "section_title": "Tro lai",
+        "section_role": "body",
+        "narration": "Ha Noi van giu nhip song cu. Atlas Labs tro lai trong cau chuyen ve ap luc cham."
+      }
+    ]
+  }
+}

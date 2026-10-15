@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/style_bible_text_approve_request_v1.schema.json",
+  "title": "Style Bible Text Approve Request V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "expected_style_bible_revision_id"
+  ],
+  "properties": {
+    "expected_style_bible_revision_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "expected_assembly_plan_artifact_id": {
+      "title": "Expected Assembly Plan Artifact Id",
+      "type": "string"
+    },
+    "expected_subtitle_srt_artifact_id": {
+      "title": "Expected Subtitle Srt Artifact Id",
+      "type": "string"
+    },
+    "expected_subtitle_vtt_artifact_id": {
+      "title": "Expected Subtitle Vtt Artifact Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "expected_assembly_plan_artifact_id",
+    "expected_subtitle_srt_artifact_id",
+    "expected_subtitle_vtt_artifact_id"
+  ],
+  "title": "AssemblyApproveRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/assembly_approve_request_v1.schema.json"
+}

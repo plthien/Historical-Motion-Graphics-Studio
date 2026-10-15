@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/beat_timing_map_v1.schema.json",
+  "title": "Beat Timing Map V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "project_id",
+    "source_script_revision_id",
+    "source_scene_plan_revision_id",
+    "source_narration_audio_artifact_id",
+    "source_narration_word_timing_map_artifact_id",
+    "beat_timing_policy_version",
+    "sample_rate_hz",
+    "total_narration_sample_count",
+    "beats"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "beat_timing_map"
+    },
+    "schema_version": {
+      "const": "beat_timing_map_v1"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_script_revision_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_scene_plan_revision_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_narration_audio_artifact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_narration_word_timing_map_artifact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "beat_timing_policy_version": {
+      "const": "voice_first_beat_timing_v1"
+    },
+    "sample_rate_hz": {
+      "const": 48000
+    },
+    "total_narration_sample_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "beats": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scene_id",
+          "scene_order",
+          "beat_id",
+          "beat_order",
+          "local_beat_order",
+          "source_start",
+          "source_end",
+          "speech_start_sample",
+          "speech_end_sample",
+          "visual_start_sample",
+          "visual_end_sample"
+        ],
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scene_order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "beat_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "beat_order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "local_beat_order": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "source_start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source_end": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "speech_start_sample": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "speech_end_sample": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "visual_start_sample": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "visual_end_sample": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    }
+  }
+}

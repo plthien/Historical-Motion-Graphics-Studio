@@ -1,0 +1,55 @@
+{
+  "artifact_id": "artifact_aaaaaaaaaaaa",
+  "ideas": [
+    {
+      "title": "Tại sao hai người nhớ khác nhau về cùng một sự kiện?",
+      "core_question": "Não bộ tái dựng ký ức như thế nào khiến các nhân chứng chân thành vẫn kể những phiên bản khác nhau?",
+      "viewer_hook": "Một ký ức rất chắc chắn vẫn có thể thay đổi mỗi lần bạn nhớ lại nó.",
+      "topic_angle": "Dùng một tình huống có nhiều nhân chứng để giải thích cơ chế tái củng cố ký ức và giới hạn của sự tự tin.",
+      "tone": "Tò mò, rõ ràng và thận trọng",
+      "ctr_score": 8,
+      "difficulty": "medium",
+      "content_tags": [
+        "ký ức",
+        "não bộ",
+        "nhân chứng"
+      ],
+      "risk_notes": [
+        "Phân biệt kết quả nghiên cứu về ký ức với kết luận pháp lý về độ tin cậy của một nhân chứng.",
+        "Kiểm tra nguồn cho các con số về sai lệch ký ức trước khi đưa vào kịch bản."
+      ],
+      "pov_style": "Ngôi thứ hai giàu trải nghiệm, kết hợp giải thích ngôi thứ ba có kiểm soát",
+      "avoid": [
+        "Tránh khẳng định tuyệt đối khi bằng chứng chỉ mang tính gợi ý",
+        "Tránh giật gân hóa ký ức"
+      ],
+      "recommended_pacing_mode": "medium",
+      "pacing_mode_reason": "Balanced story progression with regular visual-state changes."
+    },
+    {
+      "title": "Ký ức tuổi thơ đầu tiên của bạn có thật đến đâu?",
+      "core_question": "Vì sao ký ức thời thơ ấu có thể pha trộn trải nghiệm thật với ảnh, lời kể và suy diễn về sau?",
+      "viewer_hook": "Kỷ niệm bạn tin là sớm nhất có thể đã được cả gia đình cùng viết lại mà không ai nhận ra.",
+      "topic_angle": "Khám phá nguồn gốc của ký ức tự truyện qua ảnh gia đình, lời kể lặp lại và hiện tượng mất trí nhớ thời thơ ấu.",
+      "tone": "Gần gũi, suy ngẫm và có căn cứ",
+      "ctr_score": 8,
+      "difficulty": "medium",
+      "content_tags": [
+        "ký ức tuổi thơ",
+        "tâm lý học",
+        "não bộ"
+      ],
+      "risk_notes": [
+        "Không khẳng định một ký ức cá nhân là giả nếu không có bằng chứng độc lập.",
+        "Trình bày các giải thích cạnh tranh khi nghiên cứu chưa có đồng thuận."
+      ],
+      "pov_style": "Ngôi thứ hai giàu trải nghiệm, kết hợp giải thích ngôi thứ ba có kiểm soát",
+      "avoid": [
+        "Tránh khẳng định tuyệt đối khi bằng chứng chỉ mang tính gợi ý",
+        "Tránh giật gân hóa ký ức"
+      ],
+      "recommended_pacing_mode": "medium",
+      "pacing_mode_reason": "Balanced story progression with regular visual-state changes."
+    }
+  ]
+}

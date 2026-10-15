@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/schemas/v4/visual_reference_approval_set_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "project_id",
+    "approval_set_artifact_id",
+    "parent_approval_set_artifact_id",
+    "source_script_revision_id",
+    "source_script_analysis_revision_id",
+    "source_style_bible_revision_id",
+    "source_visual_reference_set_artifact_id",
+    "selections",
+    "created_at"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "style_bible_visual_reference_approval_set"
+    },
+    "schema_version": {
+      "const": "2.0"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^project_[0-9a-f]{12}$"
+    },
+    "approval_set_artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "parent_approval_set_artifact_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^artifact_[0-9a-f]{12}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source_script_revision_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "source_script_analysis_revision_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "source_style_bible_revision_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "source_visual_reference_set_artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "selections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "anchor_type",
+          "anchor_id",
+          "reference_artifact_id",
+          "media_artifact_id",
+          "source_definition_hash",
+          "media_sha256",
+          "mime_type",
+          "image_artifact_id"
+        ],
+        "properties": {
+          "anchor_type": {
+            "enum": [
+              "character",
+              "location",
+              "prop",
+              "recurring_visual_subject"
+            ]
+          },
+          "anchor_id": {
+            "type": "string",
+            "pattern": "^(char|loc|prop|subject)_[0-9]{3}$"
+          },
+          "reference_artifact_id": {
+            "type": "string",
+            "pattern": "^artifact_[0-9a-f]{12}$"
+          },
+          "media_artifact_id": {
+            "type": "string",
+            "pattern": "^artifact_[0-9a-f]{12}$"
+          },
+          "source_definition_hash": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "media_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "mime_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "image_artifact_id": {
+            "type": "string",
+            "pattern": "^artifact_[0-9a-f]{12}$"
+          }
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

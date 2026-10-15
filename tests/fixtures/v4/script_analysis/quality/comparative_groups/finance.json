@@ -1,0 +1,23 @@
+{
+  "domain": "finance",
+  "script_focus": "A comparison between investor cohorts.",
+  "expected_candidates": [
+    {
+      "label": "retail investors",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["retail investors", "individual traders", "small investors"],
+      "invalid_occurrences": ["market volatility", "small trades"]
+    },
+    {
+      "label": "institutional investors",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["institutional investors", "large funds", "professional managers"],
+      "invalid_occurrences": ["market liquidity", "fund flows"]
+    }
+  ],
+  "invariants": [
+    "Recurring cohorts can be anonymous.",
+    "Subject identity is separate from market effects.",
+    "Compared cohorts remain distinguishable downstream."
+  ]
+}

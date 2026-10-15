@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/platform/media_active_batches.schema.json",
+  "title": "Media Active Batches V3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project_id", "active_batches", "latest_batch_id"],
+  "properties": {
+    "project_id": {"type": "string", "minLength": 1},
+    "active_batches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["batch_id", "purpose", "total", "active_task_count", "created_at", "updated_at"],
+        "properties": {
+          "batch_id": {"type": "string", "minLength": 1},
+          "purpose": {"type": "string", "minLength": 1},
+          "total": {"type": "integer", "minimum": 1},
+          "active_task_count": {"type": "integer", "minimum": 1},
+          "created_at": {"type": "string", "minLength": 1},
+          "updated_at": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "latest_batch_id": {"type": ["string", "null"], "minLength": 1}
+  }
+}

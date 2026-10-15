@@ -1,0 +1,331 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_breakdown_full_llm_input_v2.schema.json",
+  "title": "Full Script Scene Breakdown External Input V2",
+  "description": "Frozen Script, narrative markers, approved Voice timing, section-local visual cadence guidance, and visual context for one external Scene Breakdown response.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "script_context",
+    "narration_context",
+    "timing_context",
+    "visual_context"
+  ],
+  "properties": {
+    "script_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "sections"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "section_context",
+              "analysis_guidance",
+              "visual_cadence_guidance"
+            ],
+            "properties": {
+              "section_context": {
+                "$ref": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_breakdown_section_llm_input_v2.schema.json#/properties/section_context"
+              },
+              "analysis_guidance": {
+                "$ref": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_breakdown_section_llm_input_v2.schema.json#/properties/analysis_guidance"
+              },
+              "visual_cadence_guidance": {
+                "$ref": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_breakdown_section_llm_input_v2.schema.json#/properties/visual_cadence_guidance"
+              }
+            }
+          }
+        }
+      }
+    },
+    "narration_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "narration_identity"
+      ],
+      "properties": {
+        "narration_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "voice",
+            "delivery",
+            "explanation_style",
+            "tone_boundaries",
+            "avoid"
+          ],
+          "properties": {
+            "voice": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "delivery": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "explanation_style": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "tone_boundaries": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "avoid": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            }
+          },
+          "description": "Exact free-form narration intent from the frozen Project Channel DNA. It informs visual interpretation but is not historical evidence."
+        }
+      }
+    },
+    "timing_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_version",
+        "sample_rate_hz",
+        "total_narration_sample_count",
+        "sections"
+      ],
+      "properties": {
+        "policy_version": {
+          "const": "voice_first_beat_timing_v1"
+        },
+        "sample_rate_hz": {
+          "const": 48000
+        },
+        "total_narration_sample_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total approved narration timeline length in canonical 48 kHz samples. Used only to close the final Beat visual interval."
+        },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "section_id",
+              "section_order",
+              "source_start",
+              "source_end",
+              "actual_duration_samples",
+              "sample_rate_hz",
+              "timing_atoms",
+              "clauses",
+              "spoken_override_spans"
+            ],
+            "properties": {
+              "section_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "section_order": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "source_start": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "source_end": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "actual_duration_samples": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "sample_rate_hz": {
+                "const": 48000
+              },
+              "timing_atoms": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "source_start",
+                    "source_end",
+                    "source_text",
+                    "indivisible",
+                    "start_boundary_safe",
+                    "end_boundary_safe",
+                    "speech_start_sample",
+                    "speech_end_sample"
+                  ],
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "word",
+                        "spoken_override"
+                      ]
+                    },
+                    "source_start": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "source_end": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "source_text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "indivisible": {
+                      "type": "boolean"
+                    },
+                    "start_boundary_safe": {
+                      "type": "boolean"
+                    },
+                    "end_boundary_safe": {
+                      "type": "boolean"
+                    },
+                    "speech_start_sample": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "speech_end_sample": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                },
+                "description": "Normalized exact Scene boundary timing. Ordinary Script words remain word-level atoms; every spoken_override is collapsed to one indivisible authored atom spanning all of its aligned spoken words, so one frozen-Script boundary maps to one timing interval."
+              },
+              "clauses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "source_start",
+                    "source_end",
+                    "text",
+                    "start_boundary_safe",
+                    "end_boundary_safe",
+                    "speech_start_sample",
+                    "speech_end_sample",
+                    "pause_before_samples"
+                  ],
+                  "properties": {
+                    "source_start": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "source_end": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "start_boundary_safe": {
+                      "type": "boolean"
+                    },
+                    "end_boundary_safe": {
+                      "type": "boolean"
+                    },
+                    "speech_start_sample": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "speech_end_sample": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "pause_before_samples": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              },
+              "spoken_override_spans": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "source_start",
+                    "source_end"
+                  ],
+                  "properties": {
+                    "source_start": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "source_end": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "visual_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "style",
+        "reference_catalog",
+        "visual_context_catalog"
+      ],
+      "properties": {
+        "style": {
+          "$ref": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_breakdown_section_llm_input_v2.schema.json#/properties/visual_context/properties/style"
+        },
+        "reference_catalog": {
+          "$ref": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_breakdown_section_llm_input_v2.schema.json#/properties/visual_context/properties/reference_catalog"
+        },
+        "visual_context_catalog": {
+          "$ref": "https://youtube-ai-studio.local/contracts/schemas/v4/script_analysis_v1.schema.json#/properties/visual_context_catalog"
+        }
+      }
+    }
+  }
+}

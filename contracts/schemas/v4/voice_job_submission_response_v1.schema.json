@@ -1,0 +1,39 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "operation_id": {
+      "title": "Operation Id",
+      "type": "string"
+    },
+    "reused_count": {
+      "title": "Reused Count",
+      "type": "integer"
+    },
+    "segment_count": {
+      "title": "Segment Count",
+      "type": "integer"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "submitted_count": {
+      "title": "Submitted Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "job_id",
+    "operation_id",
+    "status",
+    "segment_count",
+    "submitted_count",
+    "reused_count"
+  ],
+  "title": "VoiceJobSubmissionResponse",
+  "type": "object"
+}

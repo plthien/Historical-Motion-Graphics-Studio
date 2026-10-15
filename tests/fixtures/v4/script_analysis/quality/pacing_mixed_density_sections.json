@@ -1,0 +1,13 @@
+{
+  "description": "A script with clearly different semantic-transition density should not be flattened without re-evaluation.",
+  "sections": [
+    {"section_id": "sec_001", "density_shape": "focused hook"},
+    {"section_id": "sec_002", "density_shape": "evidence plus limitation plus exception plus synthesis"},
+    {"section_id": "sec_003", "density_shape": "multiple changes in subject, time, causal state, and argument direction"},
+    {"section_id": "sec_004", "density_shape": "concise synthesis"}
+  ],
+  "expected_invariants": [
+    "no forced quota",
+    "do not assign every section the same value when density differs clearly"
+  ]
+}

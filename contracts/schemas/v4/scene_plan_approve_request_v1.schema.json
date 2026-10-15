@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_plan_approve_request_v1.schema.json",
+  "title": "Scene Plan Approve Request V4 V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "expected_scene_plan_artifact_id",
+    "expected_visual_plan_artifact_id",
+    "aspect_ratio"
+  ],
+  "properties": {
+    "expected_scene_plan_artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "expected_visual_plan_artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "description": "Exact current Visual Plan artifact paired with the expected Scene Plan."
+    },
+    "aspect_ratio": {
+      "type": "string",
+      "enum": ["1:1", "3:4", "4:3", "9:16", "16:9"],
+      "description": "Image aspect ratio embedded into every automatically compiled Prompt Bundle item."
+    }
+  }
+}

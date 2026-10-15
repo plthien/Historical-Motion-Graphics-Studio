@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/scene_breakdown_section_llm_output_v1.schema.json",
+  "title": "Scene Breakdown Section Combined Semantic and Visual LLM Output V1",
+  "description": "Scene Breakdown semantic output extended with one complete beat-specific visual decision per beat. The application materializes stable IDs, spans, timing, reference bindings, continuity groups and paired Scene Plan/Visual Plan artifacts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scenes"
+  ],
+  "properties": {
+    "scenes": {
+      "description": "The ordered scene groups selected for the current section.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "description": "One consecutive semantic scene.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "beats"
+        ],
+        "properties": {
+          "beats": {
+            "description": "The ordered consecutive beats belonging to this scene.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "description": "One selected semantic beat.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "script_text",
+                "visual"
+              ],
+              "properties": {
+                "script_text": {
+                  "description": "The exact source text for this beat, copied verbatim from section_context.script_text in narration order.",
+                  "type": "string",
+                  "minLength": 1
+                },
+                "visual": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "One complete generated-still image design for this beat. The configured media provider renders every beat.",
+                  "required": [
+                    "selected_character_refs",
+                    "selected_location_refs",
+                    "representation_family",
+                    "selected_prop_refs",
+                    "selected_recurring_visual_subject_refs",
+                    "selected_motif_refs",
+                    "visual_concept",
+                    "subject_action",
+                    "environment_emphasis",
+                    "visible_text",
+                    "framing",
+                    "camera_angle",
+                    "camera_movement",
+                    "composition",
+                    "lighting_direction",
+                    "color_emphasis",
+                    "continuity_with_previous"
+                  ],
+                  "properties": {
+                    "selected_character_refs": {
+                      "description": "Character IDs from visual_context.reference_catalog.characters whose approved visual identities must appear. Return an empty array when none is needed.",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^char_[0-9]{3}$"
+                      },
+                      "uniqueItems": true
+                    },
+                    "selected_location_refs": {
+                      "description": "Location IDs from visual_context.reference_catalog.locations whose approved visual identities must appear. Return an empty array when none is needed.",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^loc_[0-9]{3}$"
+                      },
+                      "uniqueItems": true
+                    },
+                    "representation_family": {
+                      "description": "Dominant representation family of this one generated still.",
+                      "type": "string",
+                      "enum": [
+                        "character_environment_lived",
+                        "object_evidence_closeup",
+                        "text_diagram_editorial"
+                      ]
+                    },
+                    "selected_prop_refs": {
+                      "description": "Prop IDs from visual_context.reference_catalog.props that must visibly appear. Return an empty array when none is needed.",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^prop_[0-9]{3}$"
+                      },
+                      "uniqueItems": true
+                    },
+                    "selected_recurring_visual_subject_refs": {
+                      "description": "Recurring subject IDs from visual_context.reference_catalog.subjects whose approved visual identities must appear. Return an empty array when none is needed.",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^subject_[0-9]{3}$"
+                      },
+                      "uniqueItems": true
+                    },
+                    "selected_motif_refs": {
+                      "description": "Motif IDs from visual_context.reference_catalog.motifs intentionally used to reinforce an approved recurring pattern. Return an empty array when none is needed.",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^motif_[0-9]{3}$"
+                      },
+                      "uniqueItems": true
+                    },
+                    "visual_concept": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1200,
+                      "description": "Complete generated-image idea and intended viewer understanding for this beat."
+                    },
+                    "subject_action": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 800,
+                      "description": "Visible subject, action, transformation, expression or state."
+                    },
+                    "environment_emphasis": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 800,
+                      "description": "Beat-specific setting, background or graphic surface."
+                    },
+                    "visible_text": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 12,
+                      "description": "Exact text allowed in the generated image. Use an empty array when no text is required."
+                    },
+                    "framing": {
+                      "description": "Scale of the frame around the primary visual subject. Select the allowed framing that best communicates the beat.",
+                      "type": "string",
+                      "enum": [
+                        "extreme_wide",
+                        "wide",
+                        "medium_wide",
+                        "medium",
+                        "medium_close",
+                        "close_up",
+                        "extreme_close_up",
+                        "overhead",
+                        "insert",
+                        "graphic_layout"
+                      ]
+                    },
+                    "camera_angle": {
+                      "description": "Viewing angle from which the subject or graphic is presented. It controls perspective, not framing size or movement.",
+                      "type": "string",
+                      "enum": [
+                        "eye_level",
+                        "low_angle",
+                        "high_angle",
+                        "top_down",
+                        "dutch_angle",
+                        "pov",
+                        "neutral_graphic"
+                      ]
+                    },
+                    "camera_movement": {
+                      "description": "Downstream motion guidance derived from this single frozen keyframe. It must not add another temporal state, consume the next Beat, invent required motion, or replace the locked state delta.",
+                      "type": "string",
+                      "enum": [
+                        "static",
+                        "slow_push_in",
+                        "slow_pull_out",
+                        "pan_left",
+                        "pan_right",
+                        "tilt_up",
+                        "tilt_down",
+                        "tracking",
+                        "subtle_handheld",
+                        "parallax",
+                        "none"
+                      ]
+                    },
+                    "composition": {
+                      "description": "Beat-specific arrangement, placement, scale and spatial relationship of important visual elements. Do not repeat asset details or global style verbatim.",
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "lighting_direction": {
+                      "description": "Optional beat-specific lighting decision used only when direction, contrast, intensity, shadow or localized illumination materially communicates this beat. Return null when global style is sufficient; never return a generic fallback.",
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 160
+                    },
+                    "color_emphasis": {
+                      "description": "Optional beat-specific color accent or contrast used only when it materially communicates this beat. Return null when the global palette is sufficient; never copy the complete palette.",
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 160
+                    },
+                    "previous_beat_image_reference_required": {
+                      "description": "Whether this frozen still requires the actual rendered immediately previous Beat image as generation input.",
+                      "type": "boolean"
+                    },
+                    "continuity_with_previous": {
+                      "description": "Visual relationship to the immediately preceding Beat in global order. Only the first Beat of the whole plan must be new_setup; a later Scene boundary does not imply reset. The application uses the relation to calculate continuity_group_id; do not return prose continuity notes.",
+                      "type": "string",
+                      "enum": [
+                        "new_setup",
+                        "same_setup",
+                        "match_subject",
+                        "match_location",
+                        "match_composition",
+                        "graphic_sequence"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

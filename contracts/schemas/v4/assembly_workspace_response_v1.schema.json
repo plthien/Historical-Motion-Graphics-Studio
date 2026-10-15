@@ -1,0 +1,196 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "readiness": {
+      "additionalProperties": true,
+      "title": "Readiness",
+      "type": "object"
+    },
+    "current_assembly_plan_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Current Assembly Plan Artifact Id"
+    },
+    "assembly_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Assembly Status"
+    },
+    "current_subtitle_srt_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Current Subtitle Srt Artifact Id"
+    },
+    "current_subtitle_vtt_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Current Subtitle Vtt Artifact Id"
+    },
+    "source_identities": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Source Identities",
+      "type": "object"
+    },
+    "total_duration_seconds": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Total Duration Seconds"
+    },
+    "scene_count": {
+      "title": "Scene Count",
+      "type": "integer"
+    },
+    "beat_count": {
+      "title": "Beat Count",
+      "type": "integer"
+    },
+    "subtitle_cue_count": {
+      "title": "Subtitle Cue Count",
+      "type": "integer"
+    },
+    "visual_timeline_summary": {
+      "additionalProperties": true,
+      "title": "Visual Timeline Summary",
+      "type": "object"
+    },
+    "narration_track_summary": {
+      "additionalProperties": true,
+      "title": "Narration Track Summary",
+      "type": "object"
+    },
+    "optional_audio_summary": {
+      "additionalProperties": true,
+      "title": "Optional Audio Summary",
+      "type": "object"
+    },
+    "subtitle_summary": {
+      "additionalProperties": true,
+      "title": "Subtitle Summary",
+      "type": "object"
+    },
+    "backend_qc": {
+      "additionalProperties": true,
+      "title": "Backend Qc",
+      "type": "object"
+    },
+    "scenes": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Scenes",
+      "type": "array"
+    },
+    "beats": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Beats",
+      "type": "array"
+    },
+    "subtitle_cues": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Subtitle Cues",
+      "type": "array"
+    },
+    "build_eligible": {
+      "title": "Build Eligible",
+      "type": "boolean"
+    },
+    "approval_eligible": {
+      "title": "Approval Eligible",
+      "type": "boolean"
+    },
+    "available_actions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Available Actions",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "readiness",
+    "current_assembly_plan_artifact_id",
+    "assembly_status",
+    "current_subtitle_srt_artifact_id",
+    "current_subtitle_vtt_artifact_id",
+    "source_identities",
+    "total_duration_seconds",
+    "scene_count",
+    "beat_count",
+    "subtitle_cue_count",
+    "visual_timeline_summary",
+    "narration_track_summary",
+    "optional_audio_summary",
+    "subtitle_summary",
+    "backend_qc",
+    "scenes",
+    "beats",
+    "subtitle_cues",
+    "build_eligible",
+    "approval_eligible",
+    "available_actions",
+    "errors"
+  ],
+  "title": "AssemblyWorkspaceResponse",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/assembly_workspace_response_v1.schema.json"
+}

@@ -1,0 +1,23 @@
+{
+  "domain": "ecology",
+  "script_focus": "A recurring predator-prey comparison.",
+  "expected_candidates": [
+    {
+      "label": "wolves",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["wolves", "the pack", "these predators"],
+      "invalid_occurrences": ["predation", "forest pressure"]
+    },
+    {
+      "label": "deer",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["deer", "the herd", "prey animals"],
+      "invalid_occurrences": ["grazing pressure", "forest regrowth"]
+    }
+  ],
+  "invariants": [
+    "Species or populations can be recurring visual subjects.",
+    "Physical phenomena and effects are not occurrences of a population.",
+    "Compared populations can both be continuity candidates."
+  ]
+}

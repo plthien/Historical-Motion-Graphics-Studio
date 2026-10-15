@@ -1,0 +1,29 @@
+{
+  "artifact_type": "script_analysis_llm_output",
+  "schema_version": "1.0",
+  "project_id": "project_aaaaaaaaaaaa",
+  "source_script_revision_id": "artifact_bbbbbbbbbbbb",
+  "section_guidance": [
+    {
+      "section_id": "sec_001",
+      "pacing_density": "low"
+    }
+  ],
+  "narrative_markers": [
+    {
+      "marker_type": "turning_point",
+      "section_id": "sec_001",
+      "anchor_quote": "the system is not failing",
+      "context_quote": "Here is the turning point: the system is not failing.",
+      "importance": "high",
+      "purpose": "Preserve this conceptual turn without splitting it."
+    }
+  ],
+  "continuity_catalog": {
+    "characters": [],
+    "locations": [],
+    "recurring_props": [],
+    "recurring_visual_subjects": [],
+    "visual_motifs": []
+  }
+}

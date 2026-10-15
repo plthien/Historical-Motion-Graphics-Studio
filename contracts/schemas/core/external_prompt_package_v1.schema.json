@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/core/external_prompt_package_v1.schema.json",
+  "title": "External Prompt Package V1",
+  "description": "Prompt text plus the Artifact IDs reserved for the external ChatGPT result.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["prompt_text", "artifact_ids", "output_schema_name", "prompt_version"],
+  "properties": {
+    "prompt_text": {"type": "string", "minLength": 1, "description": "Complete prompt copied to ChatGPT."},
+    "artifact_ids": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "pattern": "^artifact_[0-9a-f]{12}$"}, "description": "Reserved Artifact IDs that ChatGPT must echo unchanged."},
+    "output_schema_name": {"type": "string", "minLength": 1, "description": "Static output schema used for the stage."},
+    "prompt_version": {"type": "string", "minLength": 1, "description": "Prompt template version recorded for review."}
+  }
+}

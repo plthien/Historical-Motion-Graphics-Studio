@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/style_bible_build_response_v1.schema.json",
+  "title": "Style Bible Build Response V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_id",
+    "artifact"
+  ],
+  "properties": {
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^artifact_[0-9a-f]{12}$"
+    },
+    "artifact": {
+      "$ref": "https://youtube-ai-studio.local/contracts/schemas/v4/project_style_bible_v1.schema.json"
+    }
+  }
+}

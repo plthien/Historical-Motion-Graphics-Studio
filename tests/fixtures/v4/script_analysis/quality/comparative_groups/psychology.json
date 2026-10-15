@@ -1,0 +1,23 @@
+{
+  "domain": "psychology",
+  "script_focus": "A recurring comparison between two participant groups.",
+  "expected_candidates": [
+    {
+      "label": "novice participants",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["novice participants", "new learners", "first-time participants"],
+      "invalid_occurrences": ["hesitation", "early mistakes"]
+    },
+    {
+      "label": "trained participants",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["trained participants", "experienced learners", "practiced participants"],
+      "invalid_occurrences": ["confidence", "faster response"]
+    }
+  ],
+  "invariants": [
+    "Anonymous participant groups can be recurring visual subjects.",
+    "Behavioral effects are not occurrences of a group.",
+    "Compared cohorts should remain distinguishable downstream."
+  ]
+}

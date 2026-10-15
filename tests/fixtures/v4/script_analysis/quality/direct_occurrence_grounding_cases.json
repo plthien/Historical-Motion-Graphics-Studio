@@ -1,0 +1,11 @@
+{
+  "candidate": "modern people",
+  "valid_occurrences": ["Modern people", "A modern person"],
+  "invalid_occurrences": ["Modern life", "Modern stress"],
+  "invariants": [
+    "An occurrence directly names the candidate or unambiguously corefers to it.",
+    "A related condition is not an occurrence of the candidate.",
+    "A related environment is not an occurrence of the candidate.",
+    "This fixture documents semantic expectations; the runtime has no classifier for this distinction."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "description": "Uniform pacing labels are allowed when all sections have genuinely comparable density.",
+  "sections": [
+    {"section_id": "sec_001", "density_shape": "single-direction explanation"},
+    {"section_id": "sec_002", "density_shape": "single-direction explanation"},
+    {"section_id": "sec_003", "density_shape": "single-direction explanation"}
+  ],
+  "expected_invariants": [
+    "same label allowed when density is comparable",
+    "no arbitrary distribution quota"
+  ]
+}

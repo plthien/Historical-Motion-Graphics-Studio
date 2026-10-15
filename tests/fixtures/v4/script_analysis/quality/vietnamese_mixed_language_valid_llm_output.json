@@ -1,0 +1,117 @@
+{
+  "artifact_type": "script_analysis_llm_output",
+  "schema_version": "1.0",
+  "project_id": "project_cccccccccccc",
+  "source_script_revision_id": "artifact_dddddddddddd",
+  "section_guidance": [
+    {
+      "section_id": "sec_001",
+      "pacing_density": "medium"
+    },
+    {
+      "section_id": "sec_002",
+      "pacing_density": "low"
+    }
+  ],
+  "narrative_markers": [
+    {
+      "marker_type": "emphasis",
+      "section_id": "sec_001",
+      "anchor_quote": "\"Keep moving,\"",
+      "context_quote": "\"Keep moving,\" nguoi dan noi.",
+      "importance": "medium",
+      "purpose": "Uu tien cau noi nay nhu diem nhan thong diep cua section."
+    }
+  ],
+  "continuity_catalog": {
+    "characters": [],
+    "locations": [
+      {
+        "label": "Ha Noi",
+        "description": "Dia diem lap lai trong cau chuyen.",
+        "explicit_visual_traits": [],
+        "identity_markers": [
+          "Ha Noi"
+        ],
+        "continuity_notes": [],
+        "location_kind": "thanh pho",
+        "occurrences": [
+          {
+            "section_id": "sec_001",
+            "quote": "Ha Noi",
+            "context_quote": "Ha Noi thuc day trong ap luc cham."
+          },
+          {
+            "section_id": "sec_002",
+            "quote": "Ha Noi",
+            "context_quote": "Ha Noi van giu nhip song cu."
+          }
+        ],
+        "presence_ranges": [
+          {
+            "section_id": "sec_001",
+            "start_quote": "Ha Noi thuc day trong ap luc cham.",
+            "end_quote": "Ha Noi thuc day trong ap luc cham."
+          },
+          {
+            "section_id": "sec_002",
+            "start_quote": "Ha Noi van giu nhip song cu.",
+            "end_quote": "Ha Noi van giu nhip song cu."
+          }
+        ]
+      }
+    ],
+    "recurring_props": [],
+    "recurring_visual_subjects": [
+      {
+        "label": "Atlas Labs",
+        "description": "To chuc lap lai trong cau chuyen.",
+        "visual_type": "to chuc",
+        "explicit_visual_traits": [],
+        "continuity_notes": [],
+        "occurrences": [
+          {
+            "section_id": "sec_001",
+            "quote": "Atlas Labs",
+            "context_quote": "Atlas Labs xuat hien nhu mot loi hua."
+          },
+          {
+            "section_id": "sec_002",
+            "quote": "Atlas Labs",
+            "context_quote": "Atlas Labs tro lai trong cau chuyen ve ap luc cham."
+          }
+        ],
+        "presence_ranges": [
+          {
+            "section_id": "sec_001",
+            "start_quote": "Atlas Labs xuat hien nhu mot loi hua.",
+            "end_quote": "Atlas Labs xuat hien nhu mot loi hua."
+          },
+          {
+            "section_id": "sec_002",
+            "start_quote": "Atlas Labs tro lai trong cau chuyen ve ap luc cham.",
+            "end_quote": "Atlas Labs tro lai trong cau chuyen ve ap luc cham."
+          }
+        ]
+      }
+    ],
+    "visual_motifs": [
+      {
+        "label": "ap luc cham",
+        "description": "Y tuong bieu tuong lap lai ve suc ep keo dai.",
+        "occurrences": [
+          {
+            "section_id": "sec_001",
+            "quote": "ap luc cham",
+            "context_quote": "Ha Noi thuc day trong ap luc cham."
+          },
+          {
+            "section_id": "sec_002",
+            "quote": "ap luc cham",
+            "context_quote": "Atlas Labs tro lai trong cau chuyen ve ap luc cham."
+          }
+        ]
+      }
+    ]
+  }
+}

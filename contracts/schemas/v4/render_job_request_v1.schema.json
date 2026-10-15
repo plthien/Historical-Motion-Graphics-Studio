@@ -1,0 +1,53 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "render_profile_id": {
+      "title": "Render Profile Id",
+      "type": "string"
+    },
+    "expected_assembly_plan_artifact_id": {
+      "title": "Expected Assembly Plan Artifact Id",
+      "type": "string"
+    },
+    "expected_subtitle_srt_artifact_id": {
+      "title": "Expected Subtitle Srt Artifact Id",
+      "type": "string"
+    },
+    "expected_subtitle_vtt_artifact_id": {
+      "title": "Expected Subtitle Vtt Artifact Id",
+      "type": "string"
+    },
+    "expected_final_video_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Final Video Artifact Id"
+    },
+    "operation_type": {
+      "enum": [
+        "render",
+        "rerender",
+        "retry"
+      ],
+      "title": "Operation Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "render_profile_id",
+    "expected_assembly_plan_artifact_id",
+    "expected_subtitle_srt_artifact_id",
+    "expected_subtitle_vtt_artifact_id",
+    "operation_type"
+  ],
+  "title": "RenderJobRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/v4/render_job_request_v1.schema.json"
+}

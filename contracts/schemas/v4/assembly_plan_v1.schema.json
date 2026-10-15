@@ -1,0 +1,1243 @@
+{
+  "$defs": {
+    "AssemblyBeatModel": {
+      "additionalProperties": false,
+      "properties": {
+        "scene_id": {
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "scene_order": {
+          "minimum": 1,
+          "title": "Scene Order",
+          "type": "integer"
+        },
+        "beat_id": {
+          "title": "Beat Id",
+          "type": "string"
+        },
+        "beat_order": {
+          "minimum": 1,
+          "title": "Beat Order",
+          "type": "integer"
+        },
+        "local_beat_order": {
+          "minimum": 1,
+          "title": "Local Beat Order",
+          "type": "integer"
+        },
+        "continuity_group_id": {
+          "title": "Continuity Group Id",
+          "type": "string"
+        },
+        "source_start": {
+          "minimum": 0,
+          "title": "Source Start",
+          "type": "integer"
+        },
+        "source_end": {
+          "exclusiveMinimum": 0,
+          "title": "Source End",
+          "type": "integer"
+        },
+        "start_time_units": {
+          "minimum": 0,
+          "title": "Start Time Units",
+          "type": "integer"
+        },
+        "end_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "End Time Units",
+          "type": "integer"
+        },
+        "duration_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Time Units",
+          "type": "integer"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "planned_duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Planned Duration Seconds",
+          "type": "number"
+        },
+        "duration_delta_seconds": {
+          "title": "Duration Delta Seconds",
+          "type": "number"
+        },
+        "selected_visual_artifact_id": {
+          "title": "Selected Visual Artifact Id",
+          "type": "string"
+        },
+        "selected_visual_mime_type": {
+          "title": "Selected Visual Mime Type",
+          "type": "string"
+        },
+        "selected_visual_sha256": {
+          "title": "Selected Visual Sha256",
+          "type": "string"
+        },
+        "selected_visual_width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Selected Visual Width"
+        },
+        "selected_visual_height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Selected Visual Height"
+        },
+        "visual_instruction": {
+          "$ref": "#/$defs/VisualInstructionModel"
+        },
+        "transition_instruction": {
+          "$ref": "#/$defs/TransitionInstructionModel"
+        },
+        "subtitle_cue_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Subtitle Cue Ids",
+          "type": "array"
+        },
+        "source_scene_asset_entry_sha256": {
+          "title": "Source Scene Asset Entry Sha256",
+          "type": "string"
+        },
+        "source_narration_beat_timing_sha256": {
+          "title": "Source Narration Beat Timing Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scene_id",
+        "scene_order",
+        "beat_id",
+        "beat_order",
+        "local_beat_order",
+        "continuity_group_id",
+        "source_start",
+        "source_end",
+        "start_time_units",
+        "end_time_units",
+        "duration_time_units",
+        "start_seconds",
+        "end_seconds",
+        "duration_seconds",
+        "planned_duration_seconds",
+        "duration_delta_seconds",
+        "selected_visual_artifact_id",
+        "selected_visual_mime_type",
+        "selected_visual_sha256",
+        "selected_visual_width",
+        "selected_visual_height",
+        "visual_instruction",
+        "transition_instruction",
+        "subtitle_cue_ids",
+        "source_scene_asset_entry_sha256",
+        "source_narration_beat_timing_sha256"
+      ],
+      "title": "AssemblyBeatModel",
+      "type": "object"
+    },
+    "AssemblyQCModel": {
+      "additionalProperties": false,
+      "properties": {
+        "lineage_status": {
+          "title": "Lineage Status",
+          "type": "string"
+        },
+        "scene_coverage_status": {
+          "title": "Scene Coverage Status",
+          "type": "string"
+        },
+        "beat_coverage_status": {
+          "title": "Beat Coverage Status",
+          "type": "string"
+        },
+        "visual_asset_status": {
+          "title": "Visual Asset Status",
+          "type": "string"
+        },
+        "visual_timeline_status": {
+          "title": "Visual Timeline Status",
+          "type": "string"
+        },
+        "transition_status": {
+          "title": "Transition Status",
+          "type": "string"
+        },
+        "narration_track_status": {
+          "title": "Narration Track Status",
+          "type": "string"
+        },
+        "duration_status": {
+          "title": "Duration Status",
+          "type": "string"
+        },
+        "subtitle_text_coverage_status": {
+          "title": "Subtitle Text Coverage Status",
+          "type": "string"
+        },
+        "subtitle_timing_status": {
+          "title": "Subtitle Timing Status",
+          "type": "string"
+        },
+        "srt_serialization_status": {
+          "title": "Srt Serialization Status",
+          "type": "string"
+        },
+        "vtt_serialization_status": {
+          "title": "Vtt Serialization Status",
+          "type": "string"
+        },
+        "optional_audio_status": {
+          "title": "Optional Audio Status",
+          "type": "string"
+        },
+        "publication_status": {
+          "title": "Publication Status",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lineage_status",
+        "scene_coverage_status",
+        "beat_coverage_status",
+        "visual_asset_status",
+        "visual_timeline_status",
+        "transition_status",
+        "narration_track_status",
+        "duration_status",
+        "subtitle_text_coverage_status",
+        "subtitle_timing_status",
+        "srt_serialization_status",
+        "vtt_serialization_status",
+        "optional_audio_status",
+        "publication_status",
+        "warnings",
+        "errors"
+      ],
+      "title": "AssemblyQCModel",
+      "type": "object"
+    },
+    "AssemblySceneModel": {
+      "additionalProperties": false,
+      "properties": {
+        "scene_id": {
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "scene_order": {
+          "minimum": 1,
+          "title": "Scene Order",
+          "type": "integer"
+        },
+        "source_start": {
+          "minimum": 0,
+          "title": "Source Start",
+          "type": "integer"
+        },
+        "source_end": {
+          "exclusiveMinimum": 0,
+          "title": "Source End",
+          "type": "integer"
+        },
+        "start_time_units": {
+          "minimum": 0,
+          "title": "Start Time Units",
+          "type": "integer"
+        },
+        "end_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "End Time Units",
+          "type": "integer"
+        },
+        "duration_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Time Units",
+          "type": "integer"
+        },
+        "beat_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Beat Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "scene_id",
+        "scene_order",
+        "source_start",
+        "source_end",
+        "start_time_units",
+        "end_time_units",
+        "duration_time_units",
+        "beat_ids"
+      ],
+      "title": "AssemblySceneModel",
+      "type": "object"
+    },
+    "BackgroundAudioTrackModel": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "start_time_units": {
+          "minimum": 0,
+          "title": "Start Time Units",
+          "type": "integer"
+        },
+        "end_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "End Time Units",
+          "type": "integer"
+        },
+        "source_start_time_units": {
+          "minimum": 0,
+          "title": "Source Start Time Units",
+          "type": "integer"
+        },
+        "gain_db": {
+          "maximum": 12,
+          "minimum": -60,
+          "title": "Gain Db",
+          "type": "number"
+        },
+        "loop_mode": {
+          "enum": [
+            "none",
+            "loop"
+          ],
+          "title": "Loop Mode",
+          "type": "string"
+        },
+        "fade_in_time_units": {
+          "minimum": 0,
+          "title": "Fade In Time Units",
+          "type": "integer"
+        },
+        "fade_out_time_units": {
+          "minimum": 0,
+          "title": "Fade Out Time Units",
+          "type": "integer"
+        },
+        "validator_version": {
+          "const": "canonical_pcm_wav_artifact_bytes_v1",
+          "title": "Validator Version",
+          "type": "string"
+        },
+        "mime_type": {
+          "const": "audio/wav",
+          "title": "Mime Type",
+          "type": "string"
+        },
+        "codec": {
+          "const": "pcm_s16le",
+          "title": "Codec",
+          "type": "string"
+        },
+        "container": {
+          "const": "wav",
+          "title": "Container",
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "const": 48000,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "channels": {
+          "const": 1,
+          "title": "Channels",
+          "type": "integer"
+        },
+        "sample_width_bytes": {
+          "const": 2,
+          "title": "Sample Width Bytes",
+          "type": "integer"
+        },
+        "sample_count": {
+          "minimum": 1,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "byte_count": {
+          "exclusiveMinimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "start_time_units",
+        "end_time_units",
+        "source_start_time_units",
+        "gain_db",
+        "loop_mode",
+        "fade_in_time_units",
+        "fade_out_time_units",
+        "validator_version",
+        "mime_type",
+        "codec",
+        "container",
+        "sample_rate_hz",
+        "channels",
+        "sample_width_bytes",
+        "sample_count",
+        "duration_seconds",
+        "byte_count",
+        "sha256"
+      ],
+      "title": "BackgroundAudioTrackModel",
+      "type": "object"
+    },
+    "MotionKeyframeModel": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Offset",
+          "type": "number"
+        },
+        "crop": {
+          "$ref": "#/$defs/NormalizedCropModel"
+        }
+      },
+      "required": [
+        "offset",
+        "crop"
+      ],
+      "title": "MotionKeyframeModel",
+      "type": "object"
+    },
+    "NarrationTrackModel": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "mime_type": {
+          "title": "Mime Type",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "const": 48000,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "channels": {
+          "const": 1,
+          "title": "Channels",
+          "type": "integer"
+        },
+        "sample_count": {
+          "minimum": 1,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "duration_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Time Units",
+          "type": "integer"
+        },
+        "duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "start_time_units": {
+          "const": 0,
+          "title": "Start Time Units",
+          "type": "integer"
+        },
+        "end_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "End Time Units",
+          "type": "integer"
+        },
+        "gain_db": {
+          "const": 0,
+          "title": "Gain Db",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "mime_type",
+        "sha256",
+        "sample_rate_hz",
+        "channels",
+        "sample_count",
+        "duration_time_units",
+        "duration_seconds",
+        "start_time_units",
+        "end_time_units",
+        "gain_db"
+      ],
+      "title": "NarrationTrackModel",
+      "type": "object"
+    },
+    "NormalizedCropModel": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Y",
+          "type": "number"
+        },
+        "width": {
+          "exclusiveMinimum": 0.0,
+          "maximum": 1.0,
+          "title": "Width",
+          "type": "number"
+        },
+        "height": {
+          "exclusiveMinimum": 0.0,
+          "maximum": 1.0,
+          "title": "Height",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "title": "NormalizedCropModel",
+      "type": "object"
+    },
+    "SFXTrackModel": {
+      "additionalProperties": false,
+      "properties": {
+        "sfx_id": {
+          "title": "Sfx Id",
+          "type": "string"
+        },
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "anchor_type": {
+          "enum": [
+            "absolute",
+            "scene_start",
+            "beat_start",
+            "beat_end"
+          ],
+          "title": "Anchor Type",
+          "type": "string"
+        },
+        "scene_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scene Id"
+        },
+        "beat_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Beat Id"
+        },
+        "start_time_units": {
+          "minimum": 0,
+          "title": "Start Time Units",
+          "type": "integer"
+        },
+        "source_start_time_units": {
+          "minimum": 0,
+          "title": "Source Start Time Units",
+          "type": "integer"
+        },
+        "duration_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Time Units",
+          "type": "integer"
+        },
+        "gain_db": {
+          "maximum": 12,
+          "minimum": -60,
+          "title": "Gain Db",
+          "type": "number"
+        },
+        "validator_version": {
+          "const": "canonical_pcm_wav_artifact_bytes_v1",
+          "title": "Validator Version",
+          "type": "string"
+        },
+        "mime_type": {
+          "const": "audio/wav",
+          "title": "Mime Type",
+          "type": "string"
+        },
+        "codec": {
+          "const": "pcm_s16le",
+          "title": "Codec",
+          "type": "string"
+        },
+        "container": {
+          "const": "wav",
+          "title": "Container",
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "const": 48000,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "channels": {
+          "const": 1,
+          "title": "Channels",
+          "type": "integer"
+        },
+        "sample_width_bytes": {
+          "const": 2,
+          "title": "Sample Width Bytes",
+          "type": "integer"
+        },
+        "sample_count": {
+          "minimum": 1,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "byte_count": {
+          "exclusiveMinimum": 0,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "sha256": {
+          "maxLength": 64,
+          "minLength": 64,
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sfx_id",
+        "artifact_id",
+        "anchor_type",
+        "start_time_units",
+        "source_start_time_units",
+        "duration_time_units",
+        "gain_db",
+        "validator_version",
+        "mime_type",
+        "codec",
+        "container",
+        "sample_rate_hz",
+        "channels",
+        "sample_width_bytes",
+        "sample_count",
+        "duration_seconds",
+        "byte_count",
+        "sha256"
+      ],
+      "title": "SFXTrackModel",
+      "type": "object"
+    },
+    "SubtitleCueModel": {
+      "additionalProperties": false,
+      "properties": {
+        "cue_id": {
+          "title": "Cue Id",
+          "type": "string"
+        },
+        "cue_order": {
+          "minimum": 1,
+          "title": "Cue Order",
+          "type": "integer"
+        },
+        "source_start": {
+          "minimum": 0,
+          "title": "Source Start",
+          "type": "integer"
+        },
+        "source_end": {
+          "exclusiveMinimum": 0,
+          "title": "Source End",
+          "type": "integer"
+        },
+        "exact_text": {
+          "minLength": 1,
+          "title": "Exact Text",
+          "type": "string"
+        },
+        "start_time_units": {
+          "minimum": 0,
+          "title": "Start Time Units",
+          "type": "integer"
+        },
+        "end_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "End Time Units",
+          "type": "integer"
+        },
+        "duration_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Time Units",
+          "type": "integer"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "line_1": {
+          "minLength": 1,
+          "title": "Line 1",
+          "type": "string"
+        },
+        "line_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Line 2"
+        },
+        "word_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Word Ids",
+          "type": "array"
+        },
+        "segment_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Segment Ids",
+          "type": "array"
+        },
+        "scene_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Scene Ids",
+          "type": "array"
+        },
+        "beat_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Beat Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "cue_id",
+        "cue_order",
+        "source_start",
+        "source_end",
+        "exact_text",
+        "start_time_units",
+        "end_time_units",
+        "duration_time_units",
+        "start_seconds",
+        "end_seconds",
+        "duration_seconds",
+        "line_1",
+        "line_2",
+        "word_ids",
+        "segment_ids",
+        "scene_ids",
+        "beat_ids"
+      ],
+      "title": "SubtitleCueModel",
+      "type": "object"
+    },
+    "TimebaseModel": {
+      "additionalProperties": false,
+      "properties": {
+        "units_per_second": {
+          "const": 1000000,
+          "title": "Units Per Second",
+          "type": "integer"
+        },
+        "unit": {
+          "const": "microsecond",
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "units_per_second",
+        "unit"
+      ],
+      "title": "TimebaseModel",
+      "type": "object"
+    },
+    "TransitionInstructionModel": {
+      "additionalProperties": false,
+      "properties": {
+        "compiler_version": {
+          "const": "assembly_transition_v1",
+          "title": "Compiler Version",
+          "type": "string"
+        },
+        "transition_type": {
+          "enum": [
+            "cut",
+            "crossfade"
+          ],
+          "title": "Transition Type",
+          "type": "string"
+        },
+        "duration_time_units": {
+          "minimum": 0,
+          "title": "Duration Time Units",
+          "type": "integer"
+        },
+        "previous_visual_artifact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Previous Visual Artifact Id"
+        },
+        "next_visual_artifact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Visual Artifact Id"
+        },
+        "transition_intent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Transition Intent"
+        },
+        "source_visual_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Visual Hint"
+        },
+        "destination_visual_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Destination Visual Hint"
+        }
+      },
+      "required": [
+        "compiler_version",
+        "transition_type",
+        "duration_time_units",
+        "previous_visual_artifact_id",
+        "next_visual_artifact_id",
+        "transition_intent",
+        "source_visual_hint",
+        "destination_visual_hint"
+      ],
+      "title": "TransitionInstructionModel",
+      "type": "object"
+    },
+    "VisualInstructionModel": {
+      "additionalProperties": false,
+      "properties": {
+        "compiler_version": {
+          "const": "assembly_visual_motion_v1",
+          "title": "Compiler Version",
+          "type": "string"
+        },
+        "fit_mode": {
+          "const": "cover",
+          "title": "Fit Mode",
+          "type": "string"
+        },
+        "anchor_x": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Anchor X",
+          "type": "number"
+        },
+        "anchor_y": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Anchor Y",
+          "type": "number"
+        },
+        "start_crop": {
+          "$ref": "#/$defs/NormalizedCropModel"
+        },
+        "end_crop": {
+          "$ref": "#/$defs/NormalizedCropModel"
+        },
+        "motion_type": {
+          "title": "Motion Type",
+          "type": "string"
+        },
+        "motion_keyframes": {
+          "items": {
+            "$ref": "#/$defs/MotionKeyframeModel"
+          },
+          "title": "Motion Keyframes",
+          "type": "array"
+        },
+        "hold_mode": {
+          "const": "hold",
+          "title": "Hold Mode",
+          "type": "string"
+        },
+        "background_fill": {
+          "const": "technical_black",
+          "title": "Background Fill",
+          "type": "string"
+        },
+        "source_camera_movement": {
+          "title": "Source Camera Movement",
+          "type": "string"
+        },
+        "source_framing": {
+          "title": "Source Framing",
+          "type": "string"
+        },
+        "source_camera_angle": {
+          "title": "Source Camera Angle",
+          "type": "string"
+        }
+      },
+      "required": [
+        "compiler_version",
+        "fit_mode",
+        "anchor_x",
+        "anchor_y",
+        "start_crop",
+        "end_crop",
+        "motion_type",
+        "motion_keyframes",
+        "hold_mode",
+        "background_fill",
+        "source_camera_movement",
+        "source_framing",
+        "source_camera_angle"
+      ],
+      "title": "VisualInstructionModel",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifact_type": {
+      "const": "assembly_plan",
+      "title": "Artifact Type",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "3.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "assembly_plan_revision_id": {
+      "title": "Assembly Plan Revision Id",
+      "type": "string"
+    },
+    "parent_assembly_plan_revision_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Parent Assembly Plan Revision Id"
+    },
+    "revision_operation": {
+      "enum": [
+        "build",
+        "rebuild",
+        "approval"
+      ],
+      "title": "Revision Operation",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft_ready",
+        "approved"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_script_artifact_id": {
+      "title": "Source Script Artifact Id",
+      "type": "string"
+    },
+    "source_scene_plan_artifact_id": {
+      "title": "Source Scene Plan Artifact Id",
+      "type": "string"
+    },
+    "source_scene_asset_manifest_artifact_id": {
+      "title": "Source Scene Asset Manifest Artifact Id",
+      "type": "string"
+    },
+    "source_narration_audio_artifact_id": {
+      "title": "Source Narration Audio Artifact Id",
+      "type": "string"
+    },
+    "source_beat_timing_map_artifact_id": {
+      "title": "Source Narration Timing Map Artifact Id",
+      "type": "string"
+    },
+    "source_subtitle_srt_artifact_id": {
+      "title": "Source Subtitle Srt Artifact Id",
+      "type": "string"
+    },
+    "source_subtitle_vtt_artifact_id": {
+      "title": "Source Subtitle Vtt Artifact Id",
+      "type": "string"
+    },
+    "compiler_version": {
+      "const": "assembly_plan_compiler_v1",
+      "title": "Compiler Version",
+      "type": "string"
+    },
+    "compiler_input_sha256": {
+      "title": "Compiler Input Sha256",
+      "type": "string"
+    },
+    "timeline_timebase": {
+      "$ref": "#/$defs/TimebaseModel"
+    },
+    "total_duration_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Total Duration Seconds",
+      "type": "number"
+    },
+    "total_duration_time_units": {
+      "exclusiveMinimum": 0,
+      "title": "Total Duration Time Units",
+      "type": "integer"
+    },
+    "visual_track": {
+      "additionalProperties": true,
+      "title": "Visual Track",
+      "type": "object"
+    },
+    "narration_track": {
+      "$ref": "#/$defs/NarrationTrackModel"
+    },
+    "background_audio_track": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BackgroundAudioTrackModel"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sfx_track": {
+      "items": {
+        "$ref": "#/$defs/SFXTrackModel"
+      },
+      "title": "Sfx Track",
+      "type": "array"
+    },
+    "subtitle_track": {
+      "additionalProperties": true,
+      "title": "Subtitle Track",
+      "type": "object"
+    },
+    "scenes": {
+      "items": {
+        "$ref": "#/$defs/AssemblySceneModel"
+      },
+      "minItems": 1,
+      "title": "Scenes",
+      "type": "array"
+    },
+    "beats": {
+      "items": {
+        "$ref": "#/$defs/AssemblyBeatModel"
+      },
+      "minItems": 1,
+      "title": "Beats",
+      "type": "array"
+    },
+    "subtitle_cues": {
+      "items": {
+        "$ref": "#/$defs/SubtitleCueModel"
+      },
+      "minItems": 1,
+      "title": "Subtitle Cues",
+      "type": "array"
+    },
+    "backend_qc": {
+      "$ref": "#/$defs/AssemblyQCModel"
+    },
+    "created_at": {
+      "title": "Created At",
+      "type": "string"
+    },
+    "source_narration_word_timing_map_artifact_id": {
+      "title": "Source Narration Word Timing Map Artifact Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "project_id",
+    "assembly_plan_revision_id",
+    "parent_assembly_plan_revision_id",
+    "revision_operation",
+    "status",
+    "source_script_artifact_id",
+    "source_scene_plan_artifact_id",
+    "source_scene_asset_manifest_artifact_id",
+    "source_narration_audio_artifact_id",
+    "source_narration_word_timing_map_artifact_id",
+    "source_beat_timing_map_artifact_id",
+    "source_subtitle_srt_artifact_id",
+    "source_subtitle_vtt_artifact_id",
+    "compiler_version",
+    "compiler_input_sha256",
+    "timeline_timebase",
+    "total_duration_seconds",
+    "total_duration_time_units",
+    "visual_track",
+    "narration_track",
+    "background_audio_track",
+    "sfx_track",
+    "subtitle_track",
+    "scenes",
+    "beats",
+    "subtitle_cues",
+    "backend_qc",
+    "created_at"
+  ],
+  "title": "AssemblyPlanModel",
+  "type": "object"
+}

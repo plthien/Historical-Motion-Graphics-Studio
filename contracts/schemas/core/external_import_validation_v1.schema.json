@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/core/external_import_validation_v1.schema.json",
+  "title": "External Import Validation V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["valid", "errors", "warnings", "summary"],
+  "properties": {
+    "valid": {"type": "boolean"},
+    "errors": {"type": "array", "items": {"$ref": "#/$defs/issue"}},
+    "warnings": {"type": "array", "items": {"$ref": "#/$defs/issue"}},
+    "summary": {"type": "object"}
+  },
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "path", "message"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "minLength": 1},
+        "message": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

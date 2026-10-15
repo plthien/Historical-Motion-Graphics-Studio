@@ -1,0 +1,85 @@
+{
+  "$defs": {
+    "PromptComposerOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "enum": [
+            "1:1",
+            "3:4",
+            "4:3",
+            "9:16",
+            "16:9"
+          ],
+          "title": "Aspect Ratio",
+          "type": "string"
+        },
+        "image_count": {
+          "const": 1,
+          "title": "Image Count",
+          "type": "integer"
+        },
+        "prompt_language": {
+          "const": "en",
+          "title": "Prompt Language",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "target_asset_role": {
+          "const": "beat_visual",
+          "title": "Target Asset Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "prompt_language",
+        "aspect_ratio",
+        "target_asset_role",
+        "image_count"
+      ],
+      "title": "PromptComposerOptions",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "expected_prompt_bundle_artifact_id": {
+      "anyOf": [
+        {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Expected Prompt Bundle Artifact Id"
+    },
+    "options": {
+      "$ref": "#/$defs/PromptComposerOptions"
+    },
+    "style_bible_artifact_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Style Bible Artifact Id",
+      "type": "string"
+    },
+    "visual_plan_artifact_id": {
+      "pattern": "^artifact_[0-9a-f]{12}$",
+      "title": "Visual Plan Artifact Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "style_bible_artifact_id",
+    "visual_plan_artifact_id",
+    "expected_prompt_bundle_artifact_id",
+    "options"
+  ],
+  "title": "PromptBundleRecompileRequest",
+  "type": "object"
+}

@@ -1,0 +1,23 @@
+{
+  "domain": "medicine",
+  "script_focus": "A trial comparison between treated and untreated cohorts.",
+  "expected_candidates": [
+    {
+      "label": "treatment group",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["patients receiving treatment", "the treatment group", "treated participants"],
+      "invalid_occurrences": ["the disease", "hospital care"]
+    },
+    {
+      "label": "control group",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["control group", "patients without the treatment", "untreated participants"],
+      "invalid_occurrences": ["placebo effect", "clinic schedule"]
+    }
+  ],
+  "invariants": [
+    "Central anonymous cohorts can be recurring visual subjects.",
+    "A proper name is not required.",
+    "Each side of a central comparison can be a separate candidate."
+  ]
+}

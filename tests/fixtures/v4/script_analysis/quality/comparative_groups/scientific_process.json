@@ -1,0 +1,23 @@
+{
+  "domain": "scientific process",
+  "script_focus": "A recurring comparison between observed and control samples.",
+  "expected_candidates": [
+    {
+      "label": "observed samples",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["observed samples", "measured samples", "the active sample set"],
+      "invalid_occurrences": ["measurement drift", "recorded signal"]
+    },
+    {
+      "label": "control samples",
+      "category": "recurring_visual_subjects",
+      "valid_aliases": ["control samples", "baseline samples", "the control set"],
+      "invalid_occurrences": ["baseline reading", "calibration step"]
+    }
+  ],
+  "invariants": [
+    "Scientific sample classes can be recurring visual subjects.",
+    "Measurements and procedures are not occurrences of sample identity.",
+    "Control and observed groups can be separate continuity candidates."
+  ]
+}

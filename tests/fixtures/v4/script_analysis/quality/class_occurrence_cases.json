@@ -1,0 +1,23 @@
+{
+  "cases": [
+    {
+      "name": "class_named_twice",
+      "candidate": "remote teams",
+      "evidence": ["remote teams", "these teams"],
+      "expected_action": "may_qualify",
+      "reason": "The class is named and then coreferred to as the same established class."
+    },
+    {
+      "name": "examples_do_not_prove_class",
+      "candidate": "workflow problems",
+      "evidence": ["missed handoff", "late approval", "unclear owner"],
+      "expected_action": "omit",
+      "reason": "Different examples under an umbrella label do not prove recurrence of one stable class identity."
+    }
+  ],
+  "invariants": [
+    "An occurrence of a class candidate must name or corefer to the class.",
+    "Lists of members, instances, causes, effects, or examples are not enough.",
+    "This fixture documents prompt semantics; runtime does not classify classes."
+  ]
+}

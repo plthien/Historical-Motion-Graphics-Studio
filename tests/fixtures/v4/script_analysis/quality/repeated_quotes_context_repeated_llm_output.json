@@ -1,0 +1,33 @@
+{
+  "artifact_type": "script_analysis_llm_output",
+  "schema_version": "1.0",
+  "project_id": "project_aaaaaaaaaaaa",
+  "source_script_revision_id": "artifact_bbbbbbbbbbbb",
+  "section_guidance": [
+    {
+      "section_id": "sec_001",
+      "pacing_density": "medium"
+    },
+    {
+      "section_id": "sec_002",
+      "pacing_density": "low"
+    }
+  ],
+  "narrative_markers": [
+    {
+      "marker_type": "reveal",
+      "section_id": "sec_001",
+      "anchor_quote": "The signal returns",
+      "context_quote": "The signal returns.",
+      "importance": "medium",
+      "purpose": "Prioritize this reveal as the section's protected transition point."
+    }
+  ],
+  "continuity_catalog": {
+    "characters": [],
+    "locations": [],
+    "recurring_props": [],
+    "recurring_visual_subjects": [],
+    "visual_motifs": []
+  }
+}

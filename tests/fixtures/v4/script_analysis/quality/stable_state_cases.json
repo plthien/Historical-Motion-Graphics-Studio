@@ -1,0 +1,22 @@
+{
+  "cases": [
+    {
+      "name": "concrete_stable_process",
+      "source_pattern": "The same visible process rises, changes, and returns across sections.",
+      "expected_category": "recurring_visual_subjects",
+      "reason": "A concretely recognizable process can require stable representation."
+    },
+    {
+      "name": "repeated_symbolic_meaning",
+      "source_pattern": "A repeated symbolic image carries the same non-literal meaning in different forms.",
+      "expected_category": "visual_motifs",
+      "reason": "Symbolic continuity, not subject identity, is the recurring need."
+    },
+    {
+      "name": "abstract_condition_without_visual_continuity",
+      "source_pattern": "An abstract condition recurs as explanation but has no stable subject or symbolic visual pattern.",
+      "expected_category": "omit",
+      "reason": "Recurrence and importance do not create a stable visual state."
+    }
+  ]
+}

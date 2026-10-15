@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/platform/media_task_result.schema.json",
+  "title": "Media Task Result V3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "media_task_id",
+    "status"
+  ],
+  "properties": {
+    "media_task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "submitted",
+        "provider_pending",
+        "provider_running",
+        "downloading",
+        "completed",
+        "failed",
+        "canceled",
+        "download_failed"
+      ]
+    },
+    "message": {
+      "type": "string"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifact_id",
+          "image_id",
+          "storage_uri",
+          "file_url",
+          "mime_type",
+          "source_result_url",
+          "downloaded_at"
+        ],
+        "properties": {
+          "image_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "storage_uri": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mime_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_result_url": {
+            "type": "string",
+            "minLength": 1
+          },
+          "downloaded_at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "file_url": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^artifact_[A-Za-z0-9_-]+$"
+          }
+        }
+      },
+      "maxItems": 4
+    },
+    "error_code": {
+      "type": "string"
+    },
+    "provider_error_code": {
+      "anyOf": [
+        {
+          "const": 0
+        },
+        {
+          "type": "integer",
+          "minimum": 400,
+          "maximum": 599
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error": {
+      "type": "string"
+    },
+    "error_detail": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,777 @@
+{
+  "$defs": {
+    "PromptBundleItem": {
+      "additionalProperties": false,
+      "properties": {
+        "beat_id": {
+          "pattern": "^beat_[0-9]{3,}$",
+          "title": "Beat Id",
+          "type": "string"
+        },
+        "beat_order": {
+          "minimum": 1,
+          "title": "Beat Order",
+          "type": "integer"
+        },
+        "continuity_group_id": {
+          "pattern": "^continuity_[0-9]{3,}$",
+          "title": "Continuity Group Id",
+          "type": "string"
+        },
+        "continuity_reference_requirement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PromptContinuityReferenceRequirement"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "generation_options": {
+          "$ref": "#/$defs/PromptComposerOptions"
+        },
+        "image_prompt": {
+          "minLength": 1,
+          "title": "Image Prompt",
+          "type": "string"
+        },
+        "local_beat_order": {
+          "minimum": 1,
+          "title": "Local Beat Order",
+          "type": "integer"
+        },
+        "negative_prompt": {
+          "minLength": 1,
+          "title": "Negative Prompt",
+          "type": "string"
+        },
+        "prompt_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Prompt Hash",
+          "type": "string"
+        },
+        "prompt_item_id": {
+          "pattern": "^prompt_[0-9]{3,}$",
+          "title": "Prompt Item Id",
+          "type": "string"
+        },
+        "prompt_origin": {
+          "enum": [
+            "compiled",
+            "manual_edit"
+          ],
+          "title": "Prompt Origin",
+          "type": "string"
+        },
+        "reference_bindings": {
+          "items": {
+            "$ref": "#/$defs/PromptReferenceBinding"
+          },
+          "title": "Reference Bindings",
+          "type": "array"
+        },
+        "scene_id": {
+          "pattern": "^scene_[0-9]{3,}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "source_provenance": {
+          "$ref": "#/$defs/PromptSourceProvenance"
+        },
+        "target_asset_role": {
+          "const": "beat_visual",
+          "title": "Target Asset Role",
+          "type": "string"
+        },
+        "visual_priority": {
+          "enum": [
+            "critical",
+            "high",
+            "normal"
+          ],
+          "title": "Visual Priority",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt_item_id",
+        "scene_id",
+        "beat_id",
+        "beat_order",
+        "local_beat_order",
+        "continuity_group_id",
+        "visual_priority",
+        "target_asset_role",
+        "prompt_origin",
+        "image_prompt",
+        "negative_prompt",
+        "prompt_hash",
+        "generation_options",
+        "reference_bindings",
+        "continuity_reference_requirement",
+        "source_provenance"
+      ],
+      "title": "PromptBundleItem",
+      "type": "object"
+    },
+    "PromptBundleModel": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_type": {
+          "const": "prompt_bundle",
+          "title": "Artifact Type",
+          "type": "string"
+        },
+        "backend_qc": {
+          "$ref": "#/$defs/PromptBundleValidationReport"
+        },
+        "operation_target_beat_id": {
+          "anyOf": [
+            {
+              "pattern": "^beat_[0-9]{3,}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operation Target Beat Id"
+        },
+        "options": {
+          "$ref": "#/$defs/PromptComposerOptions"
+        },
+        "parent_prompt_bundle_revision_id": {
+          "anyOf": [
+            {
+              "pattern": "^artifact_[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Parent Prompt Bundle Revision Id"
+        },
+        "project_id": {
+          "pattern": "^project_[0-9a-f]{12}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "prompt_bundle_revision_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Prompt Bundle Revision Id",
+          "type": "string"
+        },
+        "prompt_item_count": {
+          "minimum": 0,
+          "title": "Prompt Item Count",
+          "type": "integer"
+        },
+        "prompt_items": {
+          "items": {
+            "$ref": "#/$defs/PromptBundleItem"
+          },
+          "title": "Prompt Items",
+          "type": "array"
+        },
+        "revision_operation": {
+          "enum": [
+            "automatic_compilation",
+            "full_compilation",
+            "beat_recompilation",
+            "manual_edit",
+            "approval"
+          ],
+          "title": "Revision Operation",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "3.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_beat_count": {
+          "minimum": 0,
+          "title": "Source Beat Count",
+          "type": "integer"
+        },
+        "source_scene_plan_revision_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Source Scene Plan Revision Id",
+          "type": "string"
+        },
+        "source_script_analysis_revision_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Source Script Analysis Revision Id",
+          "type": "string"
+        },
+        "source_script_revision_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Source Script Revision Id",
+          "type": "string"
+        },
+        "source_style_bible_revision_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Source Style Bible Revision Id",
+          "type": "string"
+        },
+        "source_visual_plan_revision_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Source Visual Plan Revision Id",
+          "type": "string"
+        },
+        "source_visual_reference_approval_set_artifact_id": {
+          "anyOf": [
+            {
+              "pattern": "^artifact_[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Visual Reference Approval Set Artifact Id"
+        },
+        "status": {
+          "enum": [
+            "draft_ready",
+            "approved"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_type",
+        "schema_version",
+        "project_id",
+        "prompt_bundle_revision_id",
+        "parent_prompt_bundle_revision_id",
+        "revision_operation",
+        "source_script_revision_id",
+        "source_script_analysis_revision_id",
+        "source_style_bible_revision_id",
+        "source_scene_plan_revision_id",
+        "source_visual_plan_revision_id",
+        "source_visual_reference_approval_set_artifact_id",
+        "status",
+        "options",
+        "source_beat_count",
+        "prompt_item_count",
+        "prompt_items",
+        "backend_qc"
+      ],
+      "title": "PromptBundleModel",
+      "type": "object"
+    },
+    "PromptBundleValidationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "beat_coverage_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Beat Coverage Status",
+          "type": "string"
+        },
+        "duplicate_prompt_beat_ids": {
+          "items": {
+            "pattern": "^beat_[0-9]{3,}$",
+            "type": "string"
+          },
+          "title": "Duplicate Prompt Beat Ids",
+          "type": "array"
+        },
+        "forbidden_field_errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Forbidden Field Errors",
+          "type": "array"
+        },
+        "forbidden_field_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Forbidden Field Status",
+          "type": "string"
+        },
+        "generation_option_errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Generation Option Errors",
+          "type": "array"
+        },
+        "generation_options_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Generation Options Status",
+          "type": "string"
+        },
+        "lineage_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Lineage Status",
+          "type": "string"
+        },
+        "missing_prompt_beat_ids": {
+          "items": {
+            "pattern": "^beat_[0-9]{3,}$",
+            "type": "string"
+          },
+          "title": "Missing Prompt Beat Ids",
+          "type": "array"
+        },
+        "negative_prompt_errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Negative Prompt Errors",
+          "type": "array"
+        },
+        "negative_prompt_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Negative Prompt Status",
+          "type": "string"
+        },
+        "order_errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Order Errors",
+          "type": "array"
+        },
+        "order_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Order Status",
+          "type": "string"
+        },
+        "prompt_content_errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Prompt Content Errors",
+          "type": "array"
+        },
+        "prompt_content_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Prompt Content Status",
+          "type": "string"
+        },
+        "prompt_hash_errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Prompt Hash Errors",
+          "type": "array"
+        },
+        "prompt_hash_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Prompt Hash Status",
+          "type": "string"
+        },
+        "reference_binding_errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Reference Binding Errors",
+          "type": "array"
+        },
+        "reference_binding_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Reference Binding Status",
+          "type": "string"
+        },
+        "referential_integrity_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Referential Integrity Status",
+          "type": "string"
+        },
+        "source_identity_status": {
+          "enum": [
+            "passed",
+            "warning",
+            "failed"
+          ],
+          "title": "Source Identity Status",
+          "type": "string"
+        },
+        "unexpected_prompt_beat_ids": {
+          "items": {
+            "pattern": "^beat_[0-9]{3,}$",
+            "type": "string"
+          },
+          "title": "Unexpected Prompt Beat Ids",
+          "type": "array"
+        },
+        "unknown_reference_errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Unknown Reference Errors",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lineage_status",
+        "beat_coverage_status",
+        "order_status",
+        "source_identity_status",
+        "referential_integrity_status",
+        "prompt_content_status",
+        "negative_prompt_status",
+        "generation_options_status",
+        "reference_binding_status",
+        "prompt_hash_status",
+        "forbidden_field_status",
+        "missing_prompt_beat_ids",
+        "duplicate_prompt_beat_ids",
+        "unexpected_prompt_beat_ids",
+        "order_errors",
+        "unknown_reference_errors",
+        "prompt_content_errors",
+        "negative_prompt_errors",
+        "generation_option_errors",
+        "reference_binding_errors",
+        "prompt_hash_errors",
+        "forbidden_field_errors",
+        "warnings"
+      ],
+      "title": "PromptBundleValidationReport",
+      "type": "object"
+    },
+    "PromptComposerOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "enum": [
+            "1:1",
+            "3:4",
+            "4:3",
+            "9:16",
+            "16:9"
+          ],
+          "title": "Aspect Ratio",
+          "type": "string"
+        },
+        "image_count": {
+          "const": 1,
+          "title": "Image Count",
+          "type": "integer"
+        },
+        "prompt_language": {
+          "const": "en",
+          "title": "Prompt Language",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "target_asset_role": {
+          "const": "beat_visual",
+          "title": "Target Asset Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "prompt_language",
+        "aspect_ratio",
+        "target_asset_role",
+        "image_count"
+      ],
+      "title": "PromptComposerOptions",
+      "type": "object"
+    },
+    "PromptContinuityReferenceRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "reference_tag": {
+          "const": "prev_beat",
+          "title": "Reference Tag",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "same_setup",
+            "match_subject",
+            "match_location",
+            "match_composition",
+            "graphic_sequence"
+          ],
+          "title": "Relation",
+          "type": "string"
+        },
+        "source_beat_id": {
+          "pattern": "^beat_[0-9]{3,}$",
+          "title": "Source Beat Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference_tag",
+        "source_beat_id",
+        "relation"
+      ],
+      "title": "PromptContinuityReferenceRequirement",
+      "type": "object"
+    },
+    "PromptReferenceBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "anchor_id": {
+          "pattern": "^(char|loc|prop|subject)_[0-9]{3}$",
+          "title": "Anchor Id",
+          "type": "string"
+        },
+        "anchor_type": {
+          "enum": [
+            "character",
+            "location",
+            "prop",
+            "recurring_visual_subject"
+          ],
+          "title": "Anchor Type",
+          "type": "string"
+        },
+        "approval_set_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Approval Set Artifact Id",
+          "type": "string"
+        },
+        "image_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Image Artifact Id",
+          "type": "string"
+        },
+        "media_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Media Artifact Id",
+          "type": "string"
+        },
+        "media_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Media Sha256",
+          "type": "string"
+        },
+        "mime_type": {
+          "minLength": 1,
+          "title": "Mime Type",
+          "type": "string"
+        },
+        "reference_artifact_id": {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "title": "Reference Artifact Id",
+          "type": "string"
+        },
+        "source_definition_hash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Source Definition Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "anchor_type",
+        "anchor_id",
+        "reference_artifact_id",
+        "media_artifact_id",
+        "approval_set_artifact_id",
+        "source_definition_hash",
+        "media_sha256",
+        "mime_type",
+        "image_artifact_id"
+      ],
+      "title": "PromptReferenceBinding",
+      "type": "object"
+    },
+    "PromptSourceProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "representation_family": {
+          "enum": [
+            "character_environment_lived",
+            "object_evidence_closeup",
+            "text_diagram_editorial"
+          ],
+          "title": "Representation Family",
+          "type": "string"
+        },
+        "selected_character_refs": {
+          "items": {
+            "pattern": "^char_[0-9]{3}$",
+            "type": "string"
+          },
+          "title": "Selected Character Refs",
+          "type": "array"
+        },
+        "selected_location_refs": {
+          "items": {
+            "pattern": "^loc_[0-9]{3}$",
+            "type": "string"
+          },
+          "title": "Selected Location Refs",
+          "type": "array"
+        },
+        "selected_motif_refs": {
+          "items": {
+            "pattern": "^motif_[0-9]{3}$",
+            "type": "string"
+          },
+          "title": "Selected Motif Refs",
+          "type": "array"
+        },
+        "selected_native_visual_reference_ids": {
+          "items": {
+            "pattern": "^artifact_[0-9a-f]{12}$",
+            "type": "string"
+          },
+          "title": "Selected Native Visual Reference Ids",
+          "type": "array"
+        },
+        "selected_prop_refs": {
+          "items": {
+            "pattern": "^prop_[0-9]{3}$",
+            "type": "string"
+          },
+          "title": "Selected Prop Refs",
+          "type": "array"
+        },
+        "selected_recurring_visual_subject_refs": {
+          "items": {
+            "pattern": "^subject_[0-9]{3}$",
+            "type": "string"
+          },
+          "title": "Selected Recurring Visual Subject Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "representation_family",
+        "selected_character_refs",
+        "selected_location_refs",
+        "selected_prop_refs",
+        "selected_recurring_visual_subject_refs",
+        "selected_motif_refs",
+        "selected_native_visual_reference_ids"
+      ],
+      "title": "PromptSourceProvenance",
+      "type": "object"
+    },
+    "ValidationIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[A-Z0-9_]+$",
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "path": {
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "code",
+        "message"
+      ],
+      "title": "ValidationIssue",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifact": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PromptBundleModel"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifact_id": {
+      "anyOf": [
+        {
+          "pattern": "^artifact_[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Artifact Id"
+    },
+    "generated": {
+      "title": "Generated",
+      "type": "boolean"
+    },
+    "project_id": {
+      "pattern": "^project_[0-9a-f]{12}$",
+      "title": "Project Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "generated"
+  ],
+  "title": "PromptBundleProjectReadResponse",
+  "type": "object"
+}

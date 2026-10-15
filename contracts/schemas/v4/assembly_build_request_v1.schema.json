@@ -1,0 +1,227 @@
+{
+  "$defs": {
+    "BackgroundAudioBindingModel": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "start_time_units": {
+          "minimum": 0,
+          "title": "Start Time Units",
+          "type": "integer"
+        },
+        "end_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "End Time Units",
+          "type": "integer"
+        },
+        "source_start_time_units": {
+          "minimum": 0,
+          "title": "Source Start Time Units",
+          "type": "integer"
+        },
+        "gain_db": {
+          "maximum": 12,
+          "minimum": -60,
+          "title": "Gain Db",
+          "type": "number"
+        },
+        "loop_mode": {
+          "enum": [
+            "none",
+            "loop"
+          ],
+          "title": "Loop Mode",
+          "type": "string"
+        },
+        "fade_in_time_units": {
+          "minimum": 0,
+          "title": "Fade In Time Units",
+          "type": "integer"
+        },
+        "fade_out_time_units": {
+          "minimum": 0,
+          "title": "Fade Out Time Units",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "start_time_units",
+        "end_time_units",
+        "source_start_time_units",
+        "gain_db",
+        "loop_mode",
+        "fade_in_time_units",
+        "fade_out_time_units"
+      ],
+      "title": "BackgroundAudioBindingModel",
+      "type": "object"
+    },
+    "SFXBindingModel": {
+      "additionalProperties": false,
+      "properties": {
+        "sfx_id": {
+          "title": "Sfx Id",
+          "type": "string"
+        },
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "anchor_type": {
+          "enum": [
+            "absolute",
+            "scene_start",
+            "beat_start",
+            "beat_end"
+          ],
+          "title": "Anchor Type",
+          "type": "string"
+        },
+        "scene_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scene Id"
+        },
+        "beat_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Beat Id"
+        },
+        "start_time_units": {
+          "minimum": 0,
+          "title": "Start Time Units",
+          "type": "integer"
+        },
+        "source_start_time_units": {
+          "minimum": 0,
+          "title": "Source Start Time Units",
+          "type": "integer"
+        },
+        "duration_time_units": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Time Units",
+          "type": "integer"
+        },
+        "gain_db": {
+          "maximum": 12,
+          "minimum": -60,
+          "title": "Gain Db",
+          "type": "number"
+        }
+      },
+      "required": [
+        "sfx_id",
+        "artifact_id",
+        "anchor_type",
+        "start_time_units",
+        "source_start_time_units",
+        "duration_time_units",
+        "gain_db"
+      ],
+      "title": "SFXBindingModel",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "expected_assembly_plan_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Assembly Plan Artifact Id"
+    },
+    "expected_subtitle_srt_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Subtitle Srt Artifact Id"
+    },
+    "expected_subtitle_vtt_artifact_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Subtitle Vtt Artifact Id"
+    },
+    "expected_scene_plan_artifact_id": {
+      "title": "Expected Scene Plan Artifact Id",
+      "type": "string"
+    },
+    "expected_scene_asset_manifest_artifact_id": {
+      "title": "Expected Scene Asset Manifest Artifact Id",
+      "type": "string"
+    },
+    "expected_narration_audio_artifact_id": {
+      "title": "Expected Narration Audio Artifact Id",
+      "type": "string"
+    },
+    "expected_beat_timing_map_artifact_id": {
+      "title": "Expected Narration Timing Map Artifact Id",
+      "type": "string"
+    },
+    "background_music": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BackgroundAudioBindingModel"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "sound_effects": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SFXBindingModel"
+      },
+      "title": "Sound Effects",
+      "type": "array"
+    }
+  },
+  "required": [
+    "expected_scene_plan_artifact_id",
+    "expected_scene_asset_manifest_artifact_id",
+    "expected_narration_audio_artifact_id",
+    "expected_beat_timing_map_artifact_id"
+  ],
+  "title": "AssemblyBuildRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/v4/assembly_build_request_v1.schema.json"
+}

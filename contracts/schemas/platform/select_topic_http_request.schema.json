@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SelectTopicHttpRequestV3",
+  "description": "Request body for PUT /api/v3/projects/{project_id}/selected-topic. Persists the selected-topic pair on the project. Backend validates ownership, currency, and uniqueness of the requested idea_id.",
+  "type": "object",
+  "required": [
+    "topic_ideas_artifact_id",
+    "idea_id"
+  ],
+  "properties": {
+    "topic_ideas_artifact_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The artifact_id of the active Topic Ideas artifact for this project."
+    },
+    "idea_id": {
+      "type": "string",
+      "pattern": "^idea_[0-9]{3}$",
+      "description": "Backend-assigned idea ID to select. Must appear exactly once in the topic ideas artifact."
+    }
+  },
+  "additionalProperties": false
+}

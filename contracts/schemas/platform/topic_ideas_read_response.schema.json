@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://youtube-ai-studio.local/contracts/schemas/platform/topic_ideas_read_response.schema.json",
+  "title": "Topic Ideas Read Response V3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated", "artifact_id", "artifact"],
+  "properties": {
+    "generated": {"type": "boolean"},
+    "artifact_id": {"type": ["string", "null"]},
+    "artifact": {
+      "oneOf": [
+        {"$ref": "./topic_ideas.schema.json"},
+        {"type": "null"}
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "generated": {"const": false}
+        }
+      },
+      "then": {
+        "properties": {
+          "artifact_id": {"type": "null"},
+          "artifact": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "generated": {"const": true}
+        }
+      },
+      "then": {
+        "properties": {
+          "artifact_id": {"type": "string"},
+          "artifact": {"$ref": "./topic_ideas.schema.json"}
+        }
+      }
+    }
+  ]
+}
