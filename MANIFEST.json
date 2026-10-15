@@ -295,7 +295,7 @@
     "docs/65_DUAL_OFFICIAL_LLM_PHASE1_REPORT.md",
     "docs/67_SCENE_BREAKDOWN_VISUAL_MERGE_COMPLIANCE.md"
   ],
-  "package_file_count_excluding_manifest": 812,
+  "package_file_count_excluding_manifest": 815,
   "package_files": [
     {
       "path": ".github/workflows/refresh-release-manifest.yml",
@@ -2641,6 +2641,21 @@
       "path": "docs/adr/voice_durable_workflow.md",
       "size_bytes": 21695,
       "sha256": "4c175e82e3764e5045f337a483d73b2706a50ae2f0560ed6a174f5209346bc8a"
+    },
+    {
+      "path": "docs/history/CODEX_P0_ON_NEW_MAIN_PROMPT.md",
+      "size_bytes": 5293,
+      "sha256": "5a66940cb6c67cc9398534cccc6a9e8a2ae79b03dd4cca65396cd31516851c0c"
+    },
+    {
+      "path": "docs/history/HISTORY_STUDIO_MAIN_BASED_MIGRATION_PLAN_V2.md",
+      "size_bytes": 24154,
+      "sha256": "ac47ca4b6552dc20c7e223b98a65fbe3a2522f22aa0916e4fdae9231ed86de3d"
+    },
+    {
+      "path": "docs/history/MAIN_CODEBASE_AUDIT_2026-10-15.md",
+      "size_bytes": 11053,
+      "sha256": "a941b41665a7501142f999a2261a7f2aa2179563de247ca91f84d6666cbbdcde"
     },
     {
       "path": "index.html",
