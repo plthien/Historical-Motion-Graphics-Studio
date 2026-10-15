@@ -27,7 +27,7 @@ function MapBackdrop() {
 function ArchiveBackdrop() {
   const frame = useCurrentFrame();
   const turn = interpolate(frame, [0, 600], [-4, -2], {extrapolateLeft:'clamp', extrapolateRight:'clamp'});
-  return <div style={{position: 'absolute', left: 130, top: 130, width: 870, height: 720, transform: `translateX(${Math.round(frame/30)*1.5}px) rotate(${turn}deg)`, border: '15px solid #fbf8ed', background: '#cec7b8', boxShadow: '25px 28px 30px #4e46384c'}}>
+  return <div style={{position: 'absolute', left: 130, top: 130, width: 870, height: 720, transform: `translateX(${frame/30*1.5}px) rotate(${turn}deg)`, border: '15px solid #fbf8ed', background: '#cec7b8', boxShadow: '25px 28px 30px #4e46384c'}}>
     <div style={{position: 'absolute', left: 120, top: -30, width: 240, height: 65, background: '#d6c7a099', transform: 'rotate(-7deg)'}}/>
     <div style={{height: '100%', display: 'grid', placeItems: 'center', border: '3px solid #6e665a'}}>
       <div style={{width: 460, height: 280, border: '8px dashed #80786b', display: 'grid', placeItems: 'center', textAlign: 'center', fontWeight: 700, fontSize: 40, color: '#766d5d'}}>ARCHIVAL IMAGE<br/>PLACEHOLDER</div>
