@@ -1,13 +1,15 @@
 {
-  "name": "history-motion-r0",
-  "version": "0.1.0",
+  "name": "historical-remotion-p0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5174",
     "build": "vite build",
     "test": "node --test tests/*.test.mjs",
-    "render": "remotion render src/index.jsx HistoryPOC out/history-poc.mp4 --codec h264"
+    "render": "remotion render src/index.jsx HistoryPOC out/history-poc.mp4 --codec h264 --log error",
+    "test:player": "node tests/player-smoke.mjs",
+    "verify:video": "node scripts/verify-video.mjs"
   },
   "dependencies": {
     "@remotion/player": "4.0.535",
@@ -18,6 +20,7 @@
   "devDependencies": {
     "@remotion/cli": "4.0.535",
     "@vitejs/plugin-react": "4.3.1",
-    "vite": "5.4.11"
+    "vite": "5.4.11",
+    "playwright": "1.56.1"
   }
 }
