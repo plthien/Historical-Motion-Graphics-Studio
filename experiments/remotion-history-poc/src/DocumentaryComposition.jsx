@@ -56,7 +56,8 @@ function MotionItem({event}) {
   const pop = spring({fps, frame, config: {damping: 17, stiffness: 160}});
   const opacity = interpolate(frame, [0, 8, Math.max(9, event.durationFrames - 12), event.durationFrames], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const common = {position: 'absolute', zIndex: event.layer, opacity, transform: 'translateY(' + ((1 - pop) * 35) + 'px) scale(' + (0.88 + .12 * pop) + ')'};
-  if (event.kind === 'route') return <Route/>;
+  if (event.kind === 'route') return <div style={{position: 'absolute', inset: 0, zIndex: event.layer, opacity}}><Route/></div>;
+  if (event.kind === 'placeholder') return <div style={{...common, left: 350, top: 400, padding: 25, border:'7px dashed #817763', fontWeight:900, fontSize:40, color:'#605746'}}>NO VERIFIED ARCHIVE PHOTO</div>;
   if (event.kind === 'photo') return event.assetPath ? <Img src={staticFile(event.assetPath)} style={{...common, left: 165, top: 160, width: 780, height: 650, objectFit: 'contain'}}/> : null;
   if (event.kind === 'stamp') return <div style={{...common, top: 745, right: 150, padding: '16px 38px', color: red, border: '12px solid '+red, fontSize: 75, fontWeight: 900, transform: common.transform + ' rotate(-10deg)'}}>{event.text}</div>;
   if (event.kind === 'timestamp') return <div style={{...common, left: 132, top: 590, background: yellow, fontSize: 95, fontWeight: 900, padding: '15px 38px'}}>{event.text}</div>;

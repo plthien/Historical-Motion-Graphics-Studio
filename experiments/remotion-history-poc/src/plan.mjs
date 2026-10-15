@@ -38,7 +38,7 @@ export const motionPlan = {
       startFrame: 1200,
       endFrame: 1800,
       events: [
-        {id: 'photo', kind: 'photo', atFrame: 35, durationFrames: 520, text: 'TƯ LIỆU LỊCH SỬ', layer: 2},
+        {id: 'photo', kind: 'placeholder', atFrame: 35, durationFrames: 520, text: 'ARCHIVE IMAGE PLACEHOLDER', layer: 2},
         {id: 'archive-heading', kind: 'headline', atFrame: 128, durationFrames: 430, text: 'MỘT SỰ KIỆN,\nNHIỀU HỆ QUẢ', layer: 3},
         {id: 'archive-note', kind: 'label', atFrame: 310, durationFrames: 250, text: 'ẢNH CẦN XÁC MINH NGUỒN', layer: 4},
         {id: 'archive-stamp', kind: 'stamp', atFrame: 430, durationFrames: 135, text: 'HỆ QUẢ', layer: 5}
@@ -48,7 +48,7 @@ export const motionPlan = {
 };
 
 const kinds = new Set(['title','map','archive']);
-const events = new Set(['headline','timestamp','label','stamp','route','photo']);
+const events = new Set(['headline','timestamp','label','stamp','route','photo','placeholder']);
 const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const int = x => Number.isSafeInteger(x);
 const issue = (a,path,code) => a.push({path,code,message:code});
@@ -83,19 +83,12 @@ export function validatePlan(plan) {
    if(!int(e.atFrame)||e.atFrame<0||!int(e.durationFrames)||e.durationFrames<=0||e.atFrame+e.durationFrames>s.endFrame-s.startFrame) issue(a,ep,'event_timing');
    if(!int(e.layer)||e.layer<0||e.layer>99) issue(a,ep+'.layer','layer');
    if(typeof e.text!=='string'||e.text.length>220||e.text.length<1) issue(a,ep+'.text','text');
+   if(e.kind==='photo' && e.assetPath===undefined)issue(a,ep+'.assetPath','asset_required');
    if(e.assetPath!==undefined&&(!safePath(e.assetPath)||!/\.(png|jpe?g|webp)$/i.test(e.assetPath)))issue(a,ep+'.assetPath','asset_path');
   }
  }
  if(cursor!==1800) issue(a,'$.setups','coverage');
  return a;
-}
-export async function validateResolvedAssets(plan,root){
- const fs=await import('node:fs/promises'),path=await import('node:path');
- const errors=[],base=await fs.realpath(root);
- const paths=[plan?.audioSrc,...(plan?.setups||[]).flatMap(s=>(s?.events||[]).map(e=>e?.assetPath))].filter(x=>x!==null&&x!==undefined);
- for(const p of paths){if(!safePath(p)){issue(errors,p,'asset_path');continue;}
- try{const real=await fs.realpath(path.resolve(base,p));if(!real.startsWith(base+path.sep)||!(await fs.stat(real)).isFile())issue(errors,p,'asset_escape');}catch{issue(errors,p,'asset_missing');}}
- return errors;
 }
 export function setupAtFrame(plan,frame){
  if(!object(plan)||!Array.isArray(plan.setups)||!int(frame)||frame<0||frame>=plan.durationFrames)return null;
