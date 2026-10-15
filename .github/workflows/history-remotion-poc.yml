@@ -29,6 +29,10 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: experiments/remotion-history-poc/package-lock.json
+      - name: Immutable donor ledger verification
+        run: |
+          python tools/history_p0_source_audit.py --verify
+          python tools/check_history_governance.py
       - name: Exact lockfile required
         working-directory: experiments/remotion-history-poc
         run: test -f package-lock.json
@@ -113,8 +117,15 @@ jobs:
       - name: Install independent FFprobe/FFmpeg on Windows
         shell: pwsh
         run: |
-          choco install ffmpeg -y --no-progress
-          if (!(Get-Command ffprobe -ErrorAction SilentlyContinue)) { throw "ffprobe unavailable after install" }
+          if (!(Get-Command ffprobe -ErrorAction SilentlyContinue)) {
+            for ($attempt=1; $attempt -le 3; $attempt++) {
+              choco install ffmpeg -y --no-progress --ignore-package-exit-codes
+              if (Get-Command ffprobe -ErrorAction SilentlyContinue) { break }
+              Write-Warning "Chocolatey unavailable, retry $attempt/3"
+              Start-Sleep -Seconds 8
+            }
+          }
+          if (!(Get-Command ffprobe -ErrorAction SilentlyContinue)) { throw "FFPROBE_PREREQUISITE_UNAVAILABLE after 3 Chocolatey attempts" }
       - name: Windows Remotion render and FFprobe
         working-directory: experiments/remotion-history-poc
         run: |
