@@ -1,0 +1,66 @@
+name: History Remotion P0 proof
+on:
+  push:
+    branches: [feat/p0-history-remotion-feasibility]
+  pull_request:
+    paths: ['experiments/remotion-history-poc/**', '.github/workflows/history-remotion-poc.yml']
+permissions:
+  contents: read
+jobs:
+  remotion-linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Dependency lockfile gate
+        working-directory: experiments/remotion-history-poc
+        run: test -f package-lock.json
+      - name: Install pinned dependencies
+        working-directory: experiments/remotion-history-poc
+        run: npm ci
+      - name: Validate motion plan
+        working-directory: experiments/remotion-history-poc
+        run: npm test
+      - name: Build
+        working-directory: experiments/remotion-history-poc
+        run: npm run build
+      - name: Remotion browser
+        working-directory: experiments/remotion-history-poc
+        run: npx remotion browser ensure
+      - name: Render 1800 frames
+        working-directory: experiments/remotion-history-poc
+        run: npm run render
+      - name: FFprobe and decode
+        working-directory: experiments/remotion-history-poc
+        run: |
+          ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=codec_name,width,height,r_frame_rate,nb_read_frames -of json out/history-poc.mp4
+          ffmpeg -v error -i out/history-poc.mp4 -f null -
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p0-linux-output
+          path: experiments/remotion-history-poc/out/
+  remotion-windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Lockfile
+        working-directory: experiments/remotion-history-poc
+        run: if (!(Test-Path package-lock.json)) { throw "Missing lockfile" }
+      - name: Install and test
+        working-directory: experiments/remotion-history-poc
+        run: |
+          npm ci
+          npm test
+          npm run build
+      - name: Windows Remotion render
+        working-directory: experiments/remotion-history-poc
+        run: |
+          npx remotion browser ensure
+          npm run render
+          ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate -of json out/history-poc.mp4
