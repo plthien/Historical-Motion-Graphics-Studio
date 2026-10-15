@@ -94,7 +94,7 @@ def audit(root: Path = ROOT) -> list[str]:
     code_rules = root / "docs/history/CODING_RULES.md"
     if code_rules.is_file():
         text = code_rules.read_text(encoding="utf-8")
-        for marker in ("NO LLM API", "P1", ".agents/skills", "Remotion", "MANIFEST.json"):
+        for marker in ("No OpenAI/Anthropic", "P1", ".agents/skills", "Remotion", "MANIFEST.json"):
             if marker not in text:
                 errors.append(f"NEW coding rules missing required authority marker: {marker}")
     for workflow in (root / ".github/workflows").glob("*.yml"):
