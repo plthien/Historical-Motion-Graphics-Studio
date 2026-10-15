@@ -17,6 +17,9 @@ P0 acceptance additionally requires a complete machine-readable file ownership l
 
 ## Read first
 
+**Also read [phases/P0_REMOTION_FEASIBILITY.md](phases/P0_REMOTION_FEASIBILITY.md) and [phases/README.md](phases/README.md). The phase document is the detailed task contract. Never add a root release MANIFEST.json, generator or test.**
+
+
 1. docs/history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md (AUTHORITATIVE)
 2. docs/history/MAIN_CODEBASE_AUDIT_2026-10-15.md
 3. docs/history/HISTORY_STUDIO_MAIN_BASED_MIGRATION_PLAN_V2.md (SUPERSEDED; do not implement from it)

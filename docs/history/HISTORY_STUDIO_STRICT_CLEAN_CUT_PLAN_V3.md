@@ -1,6 +1,8 @@
 
 # Historical Motion Graphics Studio — STRICT CLEAN-CUT Implementation Plan v3
 
+**Nine executable phase specifications:** [phases/README.md](phases/README.md) and its P0–P8 detailed plans. The phase-specific files are required reading for Codex before implementing any stage; this overview does NOT replace their API/schema/test gates.
+
 **STATUS: AUTHORITATIVE PROPOSED MIGRATION PLAN.** Supersedes v2 and all earlier roadmap assumptions wherever they propose retaining the old YouTube Studio runtime through P8, keeping old database tables/migrations, preserving old production artifacts, or supporting old Scene/Beat APIs.
 
 **Repository:** plthien/Historical-Motion-Graphics-Studio.

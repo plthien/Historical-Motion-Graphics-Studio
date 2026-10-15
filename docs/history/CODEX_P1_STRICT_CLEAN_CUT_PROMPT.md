@@ -3,6 +3,9 @@
 
 ## Scope and repository safety
 
+**Also read [phases/P1_ATOMIC_CLEAN_CUT.md](phases/P1_ATOMIC_CLEAN_CUT.md) and [phases/README.md](phases/README.md). These are the detailed implementation contract. No root release MANIFEST.json/generator/check.**
+
+
 Implement **P1 only**, as specified by docs/history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md.
 Repository must be plthien/Historical-Motion-Graphics-Studio.
 Branch MUST be a new feature branch from exact accepted main/staging SHA, NOT the old feature prototype, and never main directly. Verify repo, main SHA, working tree and read architecture docs before any write. No automatic merge or changes to GitHub settings.
