@@ -94,7 +94,7 @@ for p in files:
     if Path(p).suffix not in EXTS: continue
     # Frozen donor object, NEVER a file from the current PR working tree.
     contents[p]=immutable_source(p)
-    direct[p]=sorted(python_deps(p,data) if p.endswith(".py") else relative_deps(p,data))
+    direct[p]=sorted(python_deps(p,contents[p]) if p.endswith(".py") else relative_deps(p,contents[p]))
 
 tests=[p for p in files if p.startswith("tests/")]
 test_map={}
