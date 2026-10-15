@@ -1,6 +1,9 @@
 
 # Codex — P1 STRICT HARD CUTOVER (run only after accepted P0)
 
+**NON-NEGOTIABLE FIRST READ:** root `AGENTS.md` → `docs/history/CODING_RULES.md` (**only active coding rules**) → `.agents/skills/README.md` → `.agents/skills/clean-cut-migration/SKILL.md` and `.agents/skills/implementation-audit/SKILL.md` and agent role instructions. Ignore old YTB rules/skills and source-of-truth.
+
+
 ## Scope and repository safety
 
 **Also read [phases/P1_ATOMIC_CLEAN_CUT.md](phases/P1_ATOMIC_CLEAN_CUT.md) and [phases/README.md](phases/README.md). These are the detailed implementation contract. No root release MANIFEST.json/generator/check.**
