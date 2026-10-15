@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-import json
+import zipfile
+
+from tools.package_windows_release import build_release, _collect_release_paths
 from pathlib import Path
 
 
@@ -47,8 +49,17 @@ def test_durable_render_launcher_preflights_ffmpeg_and_starts_host() -> None:
     assert "rq" not in launcher.lower()
 
 
-def test_windows_release_entries_fit_short_root_policy() -> None:
-    manifest = json.loads((ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
-    paths = [f"yas3/{record['path']}" for record in manifest["package_files"]]
-    paths.append("yas3/MANIFEST.json")
-    assert max(map(len, paths)) <= 180
+def test_windows_release_does_not_depend_on_or_include_root_manifest(tmp_path: Path) -> None:
+    (tmp_path / "app").mkdir()
+    (tmp_path / "app" / "main.py").write_text("print('ok')\n", encoding="utf-8")
+    (tmp_path / "README.md").write_text("Example\n", encoding="utf-8")
+    (tmp_path / "MANIFEST.json").write_text('{"obsolete":true}\n', encoding="utf-8")
+    (tmp_path / "sample.db").write_bytes(b"private data")
+    (tmp_path / ".env").write_text("SECRET=1", encoding="utf-8")
+    files = _collect_release_paths(tmp_path)
+    assert files == ["README.md", "app/main.py"]
+    zip_path = tmp_path.parent / "history-release-test.zip"
+    report = build_release(tmp_path, zip_path, "history", 180)
+    assert report["entry_count"] == 2
+    with zipfile.ZipFile(zip_path) as archive:
+        assert archive.namelist() == ["history/README.md", "history/app/main.py"]

@@ -45,6 +45,8 @@ def _classification(relative: str, token: str) -> str:
     lower = relative.lower()
     if relative == "tools/audit_voice_first_legacy.py":
         return "STATIC_AUDIT_TOOLING"
+    if relative == "AGENTS.md" or relative.startswith(".agents/skills/"):
+        return "DOCUMENTATION_OR_SPEC"
     if relative == "MANIFEST.json":
         return "GENERATED_MANIFEST_METADATA"
     if relative.startswith("alembic/versions/"):
