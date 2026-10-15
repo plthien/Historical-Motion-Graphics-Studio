@@ -204,7 +204,7 @@ report={"schemaVersion":"history_source_ownership_ledger.v2",
   "Prove old user DB/media remains untouched and is never imported or upgraded"],
  "entries":entries}
 output=args.output
-data=(json.dumps(report,indent=2,ensure_ascii=False)+"\\n").encode("utf-8")
+data=(json.dumps(report,indent=2,ensure_ascii=False)+"\n").encode("utf-8")
 if args.verify:
     if not output.exists() or output.read_bytes()!=data:
         raise SystemExit("P0_LEDGER_OUTDATED: frozen donor inventory differs from checked-in report")
