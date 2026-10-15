@@ -43,6 +43,12 @@ jobs:
       - name: Render 1800 real frames
         working-directory: experiments/remotion-history-poc
         run: npm run render
+      - name: Install independent Linux FFmpeg and FFprobe
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          command -v ffprobe
+          command -v ffmpeg
       - name: Independent FFprobe + full video decode
         working-directory: experiments/remotion-history-poc
         run: npm run verify:video
