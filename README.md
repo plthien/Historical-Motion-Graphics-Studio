@@ -1,3 +1,15 @@
+# Historical Motion Graphics Studio — Repository Transition
+
+**IMPORTANT: The codebase is still the donated YouTube AI Studio baseline until P1 hard-cutover is implemented and accepted. This README must NOT be interpreted as proof that a working History Studio exists.**
+
+**The ONLY current development instructions are [AGENTS.md](AGENTS.md), [History Coding Rules](docs/history/CODING_RULES.md), [NEW skills](.agents/skills/README.md), [History phase plans](docs/history/phases/README.md) and [Strict Clean-Cut v3](docs/history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md).** Former YouTube Studio docs, old coding rules, internal LLM provider prompts and image-per-Beat policies are donor/historical context only. No LLM API, no old YTB DB/data/support, and no direct push to main. Do not resurrect `MANIFEST.json` or its auto-refresh/check steps.
+
+## Donor codebase snapshot (NOT the target historical pipeline)
+
+The description below documents the YTB Studio implementation uploaded to `main` as migration source. It is **not** an instruction to implement or preserve its workflows. P1 removes legacy production code entirely.
+
+---
+
 # YouTube AI Studio V3
 
 A local-first, schema-driven YouTube production application. Creative authoring is performed in external ChatGPT conversations; the application builds authoritative prompts that request named JSON files, imports strict JSON results, publishes canonical artifacts, and runs the deterministic/media production pipeline.

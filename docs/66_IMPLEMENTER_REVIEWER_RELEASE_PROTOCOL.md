@@ -1,3 +1,11 @@
+# Legacy YTB Implementer/Reviewer Protocol — SUPERSEDED
+
+**This old protocol is NOT an active coding rule, skill or release authority.** It describes YTB image-per-beat FFmpeg tests and prior candidate CI only. Use [AGENTS.md](../AGENTS.md), [History Coding Rules](history/CODING_RULES.md), [History Phase Plans](history/phases/README.md) and [Implementation Audit Skill](../.agents/skills/implementation-audit/SKILL.md) exclusively.
+
+The previous protocol has been retained below as donor audit history. Do not treat it as instructions or accept its V4 CI checks as proof the Historical Studio implementation passed.
+
+---
+
 # Implementer–Reviewer Release Protocol
 
 ## Purpose

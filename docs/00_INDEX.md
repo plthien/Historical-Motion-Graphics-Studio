@@ -1,34 +1,17 @@
-# Documentation Index
+# Historical Motion Graphics Studio — Active Documentation Index
 
-## Mandatory authority
+## ONLY implementation authority
 
-1. [`../00_START_HERE.md`](../00_START_HERE.md)
-2. [`32_CODING_RULES.md`](32_CODING_RULES.md)
-3. [`99_SOURCE_OF_TRUTH.md`](99_SOURCE_OF_TRUTH.md)
-4. [`66_IMPLEMENTER_REVIEWER_RELEASE_PROTOCOL.md`](66_IMPLEMENTER_REVIEWER_RELEASE_PROTOCOL.md)
-5. [`68_EXTERNAL_AUTHORING_RULE_COMPLIANCE.md`](68_EXTERNAL_AUTHORING_RULE_COMPLIANCE.md)
-6. [`69_UNIFIED_IMAGE_HIDDEN_PROMPT_BUNDLE_COMPLIANCE.md`](69_UNIFIED_IMAGE_HIDDEN_PROMPT_BUNDLE_COMPLIANCE.md)
+1. [Root AGENTS.md](../AGENTS.md) — mandatory entrypoint.
+2. [History Coding Rules](history/CODING_RULES.md) — **ONLY active coding rulebook**. The old `32_CODING_RULES.md` was deleted.
+3. [Strict Clean-Cut Plan v3](history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md) — P1 removes all YTB code/data/DB support.
+4. [P0–P8 Detailed Phase Plans](history/phases/README.md) — exact phase contracts and gates.
+5. [New Skills Directory](../.agents/skills/README.md) — **ONLY authorized coding skills** in `.agents/skills/*/SKILL.md`.
+6. [New Agent Roles](history/agents/README.md) — reviewers/implementers for each phase.
+7. [Codex P0](history/CODEX_P0_ON_NEW_MAIN_PROMPT.md) / [Codex P1](history/CODEX_P1_STRICT_CLEAN_CUT_PROMPT.md) entrypoints.
 
-## Product and architecture
+## Donor source documentation is NOT coding guidance
 
-- `01_V3_PRODUCT_SCOPE.md`
-- `02_V3_ARCHITECTURE.md`
-- `03_CHANNEL_DNA_V3.md`
-- `04_CHANNEL_AND_PROJECT_FLOW.md`
-- `05_GENERATE_TOPIC_IDEAS_V3.md`
-- `06_GENERATE_SCRIPT_V3.md`
-- `07_API_AND_STORAGE_V3.md`
-- `08_UI_UX_V3.md`
-- `09_VALIDATION_AND_TEST_PLAN.md`
-- `10_IMPLEMENTATION_PHASE_PLAN.md`
-- `73_CINEMATIC_YOUTUBE_ENTERTAINMENT_AUTHORING.md`
+All other `docs/*_V3*`, `docs/99_SOURCE_OF_TRUTH.md`, `docs/66_IMPLEMENTER_REVIEWER_RELEASE_PROTOCOL.md`, legacy V4 Readmes, old YTB integration specs and project history are **read-only background for selective code extraction**. They do NOT provide alternate coding rules, skills, stage contracts or authority. Do not implement based on outdated Scene/Beat/image-per-beat/LLM API instructions. The old LLM implementation-plan and Codex prompts have been removed.
 
-## Historical implementation records
-
-The following documents are retained only as superseded implementation history and are not runtime authority:
-
-- `58_TASK10_LEGACY_REMOVAL.md`
-- `64_DUAL_OFFICIAL_LLM_IMPLEMENTATION_PLAN_2_PHASES.md`
-- `65_DUAL_OFFICIAL_LLM_CODEX_PROMPTS_2_PHASES.md`
-- `65_DUAL_OFFICIAL_LLM_PHASE1_REPORT.md`
-- `67_SCENE_BREAKDOWN_VISUAL_MERGE_COMPLIANCE.md`
+**No root MANIFEST.json, no manifest refresh/verification; no direct push to main; no internal LLM API.**

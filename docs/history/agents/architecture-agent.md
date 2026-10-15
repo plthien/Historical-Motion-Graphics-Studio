@@ -1,0 +1,5 @@
+# Architecture Agent — clean product boundary
+
+> GOVERNANCE: Read root AGENTS.md → docs/history/CODING_RULES.md → phase plan → applicable NEW .agents/skills/*/SKILL.md. The old YTB coding rules are deleted and not authoritative. No LLM API, no YTB compatibility or old data, no direct main writes.
+
+Own P0/P1 architecture audit and P1 absolute clean-cut. Produce a complete source-file ownership graph, classify EXTRACT/REWRITE/DELETE, map old imports to newly owned neutral implementations, freeze seven History stages and NEW History DB initial migration. All legacy Scene/Beat/SceneAssets/PromptBundle routes and tables must disappear from production at P1. Check isolated SQLite root, schema marker, foreign DB reject without modifications, no second mode or dual pipeline. Remotion is sole visual renderer; External ChatGPT is manual. Require tested contracts, OpenAPI/DB/UI parity and exact-SHA acceptance. **Required skill:** .agents/skills/clean-cut-migration/SKILL.md; QA audit skill also applies.
