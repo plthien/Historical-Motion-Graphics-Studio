@@ -47,50 +47,62 @@ export const motionPlan = {
   ]
 };
 
-const allowedKinds = new Set(['title', 'map', 'archive']);
-const allowedEvents = new Set(['headline', 'timestamp', 'label', 'stamp', 'route', 'photo']);
-const isPositiveInteger = (value) => Number.isInteger(value) && value > 0;
-const isNonnegativeInteger = (value) => Number.isInteger(value) && value >= 0;
-
+const kinds = new Set(['title','map','archive']);
+const events = new Set(['headline','timestamp','label','stamp','route','photo']);
+const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
+const int = x => Number.isSafeInteger(x);
+const issue = (a,path,code) => a.push({path,code,message:code});
+const keys = (x,allowed,path,a) => Object.keys(x).forEach(k => {if(!allowed.includes(k)) issue(a,path+'.'+k,'unknown_field')});
+export const safePath = x => typeof x === 'string' && x.length < 241 && /^[A-Za-z0-9_./-]+$/.test(x) && !x.startsWith('/') && !x.split('/').some(s=>!s||s==='.'||s==='..') && !/^[a-z]+:/i.test(x);
 export function validatePlan(plan) {
-  const errors = [];
-  if (!plan || typeof plan !== 'object' || Array.isArray(plan)) return ['Plan must be an object'];
-  if (plan.schemaVersion !== 'history_motion_poc.v1') errors.push('Unsupported schemaVersion');
-  if (!isPositiveInteger(plan.fps) || !isPositiveInteger(plan.width) || !isPositiveInteger(plan.height) || !isPositiveInteger(plan.durationFrames)) errors.push('Invalid composition metadata');
-  if (plan.audioSrc !== null && plan.audioSrc !== undefined && (typeof plan.audioSrc !== 'string' || !/^[A-Za-z0-9_/-]+\.(wav|mp3)$/.test(plan.audioSrc) || plan.audioSrc.includes('..') || plan.audioSrc.startsWith('/'))) errors.push('Invalid local audioSrc');
-  if (!Array.isArray(plan.setups) || !plan.setups.length) return [...errors, 'At least one setup is required'];
-  let cursor = 0;
-  const setupIds = new Set(), eventIds = new Set();
-  for (const setup of plan.setups) {
-    if (typeof setup.id !== 'string' || !setup.id || setupIds.has(setup.id)) errors.push('Invalid or duplicate setup id');
-    setupIds.add(setup.id);
-    if (!allowedKinds.has(setup.kind)) errors.push('Invalid setup kind for ' + setup.id);
-    if (!isNonnegativeInteger(setup.startFrame) || !isPositiveInteger(setup.endFrame) || setup.endFrame <= setup.startFrame || setup.startFrame !== cursor) errors.push('Setups must be contiguous, ordered and nonempty: ' + setup.id);
-    const setupLength = setup.endFrame - setup.startFrame;
-    cursor = setup.endFrame;
-    if (!Array.isArray(setup.events)) {errors.push('Events missing for ' + setup.id); continue;}
-    for (const event of setup.events) {
-      if (typeof event.id !== 'string' || !event.id || eventIds.has(event.id)) errors.push('Invalid or duplicate event id');
-      eventIds.add(event.id);
-      if (!allowedEvents.has(event.kind)) errors.push('Invalid event kind for ' + event.id);
-      if (!isNonnegativeInteger(event.atFrame) || !isPositiveInteger(event.durationFrames) || event.atFrame + event.durationFrames > setupLength) errors.push('Event outside setup: ' + event.id);
-      if (!Number.isInteger(event.layer) || event.layer < 0 || event.layer > 99) errors.push('Invalid layer for ' + event.id);
-      if (typeof event.text !== 'string' || event.text.length > 220) errors.push('Invalid event text: ' + event.id);
-      if (event.assetPath !== undefined && (typeof event.assetPath !== 'string' || !/^[A-Za-z0-9_/-]+\.(png|jpg|jpeg|webp)$/.test(event.assetPath) || event.assetPath.includes('..') || event.assetPath.startsWith('/'))) errors.push('Invalid local asset path: ' + event.id);
-    }
+ const a=[];
+ if(!object(plan)) return [{path:'$',code:'root_type',message:'Expected object'}];
+ keys(plan,['schemaVersion','fps','width','height','durationFrames','audioSrc','setups'],'$',a);
+ if(plan.schemaVersion!=='history_motion_poc.v1') issue(a,'$.schemaVersion','version');
+ if(plan.fps!==30||plan.width!==1920||plan.height!==1080||plan.durationFrames!==1800) issue(a,'$','composition');
+ if(plan.audioSrc!==null && (plan.audioSrc===undefined||!safePath(plan.audioSrc)||! /\.(wav|mp3)$/i.test(plan.audioSrc))) issue(a,'$.audioSrc','audio');
+ if(!Array.isArray(plan.setups)||!plan.setups.length||plan.setups.length>20){issue(a,'$.setups','setups');return a;}
+ const sid=new Set(),eid=new Set();let cursor=0;
+ for(const [i,s] of plan.setups.entries()){
+  const sp='$.setups['+i+']';
+  if(!object(s)){issue(a,sp,'setup_type');continue;}
+  keys(s,['id','kind','startFrame','endFrame','events'],sp,a);
+  if(typeof s.id!=='string'||!s.id||sid.has(s.id)) issue(a,sp+'.id','setup_id');
+  else sid.add(s.id);
+  if(!kinds.has(s.kind)) issue(a,sp+'.kind','setup_kind');
+  if(!int(s.startFrame)||!int(s.endFrame)||s.startFrame!==cursor||s.endFrame<=s.startFrame||s.endFrame>1800){issue(a,sp,'setup_timing');}
+  if(int(s.endFrame)) cursor=s.endFrame;
+  if(!Array.isArray(s.events)||s.events.length>100){issue(a,sp+'.events','events');continue;}
+  for(const [j,e] of s.events.entries()){
+   const ep=sp+'.events['+j+']';
+   if(!object(e)){issue(a,ep,'event_type');continue;}
+   keys(e,['id','kind','atFrame','durationFrames','layer','text','assetPath'],ep,a);
+   if(typeof e.id!=='string'||!e.id||eid.has(e.id)) issue(a,ep+'.id','event_id');
+   else eid.add(e.id);
+   if(!events.has(e.kind)) issue(a,ep+'.kind','event_kind');
+   if(!int(e.atFrame)||e.atFrame<0||!int(e.durationFrames)||e.durationFrames<=0||e.atFrame+e.durationFrames>s.endFrame-s.startFrame) issue(a,ep,'event_timing');
+   if(!int(e.layer)||e.layer<0||e.layer>99) issue(a,ep+'.layer','layer');
+   if(typeof e.text!=='string'||e.text.length>220||e.text.length<1) issue(a,ep+'.text','text');
+   if(e.assetPath!==undefined&&(!safePath(e.assetPath)||!/\.(png|jpe?g|webp)$/i.test(e.assetPath)))issue(a,ep+'.assetPath','asset_path');
   }
-  if (cursor !== plan.durationFrames) errors.push('Setups must cover the complete duration');
-  return errors;
+ }
+ if(cursor!==1800) issue(a,'$.setups','coverage');
+ return a;
 }
-
-export function setupAtFrame(plan, frame) {
-  if (!Number.isInteger(frame) || frame < 0 || frame >= plan.durationFrames) return null;
-  return plan.setups.find((s) => frame >= s.startFrame && frame < s.endFrame) ?? null;
+export async function validateResolvedAssets(plan,root){
+ const fs=await import('node:fs/promises'),path=await import('node:path');
+ const errors=[],base=await fs.realpath(root);
+ const paths=[plan?.audioSrc,...(plan?.setups||[]).flatMap(s=>(s?.events||[]).map(e=>e?.assetPath))].filter(x=>x!==null&&x!==undefined);
+ for(const p of paths){if(!safePath(p)){issue(errors,p,'asset_path');continue;}
+ try{const real=await fs.realpath(path.resolve(base,p));if(!real.startsWith(base+path.sep)||!(await fs.stat(real)).isFile())issue(errors,p,'asset_escape');}catch{issue(errors,p,'asset_missing');}}
+ return errors;
 }
-
-export function visibleEventsAtFrame(plan, frame) {
-  const setup = setupAtFrame(plan, frame);
-  if (!setup) return [];
-  const local = frame - setup.startFrame;
-  return setup.events.filter((e) => local >= e.atFrame && local < e.atFrame + e.durationFrames).map((e) => e.id);
+export function setupAtFrame(plan,frame){
+ if(!object(plan)||!Array.isArray(plan.setups)||!int(frame)||frame<0||frame>=plan.durationFrames)return null;
+ return plan.setups.find(s=>object(s)&&frame>=s.startFrame&&frame<s.endFrame)??null;
+}
+export function visibleEventsAtFrame(plan,frame){
+ const s=setupAtFrame(plan,frame);if(!s||!Array.isArray(s.events))return [];
+ const t=frame-s.startFrame;
+ return s.events.filter(e=>object(e)&&t>=e.atFrame&&t<e.atFrame+e.durationFrames).map(e=>e.id);
 }
