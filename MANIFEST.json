@@ -295,7 +295,7 @@
     "docs/65_DUAL_OFFICIAL_LLM_PHASE1_REPORT.md",
     "docs/67_SCENE_BREAKDOWN_VISUAL_MERGE_COMPLIANCE.md"
   ],
-  "package_file_count_excluding_manifest": 816,
+  "package_file_count_excluding_manifest": 817,
   "package_files": [
     {
       "path": ".github/workflows/refresh-release-manifest.yml",
@@ -2646,6 +2646,11 @@
       "path": "docs/history/CODEX_P0_ON_NEW_MAIN_PROMPT.md",
       "size_bytes": 6900,
       "sha256": "147eb4dda692ec06238299c8a55c585962f3c69cfbe7a8d7200d1c1fe0b88d99"
+    },
+    {
+      "path": "docs/history/CODEX_P1_STRICT_CLEAN_CUT_PROMPT.md",
+      "size_bytes": 6693,
+      "sha256": "6cc98c61399604064a452fb832e29dfdce7346ac5cfebb72d1babb677acab4ba"
     },
     {
       "path": "docs/history/HISTORY_STUDIO_MAIN_BASED_MIGRATION_PLAN_V2.md",
