@@ -34,7 +34,7 @@ F. Eliminate source-level retired YTB implementation: app/modules/v4 Scene/Beat/
 
 G. Replace Windows launch commands and CI configuration. History startup should run the API and front end with accurate dependency checks; do not start old media/RQ/Redis or old FFmpeg Render host. Node Remotion render host remains a later phase; do not start a dummy host.
 
-H. Audit packaging: do not include any old .db/.sqlite, .wav/.mp4/image generation outputs, project files, cached media, credentials/secrets. Dedicated POC fixture exceptions must be licensed and tiny. New README, 00_START_HERE, source-of-truth docs and generated manifest refer ONLY to history product.
+H. Audit packaging: do not include any old .db/.sqlite, .wav/.mp4/image generation outputs, project files, cached media, credentials/secrets. Dedicated POC fixture exceptions must be licensed and tiny. New README, 00_START_HERE and source-of-truth docs refer ONLY to history product. Never reintroduce a root MANIFEST.json or manifest generation/check step.
 
 ## Evidence gates — all required for PASS
 

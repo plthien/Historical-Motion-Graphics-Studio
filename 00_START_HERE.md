@@ -77,4 +77,4 @@ Python 3.12 x64 and Node.js LTS must already be installed. FFmpeg and FFprobe mu
 - Continuity source changes invalidate the full transitive dependent-beat closure, not only the immediate child.
 - Visual Reference Set and Approval Set are immutable publication snapshots, never mutable working-state authority.
 - `PASS` is forbidden unless the required runner is green for Backend review gates, Frontend and cutover review gates, and Windows Render review gates on the exact candidate HEAD; any corrective patch invalidates previous runner evidence and requires a new run.
-- Regenerate `MANIFEST.json` only after the final clean source tree passes review.
+- The obsolete root release MANIFEST.json and its generator/checks are removed; package safety is verified independently.

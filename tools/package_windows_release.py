@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Create a deterministic Windows-safe release ZIP under the short ``yas3`` root."""
+"""Create a deterministic Windows-safe source ZIP without a root release manifest.
+
+Inventory derives from explicit source directories, not MANIFEST.json. Generated
+user data, model weights, caches and secrets are never release contents.
+"""
 
 from __future__ import annotations
 
@@ -7,19 +11,44 @@ import argparse
 import hashlib
 import json
 import stat
-import sys
 import zipfile
 from pathlib import Path, PurePosixPath
 
-TOOLS_DIR = Path(__file__).resolve().parent
-if str(TOOLS_DIR) not in sys.path:
-    sys.path.insert(0, str(TOOLS_DIR))
-
-from package_manifest import audit_archive_paths, verify
-
 FIXED_ZIP_TIMESTAMP = (2026, 1, 1, 0, 0, 0)
-DEFAULT_ROOT_NAME = "yas3"
+DEFAULT_ROOT_NAME = "yas3"  # donor launcher name until the P1 history cutover
 DEFAULT_MAX_ENTRY_LENGTH = 180
+
+SOURCE_ROOTS = frozenset({
+    "alembic", "app", "contracts", "docs", "kokoro", "scripts",
+    "src", "tools",
+})
+ROOT_SOURCE_FILES = frozenset({
+    "README.md", "00_START_HERE.md", "index.html", "start.bat",
+    "alembic.ini", "package.json", "package-lock.json", ".npmrc",
+    "pytest.ini", "requirements.txt", "postcss.config.js",
+    "tailwind.config.js", "tsconfig.json", "vite.config.ts",
+})
+SKIP_PARTS = frozenset({
+    ".git", ".github", ".venv", "venv", "node_modules", "__pycache__",
+    ".pytest_cache", ".mypy_cache", ".ruff_cache", ".npm",
+    ".cache", "build", "dist", "dist-check", "coverage", "htmlcov",
+    "artifacts", "Artifacts", "local_artifacts", "diagnostics", "logs",
+    "history_data", "data", "output", "outputs",
+})
+SKIP_NAMES = frozenset({
+    "MANIFEST.json", ".env", ".env.local", ".env.production",
+    ".coverage", "coverage.xml", "dump.rdb", ".yas3_kokoro_ready.json",
+})
+SKIP_SUFFIXES = frozenset({
+    ".db", ".sqlite", ".sqlite3", ".sqlite-wal", ".sqlite-shm",
+    ".db-wal", ".db-shm", ".pyc", ".pyo", ".tsbuildinfo",
+    ".zip", ".mp4", ".wav", ".mp3", ".onnx", ".bin", ".pem", ".key",
+})
+SOURCE_SUFFIXES = frozenset({
+    ".py", ".pyi", ".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs",
+    ".md", ".txt", ".json", ".yaml", ".yml", ".html", ".css",
+    ".bat", ".ps1", ".ini", ".toml", ".sh", ".svg",
+})
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -40,6 +69,43 @@ def _validate_root_name(value: str) -> str:
     return value
 
 
+def _is_releasable(relative: PurePosixPath) -> bool:
+    if not relative.parts:
+        return False
+    if relative.name in SKIP_NAMES or relative.name.startswith(".env"):
+        return False
+    if any(part in SKIP_PARTS for part in relative.parts):
+        return False
+    if relative.suffix.lower() in SKIP_SUFFIXES:
+        return False
+    if len(relative.parts) == 1:
+        return relative.name in ROOT_SOURCE_FILES
+    return relative.parts[0] in SOURCE_ROOTS and relative.suffix.lower() in SOURCE_SUFFIXES
+
+
+def _collect_release_paths(root: Path) -> list[str]:
+    """Collect safe, known source paths directly; never load any manifest file."""
+    if not root.is_dir():
+        raise FileNotFoundError(f"Release source root does not exist: {root}")
+    result: list[str] = []
+    for file in root.rglob("*"):
+        path = file.relative_to(root)
+        relative = PurePosixPath(path.as_posix())
+        if file.is_symlink():
+            if _is_releasable(relative):
+                raise ValueError(f"Release input symlink is not permitted: {relative}")
+            continue
+        if not file.is_file() or not _is_releasable(relative):
+            continue
+        if path.is_absolute() or ".." in path.parts or ":" in path.parts[0]:
+            raise ValueError(f"Invalid relative archive path: {relative}")
+        result.append(relative.as_posix())
+    # Case-insensitive Windows and ZIP extraction: reject colliding paths.
+    if len(set(p.casefold() for p in result)) != len(result):
+        raise ValueError("Duplicate case-insensitive archive paths")
+    return sorted(result)
+
+
 def _zip_info(name: str) -> zipfile.ZipInfo:
     info = zipfile.ZipInfo(name, FIXED_ZIP_TIMESTAMP)
     info.compress_type = zipfile.ZIP_DEFLATED
@@ -52,42 +118,27 @@ def build_release(root: Path, output: Path, root_name: str, max_entry_length: in
     root = root.resolve()
     output = output.resolve()
     root_name = _validate_root_name(root_name)
-
-    verify(
-        root,
-        root / "tools/manifest_authority/external_authoring_baseline.json",
-        root / "tools/manifest_authority/external_authoring_patch.json",
-        root / "MANIFEST.json",
-    )
-    manifest = json.loads((root / "MANIFEST.json").read_text(encoding="utf-8"))
-    relative_paths = [record["path"] for record in manifest["package_files"]] + ["MANIFEST.json"]
+    relative_paths = _collect_release_paths(root)
+    if not relative_paths:
+        raise RuntimeError("Cannot build an empty release archive")
     archive_paths = [f"{root_name}/{relative}" for relative in relative_paths]
-
-    audit = audit_archive_paths(archive_paths)
-    if any(audit.values()):
-        raise RuntimeError(f"Archive path audit failed: {audit}")
-
     longest = max(archive_paths, key=len)
     if len(longest) > max_entry_length:
         raise RuntimeError(
-            f"Archive entry is too long for the Windows release policy: {len(longest)} > "
-            f"{max_entry_length}: {longest}"
+            f"Archive entry is too long for the Windows release policy: "
+            f"{len(longest)} > {max_entry_length}: {longest}"
         )
-
     output.parent.mkdir(parents=True, exist_ok=True)
     if output.exists():
         output.unlink()
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
-        for relative, archive_name in zip(relative_paths, archive_paths, strict=True):
-            archive.writestr(_zip_info(archive_name), (root / relative).read_bytes())
-
+        for relative, name in zip(relative_paths, archive_paths, strict=True):
+            archive.writestr(_zip_info(name), (root / relative).read_bytes())
     with zipfile.ZipFile(output) as archive:
-        written_names = archive.namelist()
-        if written_names != archive_paths:
-            raise RuntimeError("Written archive entries do not match the manifest order")
+        if archive.namelist() != archive_paths:
+            raise RuntimeError("Archive entry list changed during packaging")
         if archive.testzip() is not None:
             raise RuntimeError("ZIP CRC verification failed")
-
     payload = output.read_bytes()
     return {
         "output": str(output),

@@ -110,22 +110,8 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      - name: Remove transient audit outputs before manifest verification
+      - name: Remove transient audit outputs
         run: rm -f runtime-openapi.yaml voice-junit.xml backend-junit.xml
-
-      - name: Generate deterministic release manifest
-        run: python tools/package_manifest.py generate
-
-      - name: Persist generated release manifest
-        uses: actions/upload-artifact@v4
-        with:
-          name: generated-manifest
-          path: MANIFEST.json
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Verify committed release manifest
-        run: git diff --exit-code -- MANIFEST.json
 
       - name: Verify candidate source remained clean
         if: ${{ always() }}

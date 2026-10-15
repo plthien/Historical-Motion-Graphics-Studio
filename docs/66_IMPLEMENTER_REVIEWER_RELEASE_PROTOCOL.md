@@ -39,7 +39,7 @@ The Reviewer must:
 6. run adversarial tests not used as the primary implementation proof;
 7. rerun focused and broad suites from the candidate;
 8. inspect the required candidate runner for the exact reviewed HEAD and verify Backend review gates, Frontend and cutover review gates, and Windows Render review gates each have conclusion `success`;
-9. verify OpenAPI parity, removed-runtime closure, manifest determinism, and clean archive paths;
+9. verify OpenAPI parity, removed-runtime closure, clean archive paths and user-data exclusions;
 10. issue `PASS`, `CHANGES_REQUESTED`, or `BLOCKED_BY_UNVERIFIED_EXTERNAL_DEPENDENCY`.
 
 ## Mandatory runner evidence gate
@@ -70,7 +70,7 @@ A package is implementation-complete only when:
 - the required candidate runner has Backend review gates, Frontend and cutover review gates, and Windows Render review gates at `success` on the exact reviewed HEAD;
 - required automated checks pass;
 - source and generated contracts agree;
-- `MANIFEST.json` verifies deterministically;
+- release packaging excludes local runtime/user data and passes safe-path checks without a root release manifest;
 - external media/TTS checks not exercised by the required runner are stated plainly.
 
 There is no environment-blocked exception that permits `PASS` without green required runner evidence. If the required runner cannot be completed or verified, use `BLOCKED_BY_UNVERIFIED_EXTERNAL_DEPENDENCY`.

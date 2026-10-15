@@ -106,7 +106,7 @@ Final paced WAV is audio truth for every generation provider. ElevenLabs Forced 
 - static/runtime OpenAPI parity;
 - closure scans proving zero internal LLM/research runtime and zero active Redis/RQ/queue-dispatch runtime;
 - Linux backend + frontend candidate gates and the Windows Render candidate gate on the same exact HEAD;
-- deterministic manifest and archive audit.
+- source/archive path safety and user-data exclusion audit (no root release MANIFEST.json).
 
 Read `00_START_HERE.md` before every implementation task.
 # ytb-ai-studio

@@ -11,7 +11,7 @@
 
 The delivered application must be **one new Historical Motion Graphics Studio**, with:
 
-- Exactly one history-specific pipeline, domain model, route surface, database schema, migration head, storage namespace, launcher and release manifest.
+- Exactly one history-specific pipeline, domain model, route surface, database schema, migration head, storage namespace, launcher and release packaging.
 - ZERO old YouTube AI Studio production mode, legacy toggles, old stage routes, adapters/compatibility readers, data migration/conversion, retained scene/beat image-generation pipeline, retired feature settings, worker processes or UI panels.
 - ZERO import/open/read/write of old YTB SQLite databases or historical YTB project/artifact directories. Never point the new app at old DB/data paths. Never carry old project records, generated stills, old media operation history or old cache into the new application's storage.
 - ZERO reuse of old business-specific schemas/tables/artifact enum values when merely renamed; model history-specific ownership afresh.
@@ -96,7 +96,7 @@ Actions:
 3. Replace src/pages/StudioPage.tsx and old Stage IDs with new seven-stage skeleton and history DTOs. Old YTB-specific workspaces/panels/assets/route imports deleted, not hidden. Inactive history stages display honest prerequisite/Not Implemented state.
 4. Create **a new history SQLite database and first migration**, not the legacy 001..031 chain. Remove old Alembic versions and project pointer columns from production source; no legacy DB migration, fallback or tables. Create fresh empty history storage root and schema marker. Do not ship old samples/media/cache/db.
 5. Extract general artifact persistence, hashing/CAS/reservation/JSON validation, process guards and other demonstrably neutral primitives into clean ownership. Keep only focused tests for actual extracted behavior; delete legacy tests tied to removed behavior.
-6. Wire historical launcher/CI/release manifest with new names/paths, no old render coordinator or scene asset worker startup, no old YTB settings. New DB may have empty project and no media, never legacy seeded project.
+6. Wire historical launcher/CI/release packaging with new names/paths, no old render coordinator or scene asset worker startup, no old YTB settings. New DB may have empty project and no media, never legacy seeded project.
 7. Add static and runtime **legacy closure** checks: no modules imported from app.modules.v4, no old route registration, no old schema/migration/DB table, no scene/beat stage in OpenAPI/Studio, no old image provider/env/config or dispatch, no legacy data path opened, no historical paths containing old user data.
 8. Run clean Python/Node/history app startup + fresh migration + TypeScript build/UI screenshots; run against an old DB fixture and assert fail closed without mutations; dependency graph tests. Acceptance requires a working skeleton that can create an empty history Project and persist after restart.
 **P1 gate:** New history-only app builds/runs from a clean installation, zero legacy runtime/stages/DB/migrations/API/code-support, old DB remains untouched outside product, and no LLM API. No later phase is allowed to reintroduce legacy support. If it fails, P1 remains BLOCKED and is not merged; do NOT ship a partial combined app.
