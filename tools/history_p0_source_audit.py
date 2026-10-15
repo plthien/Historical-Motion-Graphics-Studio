@@ -6,13 +6,42 @@ import json
 import re
 import subprocess
 from pathlib import Path
-from collections import deque
+import argparse
+import hashlib
 
 ROOT = Path(__file__).resolve().parents[1]
 DONOR_SHA = "0119572d651cb2b1902aea21b6267cca9809a940"
-PREFIXES = ("app/", "src/", "contracts/", "alembic/", "tests/", "scripts/", "tools/", ".github/")
+PREFIXES = ("app/", "src/", "contracts/", "alembic/", "tests/", "scripts/", "tools/", ".github/", "kokoro/")
+ROOT_FILES = {
+    "start.bat", "package.json", "package-lock.json", "requirements.txt",
+    "alembic.ini", "pytest.ini", ".gitignore", ".npmrc", "postcss.config.js",
+    "tailwind.config.js", "tsconfig.json", "vite.config.ts", "index.html",
+    "00_START_HERE.md", "README.md",
+}
 EXTS = {".py", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"}
-files = sorted(p for p in subprocess.check_output(["git", "ls-tree", "-r", "--name-only", DONOR_SHA], cwd=ROOT, text=True).splitlines() if p.startswith(PREFIXES))
+parser=argparse.ArgumentParser(description="Immutable donor SHA source ownership inventory")
+parser.add_argument("--donor-sha", default=DONOR_SHA)
+parser.add_argument("--output", type=Path, default=ROOT/"docs/history/source-ownership-ledger.json")
+parser.add_argument("--verify", action="store_true")
+parser.add_argument("--emit", action="store_true")
+args=parser.parse_args()
+sha=args.donor_sha
+if not re.fullmatch(r"[0-9a-fA-F]{40}",sha):
+    raise SystemExit(f"DONOR_SHA_INVALID: {sha!r}")
+try:
+    revision=subprocess.run(["git","cat-file","-e",sha+"^{commit}"],cwd=ROOT,capture_output=True,check=False)
+    if revision.returncode != 0: raise RuntimeError("missing Git donor commit")
+    tree=subprocess.check_output(["git","ls-tree","-r","--name-only",sha],cwd=ROOT,text=True).splitlines()
+except (OSError,subprocess.CalledProcessError,RuntimeError) as exc:
+    raise SystemExit(f"DONOR_SHA_UNAVAILABLE: {sha} ({exc})")
+files = sorted(p for p in tree if p.startswith(PREFIXES) or p in ROOT_FILES)
+if not files or not ROOT_FILES.intersection(files):
+    raise SystemExit("DONOR_TREE_INCOMPLETE: required root files missing from donor tree")
+def immutable_source(filename):
+    try:
+        return subprocess.check_output(["git","show",sha+":"+filename],cwd=ROOT).decode("utf-8",errors="replace")
+    except (OSError,subprocess.CalledProcessError) as exc:
+        raise SystemExit(f"DONOR_BLOB_UNREADABLE: {sha}:{filename} ({exc})")
 current = set(files)
 module_paths = {}
 for p in files:
@@ -63,10 +92,8 @@ contents={}
 direct={}
 for p in files:
     if Path(p).suffix not in EXTS: continue
-    f=ROOT / p
-    try: data=f.read_text(encoding="utf-8",errors="replace")
-    except FileNotFoundError: continue
-    contents[p]=data
+    # Frozen donor object, NEVER a file from the current PR working tree.
+    contents[p]=immutable_source(p)
     direct[p]=sorted(python_deps(p,data) if p.endswith(".py") else relative_deps(p,data))
 
 tests=[p for p in files if p.startswith("tests/")]
@@ -111,6 +138,12 @@ def classify(p: str) -> tuple[str,str|None,str,str]:
         if any(s in low for s in ("sceneassets","scenebreakdown","assemblypanel","renderpanel","stylebiblevisual")):
             return "DELETE",None,"YTB frontend stage","Remove obsolete stage references, data hooks and UI routes"
         return "REWRITE","history.ui","Donor frontend stage/client/component","Rewire history-only seven stages and typed contracts"
+    if low.startswith("kokoro/"):
+        return "EXTRACT","history.voice","Donor Kokoro local runtime helper","Port only independent synthesis utilities after runtime calibration tests"
+    if "/" not in p:
+        if p in ("00_START_HERE.md","README.md"):
+            return "DELETE",None,"Old YTB product entrypoint documentation","Replace with history-only entrypoints at P1"
+        return "REWRITE","history.startup / history.build","Root startup/build/dependency configuration","Replace donor bootstrap and remove obsolete provider/process entries atomically"
     if low.startswith("tests/"):
         return "REWRITE","tests/history","Donor regression test","Keep only extracted neutral tests, replace YTB production tests"
     if low.startswith("scripts/") or low.startswith("tools/") or low.startswith(".github/"):
@@ -156,8 +189,9 @@ for p,s in contents.items():
         for method,path in re.findall(r"@\w+\.(get|post|put|patch|delete)\s*\(\s*['\"]([^'\"]+)['\"]",s):
             routes.append({"owner":p,"method":method.upper(),"declaredPath":path})
 report={"schemaVersion":"history_source_ownership_ledger.v2",
- "donorSha":DONOR_SHA,"scope":"Tracked P0 donor files from exact main commit",
+ "donorSha":sha,"scope":"Tracked P0 donor files from exact main commit",
  "completeness":{"trackedFiles":len(files),"sourceAnalyzed":len(contents),
+  "sourceSnapshot":"git show <immutable donor commit>:<file>; no working-tree reads",
   "dependencyGraph":"best-effort static import AST/regex; runtime/dynamic routes need independent P1 tests",
   "testsAssociation":"import/name heuristic, not independent runtime proof"},
  "legacyInventory":{"routes":routes,"dbTables":tables,
@@ -169,10 +203,17 @@ report={"schemaVersion":"history_source_ownership_ledger.v2",
   "Replace API/UI/DB/routes and migrations atomically, with no alternate old YTB mode",
   "Prove old user DB/media remains untouched and is never imported or upgraded"],
  "entries":entries}
-output=ROOT/"docs/history/source-ownership-ledger.json"
-output.write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-print(f"P0_LEDGER_PATHS={len(files)} TABLES={len(tables)} ROUTES={len(routes)}")
-if "--emit" in __import__("sys").argv:
- print("P0_LEDGER_BEGIN")
- print(json.dumps(report,separators=(",",":"),ensure_ascii=False))
- print("P0_LEDGER_END")
+output=args.output
+data=(json.dumps(report,indent=2,ensure_ascii=False)+"\\n").encode("utf-8")
+if args.verify:
+    if not output.exists() or output.read_bytes()!=data:
+        raise SystemExit("P0_LEDGER_OUTDATED: frozen donor inventory differs from checked-in report")
+    print(f"P0_LEDGER_VERIFY_PASS paths={len(files)} sha256={hashlib.sha256(data).hexdigest()}")
+else:
+    output.parent.mkdir(parents=True,exist_ok=True)
+    output.write_bytes(data)
+    print(f"P0_LEDGER_PATHS={len(files)} TABLES={len(tables)} ROUTES={len(routes)} sha256={hashlib.sha256(data).hexdigest()}")
+if args.emit:
+    print("P0_LEDGER_BEGIN")
+    print(json.dumps(report,separators=(",",":"),ensure_ascii=False))
+    print("P0_LEDGER_END")
