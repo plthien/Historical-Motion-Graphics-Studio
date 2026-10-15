@@ -6,14 +6,14 @@ Machine-readable output: `source-ownership-ledger.json` (`history_source_ownersh
 
 ## Inventoried donor surface
 
-- **757 tracked files** in app/, src/, contracts/, alembic/, tests/, scripts/, tools/ and GitHub workflows
+- **778 tracked files** including app/, src/, contracts/, alembic/, tests/, scripts/, tools/, Kokoro runtime, GitHub workflows, root startup files and build/dependency configuration
 - **144 static API method/path decorators**, before router-prefix expansion and runtime shadow-precedence; these are not 144 distinct full OpenAPI paths
 - **29 detected SQLAlchemy `__tablename__` declarations** across donor models
 - **31 old Alembic revision scripts**, all retired in P1, with a fresh History initial migration
 - **8 YTB UI labels**: Topic Ideas, Script & Analysis, Style Bible, Voice, Scene Breakdown, Scene Assets, Assembly, Render
 - Legacy Windows launchers in `scripts/windows/`, V4/media host workers, FFmpeg still-asset assembly, voice infrastructure
 
-The JSON ledger records every path, current owner/responsibility, EXTRACT/REWRITE/DELETE, new owner, direct internal imports, transitive static import closure, matching candidate regression tests, extraction preconditions and P1 risks. Import edges are derived with Python AST and static JavaScript/TypeScript module imports. **Static analysis does not establish runtime/dynamic import completeness or actual test coverage.**
+The JSON ledger records every path, current owner/responsibility, EXTRACT/REWRITE/DELETE, new owner, direct internal imports, transitive static import closure, matching candidate regression tests, extraction preconditions and P1 risks. The generator reads frozen donor blobs with `git show <donor-sha>:<path>` rather than the mutable worktree. It can `--verify` the checked-in report byte-for-byte. Import edges are derived with Python AST and static JavaScript/TypeScript module imports. **Static analysis does not establish runtime/dynamic import completeness or actual test coverage.**
 
 ## P1 prerequisites — NOT AUTHORIZED BY P0
 
