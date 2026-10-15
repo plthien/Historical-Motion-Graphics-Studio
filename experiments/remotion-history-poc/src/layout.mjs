@@ -11,7 +11,7 @@ export const ZONES = Object.freeze({
   },
   map: {
     headline: {x:105,y:240,w:630,h:250},
-    map: {x:735,y:190,w:1070,h:610},
+    map: {x:750,y:190,w:1050,h:610},
     label: {x:845,y:824,w:390,h:92},
     stamp: {x:1410,y:826,w:330,h:135},
     annotation: {x:90,y:935,w:1140,h:55},
