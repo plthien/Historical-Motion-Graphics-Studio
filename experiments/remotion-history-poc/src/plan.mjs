@@ -17,7 +17,8 @@ export const motionPlan = {
         {id: 'intro', kind: 'headline', atFrame: 12, durationFrames: 450, text: 'MỘT BUỔI SÁNG\nTHAY ĐỔI LỊCH SỬ', layer: 2},
         {id: 'date', kind: 'timestamp', atFrame: 94, durationFrames: 375, text: '28.06.1914', layer: 3},
         {id: 'location', kind: 'label', atFrame: 180, durationFrames: 305, text: 'SARAJEVO · BOSNIA', layer: 4},
-        {id: 'stamp-a', kind: 'stamp', atFrame: 382, durationFrames: 155, text: 'BƯỚC NGOẶT', layer: 5}
+        {id: 'stamp-a', kind: 'stamp', atFrame: 382, durationFrames: 155, text: 'BƯỚC NGOẶT', layer: 5},
+        {id: 'editorial-note', kind: 'annotation', atFrame: 280, durationFrames: 280, text: 'TIMELINE · ILLUSTRATIVE TECHNICAL POC', layer: 6}
       ]
     },
     {
@@ -29,7 +30,8 @@ export const motionPlan = {
         {id: 'map-title', kind: 'headline', atFrame: 24, durationFrames: 570, text: 'MỘT TUYẾN ĐƯỜNG\nQUA SARAJEVO', layer: 2},
         {id: 'map-place', kind: 'label', atFrame: 125, durationFrames: 450, text: 'SARAJEVO', layer: 3},
         {id: 'route', kind: 'route', atFrame: 250, durationFrames: 300, text: 'LỘ TRÌNH', layer: 4},
-        {id: 'map-warning', kind: 'stamp', atFrame: 435, durationFrames: 160, text: 'RẼ SAI', layer: 5}
+        {id: 'map-warning', kind: 'stamp', atFrame: 435, durationFrames: 160, text: 'RẼ SAI', layer: 5},
+        {id: 'map-caveat', kind: 'annotation', atFrame: 315, durationFrames: 302, text: 'ROUTE AND BORDERS ARE SCHEMATIC', layer: 6}
       ]
     },
     {
@@ -41,14 +43,15 @@ export const motionPlan = {
         {id: 'photo', kind: 'placeholder', atFrame: 35, durationFrames: 520, text: 'ARCHIVE IMAGE PLACEHOLDER', layer: 2},
         {id: 'archive-heading', kind: 'headline', atFrame: 128, durationFrames: 430, text: 'MỘT SỰ KIỆN,\nNHIỀU HỆ QUẢ', layer: 3},
         {id: 'archive-note', kind: 'label', atFrame: 310, durationFrames: 250, text: 'ẢNH CẦN XÁC MINH NGUỒN', layer: 4},
-        {id: 'archive-stamp', kind: 'stamp', atFrame: 430, durationFrames: 135, text: 'HỆ QUẢ', layer: 5}
+        {id: 'archive-stamp', kind: 'stamp', atFrame: 430, durationFrames: 135, text: 'HỆ QUẢ', layer: 5},
+        {id: 'photo-caveat', kind: 'annotation', atFrame: 240, durationFrames: 320, text: 'PLACEHOLDER · NO VERIFIED ARCHIVE RIGHTS', layer: 6}
       ]
     }
   ]
 };
 
 const kinds = new Set(['title','map','archive']);
-const events = new Set(['headline','timestamp','label','stamp','route','photo','placeholder']);
+const events = new Set(['headline','timestamp','label','stamp','route','photo','placeholder','annotation']);
 const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const int = x => Number.isSafeInteger(x);
 const issue = (a,path,code) => a.push({path,code,message:code});

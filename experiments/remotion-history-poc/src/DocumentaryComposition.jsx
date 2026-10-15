@@ -12,7 +12,9 @@ function Paper({children}) {
 }
 
 function MapBackdrop() {
-  return <svg viewBox="0 0 1200 700" style={{position: 'absolute', left: 400, top: 120, width: 1350, height: 800}}>
+  const frame = useCurrentFrame();
+  const drift = interpolate(frame, [0, 630], [0, -66], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  return <svg viewBox="0 0 1200 700" style={{position: 'absolute', left: 400, top: 120, width: 1350, height: 800, transform: `translateX(${drift}px) scale(1.025)`, transformOrigin: 'center center'}}>
     <path d="M50 180 L340 70 L520 195 L720 108 L970 260 L1050 495 L690 600 L350 520 L140 650 Z" fill="#c8cab3" stroke="#4d5147" strokeWidth="9"/>
     <path d="M340 70 L350 520 M520 195 L690 600 M720 108 L690 600" fill="none" stroke="#8b907e" strokeWidth="5" strokeDasharray="12 9"/>
     <path d="M170 420 C400 340 600 410 950 310" stroke="#a38d68" strokeWidth="22" fill="none" strokeLinecap="round"/>
@@ -23,7 +25,9 @@ function MapBackdrop() {
 }
 
 function ArchiveBackdrop() {
-  return <div style={{position: 'absolute', left: 130, top: 130, width: 870, height: 720, transform: 'rotate(-4deg)', border: '15px solid #fbf8ed', background: '#cec7b8', boxShadow: '25px 28px 30px #4e46384c'}}>
+  const frame = useCurrentFrame();
+  const turn = interpolate(frame, [0, 600], [-4, -2], {extrapolateLeft:'clamp', extrapolateRight:'clamp'});
+  return <div style={{position: 'absolute', left: 130, top: 130, width: 870, height: 720, transform: `translateX(${Math.round(frame/30)*1.5}px) rotate(${turn}deg)`, border: '15px solid #fbf8ed', background: '#cec7b8', boxShadow: '25px 28px 30px #4e46384c'}}>
     <div style={{position: 'absolute', left: 120, top: -30, width: 240, height: 65, background: '#d6c7a099', transform: 'rotate(-7deg)'}}/>
     <div style={{height: '100%', display: 'grid', placeItems: 'center', border: '3px solid #6e665a'}}>
       <div style={{width: 460, height: 280, border: '8px dashed #80786b', display: 'grid', placeItems: 'center', textAlign: 'center', fontWeight: 700, fontSize: 40, color: '#766d5d'}}>ARCHIVAL IMAGE<br/>PLACEHOLDER</div>
@@ -56,6 +60,7 @@ function MotionItem({event}) {
   const pop = spring({fps, frame, config: {damping: 17, stiffness: 160}});
   const opacity = interpolate(frame, [0, 8, Math.max(9, event.durationFrames - 12), event.durationFrames], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const common = {position: 'absolute', zIndex: event.layer, opacity, transform: 'translateY(' + ((1 - pop) * 35) + 'px) scale(' + (0.88 + .12 * pop) + ')'};
+  if (event.kind === 'annotation') return <div style={{...common, right:100, bottom:92, borderTop:'3px solid #ba5b43', paddingTop:14, textAlign:'right', color:'#5d5145', fontSize:25, fontWeight:800, letterSpacing:2}}>{event.text}</div>;
   if (event.kind === 'route') return <div style={{position: 'absolute', inset: 0, zIndex: event.layer, opacity}}><Route/></div>;
   if (event.kind === 'placeholder') return <div style={{...common, left: 350, top: 400, padding: 25, border:'7px dashed #817763', fontWeight:900, fontSize:40, color:'#605746'}}>NO VERIFIED ARCHIVE PHOTO</div>;
   if (event.kind === 'photo') return event.assetPath ? <Img src={staticFile(event.assetPath)} style={{...common, left: 165, top: 160, width: 780, height: 650, objectFit: 'contain'}}/> : null;
