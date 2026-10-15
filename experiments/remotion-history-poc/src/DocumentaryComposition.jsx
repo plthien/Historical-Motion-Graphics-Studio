@@ -63,7 +63,7 @@ function ArchivePhoto({setup}){
  if(!photo) return null;
  const relative=frame-photo.atFrame;
  if(relative<0||relative>=photo.durationFrames)return null;
- const entering=interpolate(relative,[0,14],[0,1],clamp);
+ const entering=interpolate(relative,[0,14],[0.55,1],clamp);
  const drift=interpolate(frame,[0,600],[-2,0],clamp);
  const root={...pos(ZONES.archive.photo),opacity:entering,transform:`translateY(${(1-entering)*22}px) rotate(${drift}deg)`,border:'16px solid #f9f6ed',background:'#c9c3b6',boxShadow:'18px 22px 26px #4e46384c'};
  return <div style={root}>

@@ -40,8 +40,8 @@ export const motionPlan = {
       startFrame: 1200,
       endFrame: 1800,
       events: [
-        {id: 'photo', kind: 'placeholder', atFrame: 35, durationFrames: 520, text: 'ARCHIVE IMAGE PLACEHOLDER', layer: 2},
-        {id: 'archive-heading', kind: 'headline', atFrame: 128, durationFrames: 430, text: 'MỘT SỰ KIỆN,\nNHIỀU HỆ QUẢ', layer: 3},
+        {id: 'photo', kind: 'placeholder', atFrame: 0, durationFrames: 600, text: 'ARCHIVE IMAGE PLACEHOLDER', layer: 2},
+        {id: 'archive-heading', kind: 'headline', atFrame: 65, durationFrames: 510, text: 'MỘT SỰ KIỆN,\nNHIỀU HỆ QUẢ', layer: 3},
         {id: 'archive-note', kind: 'label', atFrame: 310, durationFrames: 250, text: 'CATALOGUE · UNVERIFIED', layer: 4},
         {id: 'archive-stamp', kind: 'stamp', atFrame: 430, durationFrames: 135, text: 'HỆ QUẢ', layer: 5},
         {id: 'archive-caveat', kind: 'annotation', atFrame: 240, durationFrames: 320, text: 'LICENSE / ATTRIBUTION NOT VERIFIED', layer: 6}
