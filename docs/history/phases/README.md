@@ -1,5 +1,8 @@
 # Implementation index — Historical Motion Graphics Studio
 
+**MANDATORY CODING GOVERNANCE:** Before using ANY phase spec, read [root AGENTS.md](../../../AGENTS.md), [ONLY NEW History Coding Rules](../CODING_RULES.md), the applicable [NEW skills](../../../.agents/skills/README.md) and [agent role routing](../agents/README.md). The deleted YTB coding rules and old external API-LLM implementation documents MUST NEVER guide work.
+
+
 **Current and only implementation authority:** [STRICT CLEAN-CUT Plan v3](../HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md). This index provides nine **implementation-ready phase documents**, not evidence any phase has been implemented.
 
 **Repository:** plthien/Historical-Motion-Graphics-Studio. Base every implementation branch on verified explicit main or user-approved staging SHA, never on the old R0 branch. Do not push to main. User reviews PRs and approves merges.
