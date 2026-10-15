@@ -13,7 +13,17 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 100
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact PR branch HEAD (not synthetic merge)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Assert tested SHA
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          echo "P0_EXACT_CANDIDATE_SHA=$actual"
+          test "$actual" = "$expected"
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -52,25 +62,45 @@ jobs:
       - name: Independent FFprobe + full video decode
         working-directory: experiments/remotion-history-poc
         run: npm run verify:video
+      - name: Visual parity dependencies
+        run: python -m pip install --disable-pip-version-check pillow==11.3.0
+      - name: Full-resolution Player-versus-MP4 parity
+        working-directory: experiments/remotion-history-poc
+        run: python scripts/visual-parity.py
       - name: Representative output frames
         working-directory: experiments/remotion-history-poc
         run: |
           mkdir -p out/frames
           for sec in 0 5 10 19 20 25 35 39 40 45 55 59; do
-            ffmpeg -v error -ss "$sec" -i out/history-poc.mp4 -frames:v 1 -y "out/frames/${sec}s.png"
+            printf -v pad '%02d' "$sec"
+            ffmpeg -v error -ss "$sec" -i out/history-poc.mp4 -frames:v 1 -y "out/frames/${pad}s.png"
           done
+          actual="$(find out/frames -name '*s.png' -printf '%f\n' | sort | tr '\n' ' ')"
+          expected='00s.png 05s.png 10s.png 19s.png 20s.png 25s.png 35s.png 39s.png 40s.png 45s.png 55s.png 59s.png '
+          test "$actual" = "$expected"
+          echo "P0_CONTACT_SHEET_ORDER=$actual"
           ffmpeg -y -v error -pattern_type glob -i 'out/frames/*.png' -vf 'scale=480:270,tile=3x4' -frames:v 1 out/contact-sheet.png
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: p0-linux-${{ github.sha }}
+          name: p0-linux-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           path: experiments/remotion-history-poc/out/
           if-no-files-found: ignore
   remotion-windows:
     runs-on: windows-2022
     timeout-minutes: 100
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact PR branch HEAD (not synthetic merge)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Assert tested SHA
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          echo "P0_EXACT_CANDIDATE_SHA=$actual"
+          test "$actual" = "$expected"
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -94,6 +124,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: p0-windows-${{ github.sha }}
+          name: p0-windows-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           path: experiments/remotion-history-poc/out/
           if-no-files-found: ignore

@@ -8,6 +8,15 @@ import './style.css';
 function App() {
   const player = useRef(null);
   useEffect(() => {window.__p0Player = player; return () => {delete window.__p0Player;};}, []);
+  const parity = new URLSearchParams(window.location.search).has('parity');
+  if(parity)return <Player
+    ref={player}
+    component={DocumentaryComposition}
+    inputProps={{plan:motionPlan}}
+    compositionWidth={1920} compositionHeight={1080} fps={30} durationInFrames={1800}
+    controls={false} autoPlay={false}
+    style={{width:1920,height:1080,margin:0,padding:0}}
+  />;
   const errors = validatePlan(motionPlan);
   if (errors.length) return <main><h1>Invalid plan</h1><pre>{errors.map((e) => `${e.path}: ${e.message}`).join('\n')}</pre></main>;
   return <main>

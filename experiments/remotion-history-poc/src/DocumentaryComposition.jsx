@@ -44,11 +44,11 @@ function MapViewport({setup}){
    <g data-map-camera="true" transform={`translate(${cameraX} 0) translate(600 350) scale(${cameraScale}) translate(-600 -350)`}>
     <path d="M50 180 L340 70 L520 195 L720 108 L970 260 L1050 495 L690 600 L350 520 L140 650 Z" fill="#c8cab3" stroke="#4d5147" strokeWidth="9"/>
     <path d="M340 70 L350 520 M520 195 L690 600 M720 108 L690 600" fill="none" stroke="#8b907e" strokeWidth="5" strokeDasharray="12 9"/>
-    <path d={MAP_PATH} stroke="#a38d68" strokeWidth="22" fill="none" strokeLinecap="round" />
+    <path data-road-path="true" d={MAP_PATH} stroke="#a38d68" strokeWidth="22" fill="none" strokeLinecap="round" />
     <circle cx="615" cy="375" r="18" fill={PALETTE.red} />
     <text x="535" y="270" fontSize="37" fontWeight="bold" fill="#535f54">SARAJEVO</text>
     {showRoute&&<g data-route="true" opacity={routeHold}>
-      <path d={MAP_PATH} stroke={PALETTE.red} strokeWidth="17" fill="none" strokeLinecap="round" strokeDasharray="1500" strokeDashoffset={1500*(1-progress)}/>
+      <path data-animated-route="true" d={MAP_PATH} stroke={PALETTE.red} strokeWidth="17" fill="none" strokeLinecap="round" strokeDasharray="1500" strokeDashoffset={1500*(1-progress)}/>
       <circle cx="950" cy="310" r="22" fill={PALETTE.red} opacity={progress>.97?1:0}/>
     </g>}
    </g>

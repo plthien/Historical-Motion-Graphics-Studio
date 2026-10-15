@@ -38,6 +38,36 @@ try {
    await page.locator('button.jump').nth(i).click();
    assert.equal(await frame(),n,'Jump-to-setup failed '+n);
  }
+
+ // Independent native 1920x1080 frame capture, without browser controls/UI chrome.
+ const native=await browser.newPage({viewport:{width:1920,height:1080},deviceScaleFactor:1});
+ native.on('pageerror',e=>errors.push(e.message));
+ await native.goto('http://127.0.0.1:5174/?parity=1',{waitUntil:'networkidle'});
+ await native.waitForFunction(()=>Boolean(window.__p0Player?.current?.getCurrentFrame));
+ await mkdir('out/player-native',{recursive:true});
+ for(const n of [150,570,750,850,900,1000,1050,1100,1200,1350,1799]){
+  await native.evaluate(n=>window.__p0Player.current.seekTo(n),n);
+  await native.waitForTimeout(300);
+  assert.equal(await native.evaluate(()=>window.__p0Player.current.getCurrentFrame()),n);
+  const element=native.locator('[data-remotion-player]');
+  const box=await element.boundingBox();
+  assert.equal(Math.round(box.width),1920);
+  assert.equal(Math.round(box.height),1080);
+  await element.screenshot({path:'out/player-native/frame-'+String(n).padStart(4,'0')+'.png', animations:'disabled'});
+  if([850,900,1000,1050,1100].includes(n)){
+   const geometry=await native.evaluate(()=>{
+    const base=document.querySelector('[data-road-path]');
+    const route=document.querySelector('[data-animated-route]');
+    const arr=m=>m?[m.a,m.b,m.c,m.d,m.e,m.f]:[];
+    return {sameD:base?.getAttribute('d')===route?.getAttribute('d'),
+      base:arr(base?.getScreenCTM()),route:arr(route?.getScreenCTM())};
+   });
+   assert.equal(geometry.sameD,true,'Map/route must share identical world path at frame '+n);
+   assert.ok(geometry.base.length===6&&geometry.route.length===6);
+   for(let k=0;k<6;k++)assert.ok(Math.abs(geometry.base[k]-geometry.route[k])<0.01,'Map/route camera desync at '+n);
+  }
+ }
+ await native.close();
  assert.deepEqual(errors,[],'Browser console runtime errors');
  console.log('PASS: actual @remotion/player playback, pause, 12 seeks, jumps and screenshots');
 }finally{
