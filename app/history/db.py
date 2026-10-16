@@ -39,24 +39,33 @@ class HistoryDB:
                 if row != (EXPECTED_SCHEMA, 1) or not required.issubset(tables):
                     raise ValueError("History schema marker or required table missing")
                 version = conn.execute("SELECT version_num FROM alembic_version").fetchone()
-                if version != ("001_history_initial",):
+                if version not in (("001_history_initial",), ("002_history_authoring_p2",)):
                     raise ValueError("Unsupported History migration head")
+                if version == ("002_history_authoring_p2",):
+                    needed = {"p2_channel_dna","p2_channel_dna_history","p2_prompts","p2_candidates","p2_approvals"}
+                    if not needed.issubset(tables): raise ValueError("P2 tables missing")
             finally:
                 conn.close()
         except (sqlite3.Error, ValueError, OSError) as e:
             raise HistoryError("HISTORY_LEGACY_STORAGE_UNSUPPORTED", 409) from e
 
     def bootstrap(self) -> None:
-        if self.path.exists():
-            if not self.path.is_file():
-                raise HistoryError("HISTORY_LEGACY_STORAGE_UNSUPPORTED", 409)
-            self._check_existing_read_only()
-            return
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        config = Config(str(ROOT / "alembic.ini"))
-        config.set_main_option("script_location", str(ROOT / "alembic"))
-        config.set_main_option("sqlalchemy.url", "sqlite:///" + self.path.as_posix())
-        command.upgrade(config, "head")
+        existing=self.path.exists()
+        if existing:
+            if not self.path.is_file(): raise HistoryError("HISTORY_LEGACY_STORAGE_UNSUPPORTED",409)
+            self._check_existing_read_only() # check before ANY writable connect or migration
+        else:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+        config=Config(str(ROOT / "alembic.ini"))
+        config.set_main_option("script_location",str(ROOT / "alembic"))
+        config.set_main_option("sqlalchemy.url","sqlite:///"+self.path.as_posix())
+        if existing:
+            with sqlite3.connect("file:"+quote(self.path.as_posix(),safe="/:")+"?mode=ro&immutable=1",uri=True) as ro:
+                rev=ro.execute("SELECT version_num FROM alembic_version").fetchone()[0]
+            if rev=="002_history_authoring_p2": return
+        # Valid P1 History DB only, or a brand new file. Alembic owns the atomic
+        # upgrade; interrupted migrations are not silently treated as complete.
+        command.upgrade(config,"head")
         self._check_existing_read_only()
 
     @contextmanager
