@@ -146,8 +146,8 @@ blob-report/
 *.backup
 *.old
 # Local Kokoro runtime
-kokoro/.venv/
-kokoro/*.onnx
-kokoro/voices-*.bin
-kokoro/*.wav
-kokoro/.yas3_kokoro_ready.json
+
+# Dedicated History Studio user data, never versioned/shipped
+history_data/
+*.wav
+*.mp3

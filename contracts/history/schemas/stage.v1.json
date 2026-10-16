@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HistoryStageStatus",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "key",
+    "label",
+    "status",
+    "blocked_reason",
+    "revision"
+  ],
+  "properties": {
+    "key": {
+      "type": "string",
+      "enum": [
+        "topic",
+        "script_analysis",
+        "voice",
+        "assets",
+        "visual_director",
+        "motion_timeline",
+        "final_video"
+      ]
+    },
+    "label": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "blocked",
+        "approved"
+      ]
+    },
+    "blocked_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

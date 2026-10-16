@@ -1,66 +1,30 @@
-from __future__ import annotations
-
+"""Dedicated initial History migration; never touch an unsupported existing database."""
 from logging.config import fileConfig
-
+from sqlalchemy import engine_from_config, pool, event
 from alembic import context
+from app.history.db import HistoryDB
 
-from app.core.config import get_settings
-from app.db.base import Base
-from app.db.session import create_sqlalchemy_engine, ensure_sqlite_parent_dir_for_url
-
-# Import models so metadata is populated for Alembic.
-from app.db import models as _models  # noqa: F401
-from app.db import scene_asset_working_models as _scene_asset_working_models  # noqa: F401
-from app.db import visual_reference_working_models as _visual_reference_working_models  # noqa: F401
-
-config = context.config
-
-if config.config_file_name is not None:
+config=context.config
+if config.config_file_name:
     fileConfig(config.config_file_name)
+url=config.get_main_option("sqlalchemy.url")
 
-target_metadata = Base.metadata
-
-
-def _configured_url() -> str:
-    configured = config.get_main_option("sqlalchemy.url")
-    if configured:
-        return configured
-    return get_settings().database_url
-
-
-def run_migrations_offline() -> None:
-    url = _configured_url()
-    context.configure(
-        url=url,
-        target_metadata=target_metadata,
-        literal_binds=True,
-        compare_type=True,
-        dialect_opts={"paramstyle": "named"},
-    )
-
+def run_offline():
+    context.configure(url=url,literal_binds=True)
     with context.begin_transaction():
         context.run_migrations()
 
+def run_online():
+    engine=engine_from_config(config.get_section(config.config_ini_section),
+                              prefix="sqlalchemy.",poolclass=pool.NullPool)
+    @event.listens_for(engine,"connect")
+    def set_fk(connection,_record):
+        connection.execute("PRAGMA foreign_keys=ON")
+    with engine.connect() as connection:
+        context.configure(connection=connection)
+        with context.begin_transaction():
+            context.run_migrations()
+    engine.dispose()
 
-def run_migrations_online() -> None:
-    database_url = _configured_url()
-    if database_url.startswith("sqlite:///"):
-        ensure_sqlite_parent_dir_for_url(database_url)
-
-    connectable = create_sqlalchemy_engine(database_url)
-    try:
-        with connectable.connect() as connection:
-            context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
-
-            with context.begin_transaction():
-                context.run_migrations()
-    finally:
-        # Alembic owns this engine.  Dispose it explicitly so SQLite WAL/SHM
-        # handles and pooled connections never depend on garbage collection.
-        connectable.dispose()
-
-
-if context.is_offline_mode():
-    run_migrations_offline()
-else:
-    run_migrations_online()
+if context.is_offline_mode():run_offline()
+else:run_online()

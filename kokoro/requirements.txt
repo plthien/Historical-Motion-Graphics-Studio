@@ -1,3 +1,0 @@
-kokoro-onnx==0.6.1
-onnxruntime==1.29.0
-numpy>=2.0.2,<3

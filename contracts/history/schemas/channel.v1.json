@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HistoryChannel",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "channel_id",
+    "name",
+    "language",
+    "niche",
+    "history_dna",
+    "revision",
+    "created_at"
+  ],
+  "properties": {
+    "channel_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "language": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 32
+    },
+    "niche": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "history_dna": {
+      "type": "object"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "created_at": {
+      "type": "string"
+    }
+  }
+}
