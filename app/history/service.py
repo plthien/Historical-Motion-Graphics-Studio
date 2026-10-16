@@ -18,7 +18,7 @@ def stable_json(value) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",",":"), allow_nan=False)
 
 def safe_asset_relative_path(value: str) -> str:
-    if not isinstance(value,str) or len(value)>240 or not re.fullmatch(r"[a-zA-Z0-9_\-./]+",value) or "\\" in value or value.startswith("/") or any(s in ("", ".", "..") for s in value.split("/")):
+    if not isinstance(value,str) or len(value)>240 or not re.fullmatch(r"[a-zA-Z0-9_\-./]+",value) or "\\" in value or value.startswith("/") or any(s in ("", ".", "..") or s.startswith(".") for s in value.split("/")):
         raise HistoryError("HISTORY_ARTIFACT_PATH_INVALID", 422)
     return value
 

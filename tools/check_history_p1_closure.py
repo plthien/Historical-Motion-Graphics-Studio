@@ -19,7 +19,7 @@ errors=[]
 def fail(s):errors.append(s)
 for folder in ("app","src","contracts","tests"):
  for p in (ROOT/folder).rglob("*"):
-  if not p.is_file():continue
+  if not p.is_file() or "__pycache__" in p.parts or p.suffix==".pyc":continue
   rel=p.relative_to(ROOT).as_posix()
   if any(rel.startswith(prefix) for prefix in RETIRED):fail("Legacy path "+rel)
   if folder=="app" and not (rel in ALLOWED_APP or rel.startswith("app/history/")):fail("Non-History Python "+rel)
@@ -35,7 +35,7 @@ for p in (ROOT/"app").rglob("*.py"):
   else:continue
   if any(n.startswith(("app.modules","app.api","app.services","app.db","app.repositories")) for n in names):
    fail("Legacy import "+p.relative_to(ROOT).as_posix()+": "+str(names))
-  if any(token in n.lower() for n in ("openai","anthropic","ollama","langchain","gemini")):fail("Model SDK import "+str(names))
+  if any(token in n.lower() for token in ("openai","anthropic","ollama","langchain","gemini") for n in names):fail("Model SDK import "+str(names))
 migrations=list((ROOT/"alembic/versions").glob("*.py"))
 if [p.name for p in migrations]!=["001_history_initial.py"]:fail("Old migration chain present")
 for entry in ("MANIFEST.json","docs/32_CODING_RULES.md","docs/99_SOURCE_OF_TRUTH.md",
