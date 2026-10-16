@@ -84,6 +84,7 @@ try{
  assert.equal(topicPrompt.is_current,true);
  await upload(page,'topic',generateTopic(topicPrompt));
  await page.locator('[data-testid="authoring-topic"]').getByRole('button',{name:/Approve new SelectedTopic revision/}).click();
+ await page.locator('[data-testid="authoring-topic"] .success').getByText(/Approved and published/).waitFor();
  const topic=await request('/api/history/projects/'+project.project_id+'/topic/current');
  assert.equal(topic.revision,1);
  await page.locator('.sidebar .navItem').nth(1).click();
@@ -93,6 +94,7 @@ try{
  assert.equal(scriptPrompt.reserved_ids.parent_artifact_id,topic.artifact_id);
  await upload(page,'script_analysis',generateScript(scriptPrompt));
  await page.locator('[data-testid="authoring-script_analysis"]').getByRole('button',{name:/Approve new Script/}).click();
+ await page.locator('[data-testid="authoring-script_analysis"] .success').getByText(/Approved and published/).waitFor();
  const script=await request('/api/history/projects/'+project.project_id+'/script-analysis/current');
  assert.ok(script.content.full_script&&script.stale===false);
  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth);
@@ -117,6 +119,7 @@ try{
  'Late Pleistocene','Western Eurasia','Second imagined problem after food arrives'];
  for(let i=0;i<5;i++)await inputs.nth(i).fill(changes[i]);
  await page.locator('[data-testid="manual-topic"]').getByRole('button',{name:'Approve Manual Topic'}).click();
+ await page.locator('[data-testid="authoring-topic"] .success').getByText(/Manual selected Topic approved/).waitFor();
  const stale=await request('/api/history/projects/'+project.project_id+'/script-analysis/current');
  assert.equal(stale.stale,true);assert.equal(stale.content_hash,script.content_hash);
  for(const [w,h] of [[1920,1080]]){
