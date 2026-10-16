@@ -1,0 +1,20 @@
+name: P1 root package lockfile emission (temporary)
+on:
+  push:
+    branches: [feat/p1-atomic-history-clean-cut]
+permissions:
+  contents: read
+jobs:
+  lockfile:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Generate exact lockfile for candidate package
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          echo "P1_LOCKFILE_BEGIN"
+          cat package-lock.json
+          echo "P1_LOCKFILE_END"
