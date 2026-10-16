@@ -115,7 +115,7 @@ def classify(p: str) -> tuple[str,str|None,str,str]:
             return "ARCHIVE",None,"Superseded History migration draft, NOT current authority","Archive outside shipped History instructions; current plan v3 wins"
         return "PRESERVE","history.governance","Approved History rules, phase plan, agent guide or audit","Preserve History authority and phase ownership; verify links remain current"
     if p=="docs/00_INDEX.md":
-        return "REWRITE","history.documentation","Former YTB documentation index, NOT active coding rules","Rewrite as History-only reader index during P1"
+        return "PRESERVE","history.governance","Already converted new History documentation index","Retain new authority and repair only stale P1 details"
     if p.startswith("docs/adr/"):
         return "ARCHIVE",None,"Legacy YTB architecture decision record","Historical donor rationale only; no P1 runtime or active instruction link"
     if p.startswith("docs/"):
@@ -153,8 +153,10 @@ def classify(p: str) -> tuple[str,str|None,str,str]:
     if low.startswith("kokoro/"):
         return "EXTRACT","history.voice","Donor Kokoro local runtime helper","Port only independent synthesis utilities after runtime calibration tests"
     if "/" not in p:
-        if p in ("00_START_HERE.md","README.md"):
-            return "DELETE",None,"Old YTB product entrypoint documentation","Replace with history-only entrypoints at P1"
+        if p=="00_START_HERE.md":
+            return "PRESERVE","history.governance","New History developer governance entrypoint","Update real P1 launch commands and retain coding authority"
+        if p=="README.md":
+            return "REWRITE","history.documentation","New History transition README with embedded donor YTB material","Retain History identity and rewrite/remove embedded obsolete YTB product sections"
         return "REWRITE","history.startup / history.build","Root startup/build/dependency configuration","Replace donor bootstrap and remove obsolete provider/process entries atomically"
     if low.startswith("tests/"):
         return "REWRITE","tests/history","Donor regression test","Keep only extracted neutral tests, replace YTB production tests"
@@ -172,7 +174,8 @@ def closure(p: str) -> list[str]:
     return sorted(seen)
 def responsibility(p: str) -> str:
     desc=p.split("/")[-1].replace("_"," ").replace("-"," ").split(".")[0]
-    if p=="AGENTS.md" or p.startswith(".agents/"):return "Active NEW Historical coding/skill governance: " + desc
+    if p in ("AGENTS.md","README.md","00_START_HERE.md") or p.startswith(".agents/"):
+        return "New History governance/entrypoint and transitional documentation: " + desc
     if p.startswith("docs/history/"):return "New Historical plan/agent/governance material: " + desc
     if p.startswith("docs/"):return "Legacy YouTube Studio document: " + desc
     if p.startswith("alembic/versions/"):return "YTB Alembic revision: " + desc
@@ -197,9 +200,9 @@ for p in files:
       "testsProtectingBehavior":test_map.get(p,[]),
       "requiredP1Test":"Rebuild independent History test" if not test_map.get(p) and not p.startswith("tests/") else "Port mapped tests; verify no legacy imports",
       "p1CleanCutRisk":risk, "p1Action":task,
-      **({"documentationAuthority":("ACTIVE_NEW_HISTORY" if decision=="PRESERVE" else "RETIRED_YTB" if p.startswith("docs/") and decision in ("DELETE","REWRITE","ARCHIVE") else "NOT_APPLICABLE"),
+      **({"documentationAuthority":("ACTIVE_NEW_HISTORY" if decision=="PRESERVE" or p=="README.md" else "RETIRED_YTB" if p.startswith("docs/") and decision in ("DELETE","REWRITE","ARCHIVE") else "NOT_APPLICABLE"),
           "documentReferences":docLinks.get(p,[]),
-          "p1DocumentationAction":risk} if p.startswith(("docs/",".agents/")) or p=="AGENTS.md" else {})})
+          "p1DocumentationAction":risk} if p.startswith(("docs/",".agents/")) or p in ("AGENTS.md","README.md","00_START_HERE.md") else {})})
 
 tables=[]
 for p,s in contents.items():
