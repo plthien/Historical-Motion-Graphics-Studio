@@ -1,33 +1,24 @@
 {
-  "name": "youtube-ai-studio-frontend",
-  "version": "3.0.0-external-authoring.18-rc1",
+  "name": "historical-motion-graphics-studio",
+  "version": "1.0.0-p1",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
-    "test": "node --test tests/*.test.mjs",
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "test": "node --test tests/history-ui/*.test.mjs",
+    "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
-    "@mui/material": "^5.15.20",
-    "@tanstack/react-query": "^5.45.1",
-    "lucide-react": "^1.23.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@types/react-test-renderer": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.5.2",
-    "postcss": "^8.5.16",
-    "react-test-renderer": "^18.3.1",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5.5.3",
-    "vite": "^5.4.11"
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "@vitejs/plugin-react": "4.3.1",
+    "typescript": "5.5.3",
+    "vite": "5.4.11",
+    "playwright": "1.56.1"
   }
 }
