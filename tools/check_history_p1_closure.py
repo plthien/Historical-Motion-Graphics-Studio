@@ -23,7 +23,7 @@ for folder in ("app","src","contracts","tests"):
   rel=p.relative_to(ROOT).as_posix()
   if any(rel.startswith(prefix) for prefix in RETIRED):fail("Legacy path "+rel)
   if folder=="app" and not (rel in ALLOWED_APP or rel.startswith("app/history/")):fail("Non-History Python "+rel)
-  if folder=="src" and rel not in ALLOWED_TS:fail("Non-History UI "+rel)
+  if folder=="src" and not (rel in ALLOWED_TS or rel.startswith("src/features/history/")):fail("Non-History UI "+rel)
   if folder=="contracts" and not rel.startswith("contracts/history/"):fail("Non-History contract "+rel)
   if folder=="tests" and not (rel.startswith("tests/history/") or rel.startswith("tests/history-ui/")):fail("Legacy test "+rel)
 for p in (ROOT/"app").rglob("*.py"):
@@ -37,7 +37,7 @@ for p in (ROOT/"app").rglob("*.py"):
    fail("Legacy import "+p.relative_to(ROOT).as_posix()+": "+str(names))
   if any(token in n.lower() for token in ("openai","anthropic","ollama","langchain","gemini") for n in names):fail("Model SDK import "+str(names))
 migrations=list((ROOT/"alembic/versions").glob("*.py"))
-if [p.name for p in migrations]!=["001_history_initial.py"]:fail("Old migration chain present")
+if sorted(p.name for p in migrations)!=["001_history_initial.py","002_history_authoring_p2.py"]:fail("Old migration chain present")
 for entry in ("MANIFEST.json","docs/32_CODING_RULES.md","docs/99_SOURCE_OF_TRUTH.md",
               ".github/workflows/scene-assets-v2-candidate-audit.yml","tools/package_manifest.py"):
  if (ROOT/entry).exists():fail("Forbidden file "+entry)

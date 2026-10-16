@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "topic_ideas.v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "reservation_id",
+    "source_fingerprint",
+    "ideas"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "TopicIdeas.v1"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 32,
+      "maxLength": 32
+    },
+    "reservation_id": {
+      "type": "string",
+      "minLength": 32,
+      "maxLength": 32
+    },
+    "source_fingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "ideas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "idea_id",
+          "title",
+          "hook",
+          "historical_period",
+          "region",
+          "story_angle",
+          "novelty_questions",
+          "factual_risks"
+        ],
+        "properties": {
+          "idea_id": {
+            "type": "string",
+            "pattern": "^idea_[a-z0-9]{8}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 160
+          },
+          "hook": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 450
+          },
+          "historical_period": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 140
+          },
+          "region": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 140
+          },
+          "story_angle": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 700
+          },
+          "novelty_questions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 5,
+              "maxLength": 350
+            },
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "factual_risks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 4,
+              "maxLength": 350
+            },
+            "minItems": 1,
+            "maxItems": 8
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 12
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "history_channel_dna.v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "language",
+    "audience",
+    "historical_niche",
+    "narration_style",
+    "editorial_style",
+    "map_treatment",
+    "uncertainty_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "HistoryChannelDNA.v1"
+    },
+    "language": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 32
+    },
+    "audience": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 240
+    },
+    "historical_niche": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 180
+    },
+    "narration_style": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 500
+    },
+    "editorial_style": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 500
+    },
+    "map_treatment": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 500
+    },
+    "uncertainty_policy": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 700
+    }
+  }
+}

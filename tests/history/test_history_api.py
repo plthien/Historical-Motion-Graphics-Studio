@@ -36,12 +36,15 @@ def test_fresh_channel_project_status_persist_restart(tmp_path):
         stages=status.json()["stages"]
         assert [s["key"] for s in stages]==list(STAGE_KEYS)
         assert len(stages)==7
-        assert all(x["status"]=="blocked" and x["blocked_reason"].startswith("NOT_IMPLEMENTED_P") for x in stages)
+        assert stages[0]["status"]=="blocked" and stages[0]["blocked_reason"]=="CHANNEL_DNA_REQUIRED"
+        assert stages[1]["blocked_reason"]=="TOPIC_NOT_APPROVED"
+        assert all(x["status"]=="blocked" and x["blocked_reason"].startswith("NOT_IMPLEMENTED_P") for x in stages[2:])
         assert client.get("/api/history/projects/"+project["project_id"]).status_code==200
         openapi=client.get("/openapi.json").json()
         paths=set(openapi["paths"])
-        assert paths=={"/health","/api/history/channels","/api/history/projects",
-                        "/api/history/projects/{project_id}","/api/history/projects/{project_id}/status"}
+        assert {"/health","/api/history/channels","/api/history/projects",
+                        "/api/history/projects/{project_id}","/api/history/projects/{project_id}/status"}<=paths
+        assert all("/api/history/" in p or p=="/health" for p in paths)
         for old in ("/api/projects","/api/v4","/api/scene-assets","/api/voice","/api/render"):
             assert client.get(old).status_code==404
         assert client.post("/api/history/projects",json={"channel_id":channel["channel_id"],"name":"The Event","history_context":{}}).status_code==409
@@ -58,7 +61,7 @@ def test_fresh_channel_project_status_persist_restart(tmp_path):
         assert {"channels","projects","stage_heads","artifacts","authoring_reservations","history_meta","alembic_version"}<=tables
         assert not any("scene" in n or "beat" in n or "prompt_bundle" in n or "visual_reference" in n for n in tables)
         assert cn.execute("PRAGMA foreign_key_check").fetchall()==[]
-        assert cn.execute("SELECT version_num FROM alembic_version").fetchone()[0]=="001_history_initial"
+        assert cn.execute("SELECT version_num FROM alembic_version").fetchone()[0]=="002_history_authoring_p2"
 
 @pytest.mark.parametrize("kind",["foreign","legacy","empty"])
 def test_foreign_and_legacy_database_rejected_without_any_mutation(tmp_path,kind):

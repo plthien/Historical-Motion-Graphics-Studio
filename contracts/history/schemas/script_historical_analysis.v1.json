@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "script_historical_analysis.v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "reservation_id",
+    "source_fingerprint",
+    "parent_topic_artifact_id",
+    "parent_topic_hash",
+    "full_script",
+    "sections",
+    "claims",
+    "performance_notes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ScriptHistoricalAnalysis.v1"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 32,
+      "maxLength": 32
+    },
+    "reservation_id": {
+      "type": "string",
+      "minLength": 32,
+      "maxLength": 32
+    },
+    "source_fingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "parent_topic_artifact_id": {
+      "type": "string",
+      "minLength": 32,
+      "maxLength": 32
+    },
+    "parent_topic_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "full_script": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 90000
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "section_id",
+          "exact_text",
+          "historical_period",
+          "region",
+          "delivery_note"
+        ],
+        "properties": {
+          "section_id": {
+            "type": "string",
+            "pattern": "^sec_[0-9]{3}$"
+          },
+          "exact_text": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 20000
+          },
+          "historical_period": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 140
+          },
+          "region": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 140
+          },
+          "delivery_note": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 350
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 12
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "claim_id",
+          "section_id",
+          "quote",
+          "start",
+          "end",
+          "historical_period",
+          "region",
+          "model_verification_state",
+          "evidence_review_status",
+          "source_leads",
+          "uncertainty_note"
+        ],
+        "properties": {
+          "claim_id": {
+            "type": "string",
+            "pattern": "^claim_[0-9]{3}$"
+          },
+          "section_id": {
+            "type": "string",
+            "pattern": "^sec_[0-9]{3}$"
+          },
+          "quote": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "historical_period": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 140
+          },
+          "region": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 140
+          },
+          "model_verification_state": {
+            "enum": [
+              "unverified",
+              "verified",
+              "disputed",
+              "hypothetical"
+            ]
+          },
+          "evidence_review_status": {
+            "const": "unreviewed"
+          },
+          "source_leads": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 4,
+              "maxLength": 600
+            },
+            "minItems": 0,
+            "maxItems": 8
+          },
+          "uncertainty_note": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 500
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 20
+    },
+    "performance_notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 4,
+        "maxLength": 300
+      },
+      "minItems": 0,
+      "maxItems": 20
+    }
+  }
+}

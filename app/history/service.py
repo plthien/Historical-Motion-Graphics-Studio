@@ -92,14 +92,29 @@ class HistoryService:
         return response
 
     def get_status(self,project_id):
+        from .authoring import HistoryAuthoring
         project=self.get_project(project_id)
-        blocked=["NOT_IMPLEMENTED_P2","NOT_IMPLEMENTED_P2","NOT_IMPLEMENTED_P3","NOT_IMPLEMENTED_P4","NOT_IMPLEMENTED_P5","NOT_IMPLEMENTED_P7","NOT_IMPLEMENTED_P8"]
-        labels=["Topic Ideas","Script & Historical Analysis","Voice & Alignment","Historical Assets","Visual Director","Motion Timeline","Render & Delivery"]
-        with self.db.connect() as cn:
-            heads={r["stage_key"]:dict(r) for r in cn.execute("SELECT stage_key,revision FROM stage_heads WHERE project_id=?",(project_id,))}
-        stages=[{"key":key,"label":label,"status":"approved" if key in heads else "blocked",
-                 "blocked_reason":None if key in heads else why,"revision":heads.get(key,{}).get("revision",0)}
-                for key,label,why in zip(STAGE_KEYS,labels,blocked)]
+        labels=["Topic Ideas","Script & Historical Analysis","Voice & Alignment",
+                "Historical Assets","Visual Director","Motion Timeline","Render & Delivery"]
+        blocked=["","TOPIC_NOT_APPROVED","NOT_IMPLEMENTED_P3","NOT_IMPLEMENTED_P4",
+                 "NOT_IMPLEMENTED_P5","NOT_IMPLEMENTED_P7","NOT_IMPLEMENTED_P8"]
+        auth=HistoryAuthoring(self.db)
+        channel_dna=auth.dna_get(project["channel_id"])
+        stages=[]
+        for idx,key in enumerate(STAGE_KEYS):
+            artifact=auth.current(project_id,key) if idx<2 else None
+            if artifact and artifact["stale"]:state="stale";reason="SOURCE_STALE"
+            elif artifact:state="approved";reason=None
+            elif idx==0:
+                state="ready" if channel_dna else "blocked"
+                reason=None if channel_dna else "CHANNEL_DNA_REQUIRED"
+            elif idx==1:
+                topic=auth.current(project_id,"topic")
+                state="ready" if topic and not topic["stale"] else "blocked"
+                reason=None if state=="ready" else "TOPIC_NOT_APPROVED"
+            else:state="blocked";reason=blocked[idx]
+            stages.append({"key":key,"label":labels[idx],"status":state,
+                          "blocked_reason":reason,"revision":artifact["revision"] if artifact else 0})
         return {"project_id":project_id,"channel_id":project["channel_id"],"stages":stages}
 
     def validate_only(self, content: str):
