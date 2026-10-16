@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {motionPlan,validatePlan,safePath,setupAtFrame,visibleEventsAtFrame} from '../src/plan.mjs';
+const codes=p=>validatePlan(p).map(e=>e.code);
+const copy=()=>structuredClone(motionPlan);
+test('sample plan valid, 60 sec',()=>{assert.deepEqual(validatePlan(motionPlan),[]);assert.equal(motionPlan.durationFrames/motionPlan.fps,60)});
+test('every required half-open boundary',()=>{for(const [f,id] of [[0,'opening'],[569,'opening'],[570,'map'],[1199,'map'],[1200,'archive'],[1799,'archive']]) assert.equal(setupAtFrame(motionPlan,f)?.id,id);assert.equal(setupAtFrame(motionPlan,1800),null)});
+test('event local/global visibility',()=>{assert.ok(!visibleEventsAtFrame(motionPlan,819).includes('route'));assert.ok(visibleEventsAtFrame(motionPlan,820).includes('route'));assert.ok(!visibleEventsAtFrame(motionPlan,1120).includes('route'))});
+test('malformed roots and nested arrays do not crash',()=>{for(const x of [null,[],42,{}, {schemaVersion:'x',setups:[null]}, {...copy(),setups:[{events:[null]}]}]){assert.doesNotThrow(()=>validatePlan(x));assert.ok(validatePlan(x).length)}});
+test('unknown keys/version',()=>{const p=copy();p.unexpected=true;p.schemaVersion='bad';assert.ok(codes(p).includes('unknown_field'));assert.ok(codes(p).includes('version'))});
+test('duplicate IDs',()=>{const p=copy();p.setups[1].id=p.setups[0].id;p.setups[0].events[1].id=p.setups[0].events[0].id;assert.ok(codes(p).includes('setup_id'));assert.ok(codes(p).includes('event_id'))});
+test('gaps/overlaps and fractional/oversized events',()=>{const p=copy();p.setups[1].startFrame=571;p.setups[0].events[0].atFrame=0.5;p.setups[0].events[0].durationFrames=10000;p.setups[0].events[0].layer=100;assert.ok(codes(p).includes('setup_timing'));assert.ok(codes(p).includes('event_timing'));assert.ok(codes(p).includes('layer'))});
+test('reject remote, traversal and absolute asset paths',()=>{for(const x of ['../a.png','a/../b.png','/tmp/a.png','https://example.com/a.png','C:\\a.png','a//b.png','a.png?x=1'])assert.equal(safePath(x),false,x);const p=copy();p.setups[2].events[0].assetPath='../secret.png';assert.ok(codes(p).includes('asset_path'))});

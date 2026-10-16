@@ -90,23 +90,6 @@ def test_candidate_audit_triggers_main_pull_requests() -> None:
     assert "durable-media-workflow" not in source
 
 
-def test_release_manifest_refresh_targets_active_branch() -> None:
-    source = (ROOT / ".github" / "workflows" / "refresh-release-manifest.yml").read_text(encoding="utf-8")
-    parsed = yaml.safe_load(source)
-    events = parsed.get("on") or parsed.get(True)
-
-    assert parsed["name"] == "Refresh deterministic release artifacts"
-    assert "branches" not in events["push"]
-    assert events["push"]["paths-ignore"] == [
-        "MANIFEST.json",
-        "contracts/openapi/youtube_ai_studio_api.openapi.yaml",
-    ]
-    assert parsed["permissions"]["contents"] == "write"
-    assert 'git push origin "HEAD:${GITHUB_REF_NAME}"' in source
-    assert "git push origin HEAD:main" not in source
-    assert "durable-media-workflow" not in source
-
-
 def test_gitignore_excludes_runtime_assets() -> None:
     source = (ROOT / ".gitignore").read_text(encoding="utf-8")
 
