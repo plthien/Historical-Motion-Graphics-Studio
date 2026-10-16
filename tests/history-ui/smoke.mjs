@@ -73,7 +73,7 @@ try{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:5173/',{waitUntil:'networkidle'});
  await page.locator('#channel-select').selectOption(channel.channel_id);
- await page.locator('#project-select option[value="'+project.project_id+'"]').waitFor();
+ await page.locator('#project-select option[value="'+project.project_id+'"]').waitFor({state:'attached'});
  await page.locator('#project-select').selectOption(project.project_id);
  await page.locator('.dnaEditor summary').click();
  await page.locator('.dnaEditor').getByRole('button',{name:'Save ChannelDNA'}).click();
@@ -124,7 +124,7 @@ try{
    const errs=[];p.on('pageerror',e=>errs.push(e.message));
    await p.goto('http://127.0.0.1:5173/',{waitUntil:'networkidle'});
    await p.locator('#channel-select').selectOption(channel.channel_id);
-   await p.locator('#project-select option[value="'+project.project_id+'"]').waitFor();
+   await p.locator('#project-select option[value="'+project.project_id+'"]').waitFor({state:'attached'});
    await p.locator('#project-select').selectOption(project.project_id);
    await p.locator('.sidebar .navItem').nth(1).click();
    await p.locator('[data-testid="authoring-script_analysis"]').waitFor();
