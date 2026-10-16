@@ -40,7 +40,8 @@ try{
   assert.equal(await page.locator('.stage').count(),7);
   assert.equal(await page.locator('.inspector button:disabled').count(),1);
   assert.deepEqual(errors,[]);
-  await page.screenshot({path:'out/p1-ui/history-'+w+'x'+h+'.png',fullPage:true});
+  await page.screenshot({path:'out/p1-ui/history-'+w+'x'+h+'.png',fullPage:false});
+  await page.screenshot({path:'out/p1-ui/history-'+w+'x'+h+'-full.png',fullPage:true});
   await page.close();
  }
  await kill(api);api=null;
