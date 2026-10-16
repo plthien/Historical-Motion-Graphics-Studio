@@ -4,6 +4,7 @@ import json
 import os
 import sqlite3
 from pathlib import Path
+from contextlib import contextmanager
 from urllib.parse import quote
 
 from alembic import command
@@ -58,14 +59,24 @@ class HistoryDB:
         command.upgrade(config, "head")
         self._check_existing_read_only()
 
-    def connect(self) -> sqlite3.Connection:
+    @contextmanager
+    def connect(self):
         self._check_existing_read_only()
         conn = sqlite3.connect(str(self.path), timeout=10, isolation_level=None)
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys=ON")
-        conn.execute("PRAGMA busy_timeout=10000")
-        conn.execute("PRAGMA journal_mode=WAL")
-        return conn
+        try:
+            conn.row_factory = sqlite3.Row
+            conn.execute("PRAGMA foreign_keys=ON")
+            conn.execute("PRAGMA busy_timeout=10000")
+            conn.execute("PRAGMA journal_mode=WAL")
+            yield conn
+            if conn.in_transaction:
+                conn.commit()
+        except BaseException:
+            if conn.in_transaction:
+                conn.rollback()
+            raise
+        finally:
+            conn.close()
 
 
 def strict_json(text: str, max_bytes: int = 1024 * 1024):
