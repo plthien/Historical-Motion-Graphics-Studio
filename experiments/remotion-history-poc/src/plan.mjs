@@ -50,6 +50,18 @@ export const motionPlan = {
   ]
 };
 
+function deepFreeze(value){
+  if(value && typeof value==='object' && !Object.isFrozen(value)){
+    for(const child of Object.values(value))deepFreeze(child);
+    Object.freeze(value);
+  }
+  return value;
+}
+// One fixed P0 fixture is shared by the browser and the CLI Root.
+// Do not accept arbitrary user plans through this technical demonstrator.
+deepFreeze(motionPlan);
+export const CANONICAL_PLAN_BYTES = JSON.stringify(motionPlan);
+
 const kinds = new Set(['title','map','archive']);
 const events = new Set(['headline','timestamp','label','stamp','route','photo','placeholder','annotation']);
 const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
