@@ -11,12 +11,12 @@ import hashlib
 
 ROOT = Path(__file__).resolve().parents[1]
 DONOR_SHA = "0119572d651cb2b1902aea21b6267cca9809a940"
-PREFIXES = ("app/", "src/", "contracts/", "alembic/", "tests/", "scripts/", "tools/", ".github/", "kokoro/")
+PREFIXES = ("app/", "src/", "contracts/", "alembic/", "tests/", "scripts/", "tools/", ".github/", "kokoro/", "docs/", ".agents/")
 ROOT_FILES = {
     "start.bat", "package.json", "package-lock.json", "requirements.txt",
     "alembic.ini", "pytest.ini", ".gitignore", ".npmrc", "postcss.config.js",
     "tailwind.config.js", "tsconfig.json", "vite.config.ts", "index.html",
-    "00_START_HERE.md", "README.md",
+    "00_START_HERE.md", "README.md", "AGENTS.md",
 }
 EXTS = {".py", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"}
 parser=argparse.ArgumentParser(description="Immutable donor SHA source ownership inventory")
@@ -108,6 +108,18 @@ for p in files:
 
 def classify(p: str) -> tuple[str,str|None,str,str]:
     low=p.lower()
+    if p=="AGENTS.md" or p.startswith(".agents/skills/"):
+        return "PRESERVE","history.governance","Active NEW History entrypoint or skill","Never replace with old YTB rules; update under separate review"
+    if p.startswith("docs/history/"):
+        if any(mark in p for mark in ("MAIN_BASED_MIGRATION_PLAN_V2",)):
+            return "ARCHIVE",None,"Superseded History migration draft, NOT current authority","Archive outside shipped History instructions; current plan v3 wins"
+        return "PRESERVE","history.governance","Approved History rules, phase plan, agent guide or audit","Preserve History authority and phase ownership; verify links remain current"
+    if p=="docs/00_INDEX.md":
+        return "REWRITE","history.documentation","Former YTB documentation index, NOT active coding rules","Rewrite as History-only reader index during P1"
+    if p.startswith("docs/adr/"):
+        return "ARCHIVE",None,"Legacy YTB architecture decision record","Historical donor rationale only; no P1 runtime or active instruction link"
+    if p.startswith("docs/"):
+        return "DELETE",None,"Old YouTube Studio specification/coding/workflow instruction","Retire obsolete YTB docs from active product during P1; no legacy instruction authority"
     if low.startswith("alembic/versions/"):
         return "DELETE",None,"Legacy SQLite migration revision","Remove the full old migration chain only during P1 atomic cut"
     if low.startswith("contracts/"):
@@ -160,12 +172,20 @@ def closure(p: str) -> list[str]:
     return sorted(seen)
 def responsibility(p: str) -> str:
     desc=p.split("/")[-1].replace("_"," ").replace("-"," ").split(".")[0]
+    if p=="AGENTS.md" or p.startswith(".agents/"):return "Active NEW Historical coding/skill governance: " + desc
+    if p.startswith("docs/history/"):return "New Historical plan/agent/governance material: " + desc
+    if p.startswith("docs/"):return "Legacy YouTube Studio document: " + desc
     if p.startswith("alembic/versions/"):return "YTB Alembic revision: " + desc
     if p.startswith("contracts/"):return "YTB API/prompt/validation contract: " + desc
     if p.startswith("src/"):return "YTB React component or browser utility: " + desc
     if p.startswith("tests/"):return "YTB regression/behavior test: " + desc
     return "Donor service/module/tool: " + desc
 
+# Document links are read from the SAME immutable donor SHA, never the worktree.
+documents={p:immutable_source(p) for p in files if p.endswith(".md")}
+docLinks={p:sorted({q for q in files if q.startswith(("docs/",".agents/")) and q!=p and (
+    q in body or Path(q).name in body
+)}) for p,body in documents.items()}
 entries=[]
 for p in files:
     decision,new_owner,task,risk=classify(p)
@@ -176,7 +196,10 @@ for p in files:
       "directDependencies":deps,"transitiveDependencies":closure(p),
       "testsProtectingBehavior":test_map.get(p,[]),
       "requiredP1Test":"Rebuild independent History test" if not test_map.get(p) and not p.startswith("tests/") else "Port mapped tests; verify no legacy imports",
-      "p1CleanCutRisk":risk, "p1Action":task})
+      "p1CleanCutRisk":risk, "p1Action":task,
+      **({"documentationAuthority":("ACTIVE_NEW_HISTORY" if decision=="PRESERVE" else "RETIRED_YTB" if p.startswith("docs/") and decision in ("DELETE","REWRITE","ARCHIVE") else "NOT_APPLICABLE"),
+          "documentReferences":docLinks.get(p,[]),
+          "p1DocumentationAction":risk} if p.startswith(("docs/",".agents/")) or p=="AGENTS.md" else {})})
 
 tables=[]
 for p,s in contents.items():
@@ -189,11 +212,19 @@ for p,s in contents.items():
         for method,path in re.findall(r"@\w+\.(get|post|put|patch|delete)\s*\(\s*['\"]([^'\"]+)['\"]",s):
             routes.append({"owner":p,"method":method.upper(),"declaredPath":path})
 report={"schemaVersion":"history_source_ownership_ledger.v2",
- "donorSha":sha,"scope":"Tracked P0 donor files from exact main commit",
+ "donorSha":sha,"scope":"All tracked relevant donor sources, root configurations and documentation from exact main commit",
  "completeness":{"trackedFiles":len(files),"sourceAnalyzed":len(contents),
   "sourceSnapshot":"git show <immutable donor commit>:<file>; no working-tree reads",
   "dependencyGraph":"best-effort static import AST/regex; runtime/dynamic routes need independent P1 tests",
   "testsAssociation":"import/name heuristic, not independent runtime proof"},
+ "documentationInventory":{"donorDocuments":len(documents),
+   "paths":sorted(documents),
+   "newHistoryAuthority":sorted(p for p in documents if classify(p)[0]=="PRESERVE"),
+   "retiredYtbDocumentation":sorted(p for p in documents if classify(p)[0] in ("DELETE","REWRITE","ARCHIVE")),
+   "candidateOnlyP0Outputs":["docs/history/P0_EXECUTION_AUDIT.md","docs/history/P0_MEDIA_REGISTER.md",
+     "docs/history/P0_P1_READINESS.md","docs/history/source-ownership-ledger.json",
+     "experiments/remotion-history-poc/README.md"],
+   "candidateOutputPolicy":"not donor tree items, not claimed source at frozen donor SHA"},
  "legacyInventory":{"routes":routes,"dbTables":tables,
    "migrations":[p for p in files if p.startswith("alembic/versions/")],
    "uiStages":["Topic Ideas","Script & Analysis","Style Bible","Voice","Scene Breakdown","Scene Assets","Assembly","Render"],
