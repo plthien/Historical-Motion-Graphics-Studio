@@ -36,14 +36,16 @@ class HistoryDB:
                 row = conn.execute("SELECT schema_key, schema_version FROM history_meta WHERE id=1").fetchone()
                 tables = {x[0] for x in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
                 required = {"history_meta","channels","projects","stage_heads","artifacts","authoring_reservations","alembic_version"}
-                if row != (EXPECTED_SCHEMA, 1) or not required.issubset(tables):
-                    raise ValueError("History schema marker or required table missing")
-                version = conn.execute("SELECT version_num FROM alembic_version").fetchone()
-                if version not in (("001_history_initial",), ("002_history_authoring_p2",)):
-                    raise ValueError("Unsupported History migration head")
-                if version == ("002_history_authoring_p2",):
-                    needed = {"p2_channel_dna","p2_channel_dna_history","p2_prompts","p2_candidates","p2_approvals"}
-                    if not needed.issubset(tables): raise ValueError("P2 tables missing")
+                version=conn.execute("SELECT version_num FROM alembic_version").fetchone()
+                if version == ("001_history_initial",):
+                    expected_tables=required
+                    expected_row=(EXPECTED_SCHEMA,1)
+                elif version == ("002_history_authoring_p2",):
+                    expected_tables=required|{"p2_channel_dna","p2_channel_dna_history","p2_prompts","p2_candidates","p2_approvals"}
+                    expected_row=(EXPECTED_SCHEMA,2)
+                else: raise ValueError("Unsupported History migration head")
+                if row != expected_row or tables!=expected_tables:
+                    raise ValueError("History schema marker/table closure mismatch")
             finally:
                 conn.close()
         except (sqlite3.Error, ValueError, OSError) as e:

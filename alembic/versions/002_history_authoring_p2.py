@@ -53,7 +53,9 @@ def upgrade():
         sa.Column("channel_dna_hash",sa.String(64),nullable=False),
         sa.Column("approved_at",sa.String(40),nullable=False))
     op.create_index("ix_p2_approvals_owner","p2_approvals",["project_id","stage_key"])
+    op.execute("UPDATE history_meta SET schema_version=2 WHERE id=1 AND schema_version=1")
 
 def downgrade():
+    op.execute("UPDATE history_meta SET schema_version=1 WHERE id=1 AND schema_version=2")
     for name in ("p2_approvals","p2_candidates","p2_prompts","p2_channel_dna_history","p2_channel_dna"):
         op.drop_table(name)
