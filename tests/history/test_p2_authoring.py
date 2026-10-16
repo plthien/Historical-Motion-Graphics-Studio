@@ -1,0 +1,197 @@
+"""P2 frozen-gate API, persisted workflow, authoring isolation and invalidation."""
+from __future__ import annotations
+import json,sqlite3,hashlib
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+import pytest
+from fastapi.testclient import TestClient
+from app.main import create_app
+from app.history.db import HistoryDB
+from app.history.errors import HistoryError
+from app.history.authoring import HistoryAuthoring
+
+def create(db):return TestClient(create_app(db))
+def send(c,path,body):r=c.post(path,json=body);assert r.status_code in (200,201),r.text;return r.json()
+def channel(c):
+    return send(c,"/api/history/channels",{"name":"Ancient History","language":"English","niche":"Ancient humans","history_dna":{}})
+DNA={"schema_version":"HistoryChannelDNA.v1","language":"English","audience":"Curious adults",
+     "historical_niche":"Ancient human survival",
+     "narration_style":"Conversational dry humor with natural speech",
+     "editorial_style":"Entertaining and historically careful narrative",
+     "map_treatment":"Schematic maps plainly marked; never fabricate exact borders",
+     "uncertainty_policy":"Label hypotheses, contested evidence and reconstructed scenes explicitly"}
+TOPIC={"title":"The Ancient Hunt That Created a New Problem","hook":"They caught dinner and invented a second emergency.",
+       "historical_period":"Late Pleistocene","region":"Western Eurasia",
+       "story_angle":"An imagined but plausible cause-and-effect chain about food storage and conflict",
+       "novelty_questions":["Which downstream problem follows a successful hunt?"],
+       "factual_risks":["Exact event is fictional, not attested by archaeology"]}
+def setup(c):
+    ch=channel(c)
+    assert c.get(f"/api/history/channels/{ch['channel_id']}/dna").json() is None
+    saved=c.put(f"/api/history/channels/{ch['channel_id']}/dna",json={"document":DNA,"expected_revision":0})
+    assert saved.status_code==200,saved.text
+    p=send(c,"/api/history/projects",{"channel_id":ch["channel_id"],"name":"Hunt","history_context":{"style":"lightly comedic"}})
+    return ch,p
+def topic_json(prompt):
+    return json.dumps({"schema_version":"TopicIdeas.v1","project_id":prompt["project_id"],
+      "reservation_id":prompt["reservation_id"],"source_fingerprint":prompt["source_fingerprint"],
+      "ideas":[dict(idea_id=id,**TOPIC) for id in prompt["reserved_ids"]["ideas"]]},ensure_ascii=False)
+def script_json(prompt,wrong=False):
+    ids=prompt["reserved_ids"]["sections"]
+    sections=[{"section_id":sid,"exact_text":f"Section {i}: The hunt succeeds, but people must make a harder choice.",
+               "historical_period":"Late Pleistocene","region":"Western Eurasia",
+               "delivery_note":"Speak naturally"} for i,sid in enumerate(ids,1)]
+    text="\n\n".join(s["exact_text"] for s in sections)
+    quote="The hunt succeeds"
+    anchor=sections[0]["exact_text"].index(quote)
+    claim={"claim_id":"claim_001","section_id":ids[0],"quote":quote,"start":anchor,
+           "end":anchor+len(quote),"historical_period":"Late Pleistocene","region":"Western Eurasia",
+           "model_verification_state":"hypothetical","evidence_review_status":"unreviewed",
+           "source_leads":["Potential archaeological research lead, NOT verified"],
+           "uncertainty_note":"Illustrative story event, not an attested incident"}
+    return json.dumps({"schema_version":"ScriptHistoricalAnalysis.v1","project_id":prompt["project_id"],
+      "reservation_id":prompt["reservation_id"],"source_fingerprint":prompt["source_fingerprint"],
+      "parent_topic_artifact_id":prompt["reserved_ids"]["parent_artifact_id"],
+      "parent_topic_hash":prompt["reserved_ids"]["parent_hash"],
+      "full_script":text+(" altered" if wrong else ""),"sections":sections,
+      "claims":[claim],"performance_notes":["Dry comedy, conversational"]},ensure_ascii=False)
+def approve_topic(c,p):
+    base=f"/api/history/projects/{p['project_id']}/topic"
+    prompt=send(c,base+"/prompt",{"count":2,"avoid":["Repeated viral hunting videos"],"emphasis":"Novel cause-and-effect comedy"})
+    assert "manual" in prompt["prompt"].lower()
+    assert "HistoryChannelDNA.v1" in prompt["prompt"]
+    assert c.get(base+"/prompt").json()["reservation_id"]==prompt["reservation_id"]
+    raw=topic_json(prompt)
+    validated=send(c,base+"/import/validate",{"reservation_id":prompt["reservation_id"],"raw_json":raw})
+    assert validated["valid"],validated
+    assert c.get(base+"/current").json() is None
+    candidate=send(c,base+"/import",{"reservation_id":prompt["reservation_id"],"raw_json":raw})
+    rev=c.get(base+"/candidates/"+candidate["candidate_id"]).json()
+    assert rev["status"]=="candidate" and len(rev["content"]["ideas"])==2
+    approved=send(c,base+"/approve",{"candidate_id":candidate["candidate_id"],"idea_id":prompt["reserved_ids"]["ideas"][0],"expected_revision":0})
+    assert approved["revision"]==1
+    assert c.get(base+"/current").json()["content_hash"]==approved["content_hash"]
+    return prompt,approved
+
+def test_full_topic_script_cycle_restart_source_stale_and_bytes(tmp_path):
+    db=tmp_path/"history_data"/"history_app.db"
+    with create(db) as c:
+        ch,p=setup(c)
+        t_prompt,topic=approve_topic(c,p)
+        script_base=f"/api/history/projects/{p['project_id']}/script-analysis"
+        source=send(c,script_base+"/prompt",{"section_count":3,"notes":"Dry understated humor"})
+        assert source["reserved_ids"]["parent_artifact_id"]==topic["artifact_id"]
+        raw=script_json(source)
+        req={"reservation_id":source["reservation_id"],"raw_json":raw}
+        assert send(c,script_base+"/import/validate",req)["valid"]
+        candidate=send(c,script_base+"/import",req)
+        reviewed=c.get(script_base+"/review",params={"candidate_id":candidate["candidate_id"]})
+        assert reviewed.status_code==200 and len(reviewed.json()["content"]["claims"])==1
+        approved=send(c,script_base+"/approve",{"candidate_id":candidate["candidate_id"],"expected_revision":0})
+        assert approved["content"]["full_script"]==json.loads(raw)["full_script"]
+        assert approved["content"]["claims"][0]["evidence_review_status"]=="unreviewed"
+        assert c.get(script_base+"/current").json()["stale"] is False
+        assert c.post(script_base+"/approve",json={"candidate_id":candidate["candidate_id"],"expected_revision":0}).status_code==409
+        status=c.get(f"/api/history/projects/{p['project_id']}/status").json()
+        assert [x["status"] for x in status["stages"][:2]]==["approved","approved"]
+    with create(db) as c:
+        old=c.get(script_base+"/current").json()
+        assert old["content_hash"]==approved["content_hash"] and old["content"]["full_script"]==approved["content"]["full_script"]
+        assert c.get(f"/api/history/channels/{ch['channel_id']}/dna").json()["revision"]==1
+        manual=send(c,f"/api/history/projects/{p['project_id']}/topic/manual",{"topic":dict(TOPIC),"expected_revision":1})
+        assert manual["revision"]==2
+        stale=c.get(script_base+"/current").json()
+        assert stale["stale"] is True and stale["content_hash"]==old["content_hash"]
+        assert c.post(script_base+"/approve",json={"candidate_id":candidate["candidate_id"],"expected_revision":0}).status_code==409
+        assert (db.parent/"artifacts"/(old["content_hash"]+".json")).is_file()
+        assert c.get(f"/api/history/projects/{p['project_id']}/status").json()["stages"][1]["status"]=="stale"
+    with sqlite3.connect(db) as cn:
+        assert cn.execute("SELECT version_num FROM alembic_version").fetchone()[0]=="002_history_authoring_p2"
+        assert cn.execute("SELECT COUNT(*) FROM p2_approvals").fetchone()[0]==3
+        assert cn.execute("PRAGMA foreign_key_check").fetchall()==[]
+
+def test_strict_validation_no_writes_and_repair_prompt(tmp_path):
+    db=tmp_path/"app.db"
+    with create(db) as c:
+        ch,p=setup(c)
+        base=f"/api/history/projects/{p['project_id']}/topic"
+        prompt=send(c,base+"/prompt",{"count":1})
+        assert c.get(base+"/prompt").json()["source_fingerprint"]==prompt["source_fingerprint"]
+        raw=topic_json(prompt)
+        cases=[
+          raw.replace('"title":','"unknown":42,"title":',1),
+          '{"schema_version":"TopicIdeas.v1","schema_version":"TopicIdeas.v1"}',
+          raw.replace('"idea_id":','"idea_id":"bad", "idea_id":',1),
+          raw.replace('"ideas": [','"ideas": null, "foo": [',1),
+          raw.replace(prompt["reserved_ids"]["ideas"][0],"idea_wrong"),
+          '{"broken": NaN}',
+          "x"*(1024*1024+1),
+        ]
+        for invalid in cases:
+            before=db.stat().st_mtime_ns
+            payload={"reservation_id":prompt["reservation_id"],"raw_json":invalid}
+            response=c.post(base+"/import/validate",json=payload)
+            assert response.status_code in (200,422)
+            if response.status_code==200:assert not response.json()["valid"]
+            assert c.get(base+"/candidates").json()==[]
+            assert c.get(base+"/current").json() is None
+        repair=send(c,base+"/repair-prompt",{"reservation_id":prompt["reservation_id"],"raw_json":'{"missing":true}'})
+        assert "invalid_paths" in repair["prompt"]
+        assert "frozen_prompt" in repair["prompt"]
+        assert c.get(base+"/prompt").json()["state"]=="pending"
+
+def test_stale_dna_and_reservation_rebuild_replay(tmp_path):
+    db=tmp_path/"a.db"
+    with create(db) as c:
+        ch,p=setup(c);base=f"/api/history/projects/{p['project_id']}/topic"
+        one=send(c,base+"/prompt",{"count":1})
+        two=send(c,base+"/prompt",{"count":1})
+        assert c.post(base+"/import",json={"reservation_id":one["reservation_id"],"raw_json":topic_json(one)}).status_code==409
+        body=dict(DNA);body["editorial_style"]="Different historical production style"
+        assert c.put(f"/api/history/channels/{ch['channel_id']}/dna",json={"document":body,"expected_revision":1}).status_code==200
+        assert c.post(base+"/import",json={"reservation_id":two["reservation_id"],"raw_json":topic_json(two)}).status_code==409
+        three=send(c,base+"/prompt",{"count":1})
+        imported=send(c,base+"/import",{"reservation_id":three["reservation_id"],"raw_json":topic_json(three)})
+        assert c.post(base+"/import",json={"reservation_id":three["reservation_id"],"raw_json":topic_json(three)}).status_code==409
+        assert c.post(base+"/approve",json={"candidate_id":imported["candidate_id"],"idea_id":three["reserved_ids"]["ideas"][0],"expected_revision":5}).status_code==409
+
+def test_p1_populated_history_database_migrates_without_losing_records(tmp_path):
+    db=tmp_path/"existing_history.db"
+    from alembic import command
+    from alembic.config import Config
+    from app.history.db import ROOT
+    config=Config(str(ROOT/"alembic.ini"))
+    config.set_main_option("script_location",str(ROOT/"alembic"))
+    config.set_main_option("sqlalchemy.url","sqlite:///"+db.as_posix())
+    command.upgrade(config,"001_history_initial")
+    with sqlite3.connect(db) as cn:
+        cn.execute("PRAGMA foreign_keys=ON")
+        cn.execute("INSERT INTO channels VALUES (?,?,?,?,?,?,?)",("a"*32,"P1 Channel","English","History","{}",1,"2026-01-01T00:00:00+00:00"))
+        cn.execute("INSERT INTO projects VALUES (?,?,?,?,?)",("b"*32,"a"*32,"P1 Project","{}","2026-01-01T00:00:00+00:00"))
+    with create(db) as c:
+        assert c.get("/api/history/projects/"+"b"*32).status_code==200
+        assert c.get("/health").status_code==200
+    with sqlite3.connect(db) as cn:
+        assert cn.execute("SELECT version_num FROM alembic_version").fetchone()[0]=="002_history_authoring_p2"
+        assert cn.execute("SELECT name FROM channels").fetchone()[0]=="P1 Channel"
+
+def test_script_quotes_spans_exactness_and_cross_project_candidate(tmp_path):
+    db=tmp_path/"h.db"
+    with create(db) as c:
+        ch,p=setup(c);_p,topic=approve_topic(c,p)
+        base=f"/api/history/projects/{p['project_id']}/script-analysis"
+        prompt=send(c,base+"/prompt",{"section_count":2})
+        original=json.loads(script_json(prompt))
+        bads=[]
+        v=json.loads(json.dumps(original));v["full_script"]+="x";bads.append(v)
+        v=json.loads(json.dumps(original));v["sections"].reverse();bads.append(v)
+        v=json.loads(json.dumps(original));v["claims"][0]["start"]=0;bads.append(v)
+        v=json.loads(json.dumps(original));v["claims"][0]["section_id"]="sec_999";bads.append(v)
+        v=json.loads(json.dumps(original));v["claims"][0]["evidence_review_status"]="verified";bads.append(v)
+        v=json.loads(json.dumps(original));v["parent_topic_artifact_id"]="f"*32;bads.append(v)
+        for value in bads:
+            result=send(c,base+"/import/validate",{"reservation_id":prompt["reservation_id"],"raw_json":json.dumps(value)})
+            assert result["valid"] is False
+        p2=send(c,"/api/history/projects",{"channel_id":ch["channel_id"],"name":"Other Project","history_context":{}})
+        assert c.post(f"/api/history/projects/{p2['project_id']}/script-analysis/import",json={
+            "reservation_id":prompt["reservation_id"],"raw_json":script_json(prompt)}).status_code in (404,409)
