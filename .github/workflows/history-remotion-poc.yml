@@ -37,6 +37,12 @@ jobs:
       - name: Exact lockfile required
         working-directory: experiments/remotion-history-poc
         run: test -f package-lock.json
+      - name: Install independent Linux FFmpeg and FFprobe
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          command -v ffprobe
+          command -v ffmpeg
       - name: npm ci
         working-directory: experiments/remotion-history-poc
         run: npm ci --no-audit --no-fund
@@ -58,12 +64,6 @@ jobs:
       - name: Render 1800 real frames
         working-directory: experiments/remotion-history-poc
         run: npm run render
-      - name: Install independent Linux FFmpeg and FFprobe
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y ffmpeg
-          command -v ffprobe
-          command -v ffmpeg
       - name: Independent FFprobe + full video decode
         working-directory: experiments/remotion-history-poc
         run: npm run verify:video
@@ -110,12 +110,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: npm ci, tests and Vite
-        working-directory: experiments/remotion-history-poc
-        run: |
-          npm ci --no-audit --no-fund
-          npm test
-          npm run build
       - name: Install independent FFprobe/FFmpeg on Windows
         shell: pwsh
         run: |
@@ -128,6 +122,12 @@ jobs:
             }
           }
           if (!(Get-Command ffprobe -ErrorAction SilentlyContinue)) { throw "FFPROBE_PREREQUISITE_UNAVAILABLE after 3 Chocolatey attempts" }
+      - name: npm ci, tests and Vite
+        working-directory: experiments/remotion-history-poc
+        run: |
+          npm ci --no-audit --no-fund
+          npm test
+          npm run build
       - name: Windows Remotion render and FFprobe
         working-directory: experiments/remotion-history-poc
         run: |

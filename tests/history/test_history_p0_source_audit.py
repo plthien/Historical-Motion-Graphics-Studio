@@ -54,3 +54,32 @@ def test_relevant_path_cannot_disappear_silently(tmp_path):
     r=run("--verify","--output",str(report))
     assert r.returncode!=0
     assert "P0_LEDGER_OUTDATED" in r.stderr
+
+def test_all_donor_docs_are_classified_and_history_governance_preserved():
+    j=json.loads((ROOT/"docs/history/source-ownership-ledger.json").read_text(encoding="utf-8"))
+    donor=set(subprocess.check_output(["git","ls-tree","-r","--name-only",SHA],cwd=ROOT,text=True).splitlines())
+    expected={p for p in donor if p.startswith(("docs/",".agents/")) or p=="AGENTS.md"}
+    indexed={e["path"] for e in j["entries"]}
+    assert expected<=indexed,sorted(expected-indexed)
+    entries={e["path"]:e for e in j["entries"]}
+    for name in ("AGENTS.md","docs/history/CODING_RULES.md",
+                 "docs/history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md",
+                 "docs/history/phases/P0_REMOTION_FEASIBILITY.md",
+                 ".agents/skills/remotion-motion-graphics/SKILL.md"):
+        assert entries[name]["decision"]=="PRESERVE",name
+        assert entries[name]["documentationAuthority"]=="ACTIVE_NEW_HISTORY",name
+    for name in ("docs/99_SOURCE_OF_TRUTH.md","docs/67_SCENE_BREAKDOWN_VISUAL_MERGE_COMPLIANCE.md",
+                 "docs/69_UNIFIED_IMAGE_HIDDEN_PROMPT_BUNDLE_COMPLIANCE.md"):
+        assert entries[name]["decision"] in ("DELETE","ARCHIVE","REWRITE"),name
+        assert entries[name]["documentationAuthority"]=="RETIRED_YTB",name
+    assert "docs/history/P0_EXECUTION_AUDIT.md" in j["documentationInventory"]["candidateOnlyP0Outputs"]
+    assert "docs/history/P0_EXECUTION_AUDIT.md" not in donor
+
+def test_missing_legacy_document_cannot_pass_completeness(tmp_path):
+    data=json.loads((ROOT/"docs/history/source-ownership-ledger.json").read_text(encoding="utf-8"))
+    data["entries"]=[e for e in data["entries"] if e["path"]!="docs/99_SOURCE_OF_TRUTH.md"]
+    out=tmp_path/"missing-doc.json"
+    out.write_text(json.dumps(data),encoding="utf-8")
+    result=run("--verify","--output",str(out))
+    assert result.returncode!=0
+    assert "P0_LEDGER_OUTDATED" in result.stderr
