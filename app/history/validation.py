@@ -18,7 +18,8 @@ def check_schema(value,name):
     issues=[]
     for e in sorted(Draft202012Validator(schema).iter_errors(value),key=lambda e:(list(map(str,e.absolute_path)),e.message)):
         p="$"+"".join("["+str(x)+"]" if isinstance(x,int) else "."+str(x) for x in e.absolute_path)
-        issues.append({"path":p,"code":"SCHEMA_"+e.validator.upper(),"message":e.message[:300],"expected":str(e.validator_value)[:120]})
+        issues.append({"path":p,"code":"SCHEMA_"+e.validator.upper(),"message":e.message[:300],"expected":str(e.validator_value)[:120],
+                       "actual":type(e.instance).__name__})
     return issues
 def fail(code,message,path="$"):
     raise HistoryError(code,422,json.dumps({"path":path,"message":message},ensure_ascii=False))
@@ -62,4 +63,6 @@ def validate_payload(stage,raw,reservation):
                 a,b=c["start"],c["end"]
                 if b<=a or b>len(spoken) or spoken[a:b]!=c["quote"]:
                     errors.append({"path":cp+".quote","code":"QUOTE_SPAN","message":"Claim span must quote exact section code-point offsets"})
+                if c["historical_period"]!=sections[idx]["historical_period"] or c["region"]!=sections[idx]["region"]:
+                    errors.append({"path":cp,"code":"CHRONOLOGY_MISMATCH","message":"Claim period/region must match its referenced section; do not silently alter either"})
     return value,errors

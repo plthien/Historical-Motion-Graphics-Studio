@@ -163,7 +163,15 @@ class HistoryAuthoring:
         with self.db.connect() as cn:
             p=self._prompt_row(cn,project_id,stage,reservation_id)
             self._assert_prompt(cn,p)
-            val,errors=validate_payload(stage,raw,p)
+            try:
+                val,errors=validate_payload(stage,raw,p)
+            except HistoryError as e:
+                if e.code not in ("HISTORY_JSON_INVALID","HISTORY_JSON_DUPLICATE_KEY"):
+                    raise
+                val=None
+                errors=[{"path":"$","code":e.code,"message":e.message,
+                         "expected":"Valid UTF-8 JSON object with no duplicate keys",
+                         "actual":"Malformed or ambiguous JSON input"}]
             items=(val.get("ideas") if stage=="topic" else val.get("sections")) if isinstance(val,dict) else []
             return {"valid":not errors,"errors":errors,"summary":{"stage":stage,"items":len(items) if isinstance(items,list) else 0},"value":val if not errors else None}
 
