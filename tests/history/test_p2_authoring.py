@@ -195,3 +195,107 @@ def test_script_quotes_spans_exactness_and_cross_project_candidate(tmp_path):
         p2=send(c,"/api/history/projects",{"channel_id":ch["channel_id"],"name":"Other Project","history_context":{}})
         assert c.post(f"/api/history/projects/{p2['project_id']}/script-analysis/import",json={
             "reservation_id":prompt["reservation_id"],"raw_json":script_json(prompt)}).status_code in (404,409)
+
+
+def test_expired_reservation_wrong_stage_and_validate_only_purity(tmp_path):
+    db=tmp_path/"h.db"
+    with create(db) as c:
+        ch,p=setup(c)
+        topic=f"/api/history/projects/{p['project_id']}/topic"
+        reservation=send(c,topic+"/prompt",{"count":1})
+        data={"reservation_id":reservation["reservation_id"],"raw_json":topic_json(reservation)}
+        before_bytes=db.read_bytes()
+        before_mtime=db.stat().st_mtime_ns
+        assert send(c,topic+"/import/validate",data)["valid"]
+        # Read-only validate has no DB/artifact or head writes.
+        assert db.read_bytes()==before_bytes and db.stat().st_mtime_ns==before_mtime
+        assert not (db.parent/"artifacts").exists()
+        with sqlite3.connect(db) as cn:
+            cn.execute("UPDATE p2_prompts SET expires_at='2000-01-01T00:00:00+00:00' WHERE reservation_id=?",
+                       (reservation["reservation_id"],))
+        assert c.post(topic+"/import",json=data).status_code==409
+        assert c.post(f"/api/history/projects/{p['project_id']}/script-analysis/import",json=data).status_code in (404,409)
+        assert c.get(topic+"/current").json() is None
+
+def test_concurrent_approval_one_winner_and_immutable_history(tmp_path):
+    db=tmp_path/"h.db"
+    with create(db) as c:
+        ch,p=setup(c)
+        topic=f"/api/history/projects/{p['project_id']}/topic"
+        reservation=send(c,topic+"/prompt",{"count":1})
+        candidate=send(c,topic+"/import",{"reservation_id":reservation["reservation_id"],"raw_json":topic_json(reservation)})
+        srv=HistoryAuthoring(HistoryDB(db))
+        def run():
+            try:return srv.approve(p["project_id"],"topic",candidate["candidate_id"],0,reservation["reserved_ids"]["ideas"][0])
+            except HistoryError as e:return e.code
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results=list(pool.map(lambda _:run(),range(2)))
+        winners=[v for v in results if isinstance(v,dict)]
+        assert len(winners)==1,results
+        assert results.count("HISTORY_CANDIDATE_CONSUMED")==1
+        first=winners[0]
+        assert len(c.get(topic+"/history").json())==1
+        second=send(c,topic+"/manual",{"topic":TOPIC,"expected_revision":1})
+        rows=c.get(topic+"/history").json()
+        assert [x["version"] for x in rows]==[2,1]
+        assert rows[1]["artifact_id"]==first["artifact_id"]
+        assert rows[1]["content_hash"]==first["content_hash"]
+        assert rows[1]["content"]==first["content"]
+        assert rows[0]["artifact_id"]==second["artifact_id"]
+        assert c.get(topic+"/current").json()["revision"]==2
+
+def test_storage_write_failure_never_publishes_missing_head(tmp_path,monkeypatch):
+    db=tmp_path/"h.db"
+    with create(db) as c:
+        ch,p=setup(c)
+        topic=f"/api/history/projects/{p['project_id']}/topic"
+        reservation=send(c,topic+"/prompt",{"count":1})
+        candidate=send(c,topic+"/import",{"reservation_id":reservation["reservation_id"],"raw_json":topic_json(reservation)})
+        srv=HistoryAuthoring(HistoryDB(db))
+        import os
+        real_open=os.open
+        def fail_open(*args,**kwargs):
+            if "artifacts" in str(args[0]):
+                raise PermissionError("injected disk failure")
+            return real_open(*args,**kwargs)
+        with monkeypatch.context() as m:
+            m.setattr("app.history.authoring.os.open",fail_open)
+            with pytest.raises(PermissionError,match="injected disk failure"):
+                srv.approve(p["project_id"],"topic",candidate["candidate_id"],0,reservation["reserved_ids"]["ideas"][0])
+        assert c.get(topic+"/current").json() is None
+        reviewed=c.get(topic+"/candidates/"+candidate["candidate_id"]).json()
+        assert reviewed["status"]=="candidate"
+        approved=srv.approve(p["project_id"],"topic",candidate["candidate_id"],0,reservation["reserved_ids"]["ideas"][0])
+        assert approved["revision"]==1
+
+def test_channel_dna_changes_make_approved_topic_stale_without_deleting_history(tmp_path):
+    db=tmp_path/"h.db"
+    with create(db) as c:
+        ch,p=setup(c)
+        _,t=approve_topic(c,p)
+        changed=dict(DNA);changed["audience"]="Specialist archaeology enthusiasts"
+        r=c.put(f"/api/history/channels/{ch['channel_id']}/dna",json={"document":changed,"expected_revision":1})
+        assert r.status_code==200 and r.json()["revision"]==2
+        head=c.get(f"/api/history/projects/{p['project_id']}/topic/current").json()
+        assert head["stale"] is True and head["content_hash"]==t["content_hash"]
+        assert c.get(f"/api/history/projects/{p['project_id']}/topic/history").json()[0]["content_hash"]==t["content_hash"]
+        status=c.get(f"/api/history/projects/{p['project_id']}/status").json()
+        assert status["stages"][0]["status"]=="stale"
+        assert c.post(f"/api/history/projects/{p['project_id']}/script-analysis/prompt",json={"section_count":2}).status_code==409
+
+def test_invalid_utf8_json_http_and_claim_period_conflict(tmp_path):
+    db=tmp_path/"h.db"
+    with create(db) as c:
+        ch,p=setup(c)
+        prompt,_=approve_topic(c,p)
+        # Browser rejects non-UTF8 File inputs before fetch; HTTP server must reject invalid JSON bytes.
+        result=c.post(f"/api/history/projects/{p['project_id']}/topic/import",
+                     content=b'{"bad":"\\xff"}',headers={"content-type":"application/json"})
+        assert result.status_code==422
+        sp=send(c,f"/api/history/projects/{p['project_id']}/script-analysis/prompt",{"section_count":2})
+        bad=json.loads(script_json(sp))
+        bad["claims"][0]["region"]="Unrelated geography"
+        out=send(c,f"/api/history/projects/{p['project_id']}/script-analysis/import/validate",
+                {"reservation_id":sp["reservation_id"],"raw_json":json.dumps(bad)})
+        assert not out["valid"]
+        assert any(e["code"]=="CHRONOLOGY_MISMATCH" for e in out["errors"])
