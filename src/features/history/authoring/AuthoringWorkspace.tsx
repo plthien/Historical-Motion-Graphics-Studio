@@ -111,7 +111,7 @@ export function AuthoringWorkspace({projectId,stage,onChanged}:{projectId:string
   </section>
   {stage==="topic"&&<section className="authorCard" data-testid="manual-topic">
     <h3>Alternative · Direct manual Topic</h3><p className="smallMuted">A manual Topic is approved explicitly as a new immutable revision, never as a hidden import.</p>
-    {(["title","hook","historical_period","region","story_angle"] as const).map(k=><label key={k}>{k.replaceAll("_"," ")}
+    {(["title","hook","historical_period","region","story_angle"] as const).map(k=><label key={k}>{k.replace(/_/g," ")}
       <textarea value={manual[k]} onChange={e=>setManual(v=>({...v,[k]:e.target.value}))}/></label>)}
     <button disabled={busy||!manual.title||!manual.hook||!manual.historical_period||!manual.region||!manual.story_angle}
       onClick={()=>action(async()=>{await authoring.manualTopic(projectId,manual,approved?.revision||0);await refresh();onChanged();setNotice("Manual selected Topic approved under a new revision.");})}>Approve Manual Topic</button>
