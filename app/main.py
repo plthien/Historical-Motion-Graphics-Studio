@@ -10,6 +10,8 @@ from app.history.db import HistoryDB
 from app.history.domain import ChannelCreate,ChannelResponse,ProjectCreate,ProjectResponse,ProjectStatusResponse,HealthResponse
 from app.history.errors import HistoryError,history_exception_handler
 from app.history.service import HistoryService
+from app.history.authoring import HistoryAuthoring
+from app.history.api_authoring import router as authoring_router, service as authoring_dependency
 
 
 def create_app(db_path: Path | str | None = None) -> FastAPI:
@@ -18,12 +20,13 @@ def create_app(db_path: Path | str | None = None) -> FastAPI:
     async def lifespan(app: FastAPI):
         db.bootstrap()
         app.state.history_service=HistoryService(db)
+        app.state.history_authoring=HistoryAuthoring(db)
         yield
 
     app=FastAPI(title="Historical Motion Graphics Studio", version="1.0.0-p1", lifespan=lifespan)
     app.add_exception_handler(HistoryError,history_exception_handler)
     app.add_middleware(CORSMiddleware,allow_origins=["http://127.0.0.1:5173","http://localhost:5173"],
-                       allow_credentials=False,allow_methods=["GET","POST"],allow_headers=["Content-Type"])
+                       allow_credentials=False,allow_methods=["GET","POST","PUT"],allow_headers=["Content-Type"])
     def service()->HistoryService:
         return app.state.history_service
 
@@ -54,6 +57,9 @@ def create_app(db_path: Path | str | None = None) -> FastAPI:
     @app.get("/api/history/projects/{project_id}/status",response_model=ProjectStatusResponse)
     def project_status(project_id:str,s:HistoryService=Depends(service)):
         return s.get_status(project_id)
+
+    app.include_router(authoring_router)
+    app.dependency_overrides[authoring_dependency]=lambda: app.state.history_authoring
 
     return app
 

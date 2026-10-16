@@ -41,7 +41,7 @@ class ProjectResponse(ProjectCreate):
 class StageResponse(StrictModel):
     key: StageKey
     label: str
-    status: Literal["blocked", "approved"]
+    status: Literal["blocked", "ready", "stale", "approved"]
     blocked_reason: str | None
     revision: int
 
