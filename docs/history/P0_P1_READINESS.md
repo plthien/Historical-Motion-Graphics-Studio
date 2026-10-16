@@ -1,26 +1,23 @@
-# P0 — source-backed donor audit / P1 readiness
+# P0 donor ownership / P1 readiness — source snapshot
 
-Source: `main` at `0119572d651cb2b1902aea21b6267cca9809a940`.
-Executable audit: `python tools/history_p0_source_audit.py`.
-Machine-readable output: `source-ownership-ledger.json` (`history_source_ownership_ledger.v2`).
+Frozen donor SHA: `0119572d651cb2b1902aea21b6267cca9809a940`.
 
-## Inventoried donor surface
+## Verified immutable inventory
 
-- **778 tracked files** including app/, src/, contracts/, alembic/, tests/, scripts/, tools/, Kokoro runtime, GitHub workflows, root startup files and build/dependency configuration
-- **144 static API method/path decorators**, before router-prefix expansion and runtime shadow-precedence; these are not 144 distinct full OpenAPI paths
-- **29 detected SQLAlchemy `__tablename__` declarations** across donor models
-- **31 old Alembic revision scripts**, all retired in P1, with a fresh History initial migration
-- **8 YTB UI labels**: Topic Ideas, Script & Analysis, Style Bible, Voice, Scene Breakdown, Scene Assets, Assembly, Render
-- Legacy Windows launchers in `scripts/windows/`, V4/media host workers, FFmpeg still-asset assembly, voice infrastructure
+- **839** tracked donor files inventoried across app/, src/, tests/, contracts/, alembic/, scripts/, tools/, kokoro/, .github/, .agents/, docs/ and relevant root files.
+- **53** tracked `docs/` documents classified: 23 preserve (new History governance/plans), 24 delete (obsolete YTB authority), 5 archive (non-authoritative historical design), 1 rewrite (old docs index).
+- `AGENTS.md` and seven NEW `.agents/skills/` entries are preserved as new authority; they are never treated as obsolete YouTube coding instructions.
+- 144 statically declared router endpoints, 29 SQLAlchemy tables and 31 legacy migration files were identified. Router method/path declarations are **not** proof of final mounted OpenAPI route counts.
+- The file-by-file `docs/history/source-ownership-ledger.json` records decisions, static direct/transitive imports, candidate tests and P1 cut risks; docs additionally record authority and references.
+- Source-derived data is read only with `git show <donor SHA>:<path>`. Current-branch P0 documents are separately identified as candidate outputs, **not represented as files existing in the donor snapshot**.
+- The `--verify` command asserts byte-identical deterministic output and rejects stale/omitted documentation.
 
-The JSON ledger records every path, current owner/responsibility, EXTRACT/REWRITE/DELETE, new owner, direct internal imports, transitive static import closure, matching candidate regression tests, extraction preconditions and P1 risks. The generator reads frozen donor blobs with `git show <donor-sha>:<path>` rather than the mutable worktree. It can `--verify` the checked-in report byte-for-byte. Import edges are derived with Python AST and static JavaScript/TypeScript module imports. **Static analysis does not establish runtime/dynamic import completeness or actual test coverage.**
+## P1 dependencies (not implemented or authorized here)
 
-## P1 prerequisites — NOT AUTHORIZED BY P0
+1. Extract only independently tested, neutral JSON, CAS/hash, Kokoro/ElevenLabs, Windows Job/process and durable-workflow algorithms.
+2. Establish P1-specific dynamic import/route ownership and runtime test closure; static source graph does not replace it.
+3. Atomically replace all YTB runtime, UI, database/migrations, legacy asset/slideshow paths and launcher with a single new History Studio.
+4. Never load/migrate old user SQLite, WAV/media/assets or touch files under former application roots; preserve old local user data outside history storage.
+5. Remove old YTB coding/authoring documents and obsolete workflow links from active History UI and shipped documentation, preserving new History rules and phase guides.
 
-1. Independently prove dynamic API router mounting, OpenAPI closure, module graph and old routes.
-2. Extract neutral duplicate-key JSON parser, hash/CAS and ownership guards, Kokoro/ElevenLabs/true final-WAV alignment and Win32 process ownership into new history-only modules with new tests.
-3. Replace YTB UI/API/DB/migration/stages atomically in P1, not gradually or as a second mode.
-4. Prove old files on user's machine are not opened, modified, imported or migrated.
-5. Verify launchers and workers no longer start YTB processes; new history root and initial migration are clean.
-
-P0 does **not** delete source/data, alter the YTB runtime, add new production APIs or implement P1.
+**P1 is not ready to execute based solely on this ledger; P0 PR must not implement P1.**

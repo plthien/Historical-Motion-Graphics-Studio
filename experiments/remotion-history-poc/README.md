@@ -53,7 +53,7 @@ seek to global frames 0, 570 and 1200. Playback and pause are real
 `@remotion/player` controls; the displayed frames come from the same
 React composition used by the export.
 
-In a separate terminal, after Chromium is installed:
+Stop the development server first. Then, after Chromium is installed, run:
 
 ```bash
 npm run test:player
