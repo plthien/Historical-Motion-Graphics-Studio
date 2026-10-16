@@ -136,3 +136,15 @@ def test_immutable_artifact_cross_project_and_cas_race(tmp_path):
 def test_unsafe_artifact_paths_rejected(unsafe):
     with pytest.raises(HistoryError,match="HISTORY_ARTIFACT_PATH_INVALID"):
         safe_asset_relative_path(unsafe)
+
+
+def test_artifact_storage_symlink_escape_rejected(tmp_path):
+    root=tmp_path/"private";db=root/"history_app.db"
+    foreign=tmp_path/"outside";foreign.mkdir()
+    with create_api(db) as client:
+        c=sample_channel(client);p=sample_project(client,c["channel_id"])
+        (root/"artifacts").symlink_to(foreign,target_is_directory=True)
+        svc=HistoryService(HistoryDB(db))
+        with pytest.raises(HistoryError,match="HISTORY_ARTIFACT_PATH_INVALID"):
+            svc.publish_artifact(p["project_id"],"topic",'{"no":"escape"}')
+        assert not list(foreign.iterdir())

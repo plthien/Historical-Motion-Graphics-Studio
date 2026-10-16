@@ -121,6 +121,8 @@ class HistoryService:
             if not cn.execute("SELECT 1 FROM projects WHERE project_id=?",(project_id,)).fetchone():
                 raise HistoryError("HISTORY_PROJECT_NOT_FOUND",404)
         target.parent.mkdir(parents=True,exist_ok=True)
+        if target.parent.is_symlink() or target.parent.resolve()!=storage_root.resolve()/"artifacts":
+            raise HistoryError("HISTORY_ARTIFACT_PATH_INVALID",422)
         try:
             fd=os.open(target,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
             try:
