@@ -1,0 +1,2 @@
+import {AuthoringWorkspace} from "../authoring/AuthoringWorkspace";
+export function ScriptHistoricalAnalysisWorkspace({projectId,onChanged}:{projectId:string;onChanged:()=>void}){return <AuthoringWorkspace projectId={projectId} stage="script_analysis" onChanged={onChanged}/>;}

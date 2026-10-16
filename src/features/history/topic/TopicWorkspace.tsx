@@ -1,0 +1,2 @@
+import {AuthoringWorkspace} from "../authoring/AuthoringWorkspace";
+export function TopicWorkspace({projectId,onChanged}:{projectId:string;onChanged:()=>void}){return <AuthoringWorkspace projectId={projectId} stage="topic" onChanged={onChanged}/>;}
