@@ -99,12 +99,15 @@ class HistoryService:
         blocked=["","TOPIC_NOT_APPROVED","NOT_IMPLEMENTED_P3","NOT_IMPLEMENTED_P4",
                  "NOT_IMPLEMENTED_P5","NOT_IMPLEMENTED_P7","NOT_IMPLEMENTED_P8"]
         auth=HistoryAuthoring(self.db)
+        channel_dna=auth.dna_get(project["channel_id"])
         stages=[]
         for idx,key in enumerate(STAGE_KEYS):
             artifact=auth.current(project_id,key) if idx<2 else None
             if artifact and artifact["stale"]:state="stale";reason="SOURCE_STALE"
             elif artifact:state="approved";reason=None
-            elif idx==0:state="ready";reason=None
+            elif idx==0:
+                state="ready" if channel_dna else "blocked"
+                reason=None if channel_dna else "CHANNEL_DNA_REQUIRED"
             elif idx==1:
                 topic=auth.current(project_id,"topic")
                 state="ready" if topic and not topic["stale"] else "blocked"

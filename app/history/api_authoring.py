@@ -99,3 +99,10 @@ def script_current(project_id:str,s:HistoryAuthoring=Depends(service)):
 @router.post("/api/history/projects/{project_id}/script-analysis/repair-prompt")
 def script_repair(project_id:str,body:RepairRequest,s:HistoryAuthoring=Depends(service)):
     return s.repair_prompt(project_id,"script_analysis",body.reservation_id,body.raw_json)
+
+@router.get("/api/history/projects/{project_id}/topic/history")
+def topic_history(project_id:str,s:HistoryAuthoring=Depends(service)):
+    return s.history(project_id,"topic")
+@router.get("/api/history/projects/{project_id}/script-analysis/history")
+def script_history(project_id:str,s:HistoryAuthoring=Depends(service)):
+    return s.history(project_id,"script_analysis")

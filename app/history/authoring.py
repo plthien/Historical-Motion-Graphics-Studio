@@ -305,6 +305,24 @@ class HistoryAuthoring:
             project(cn,project_id)
             return self._current(cn,project_id,stage)
 
+    def history(self,project_id,stage):
+        if stage not in STAGES:problem("HISTORY_STAGE_INVALID",422)
+        from .service import HistoryService
+        with self.db.connect() as cn:
+            project(cn,project_id)
+            rows=cn.execute("""SELECT a.artifact_id,a.version,a.content_hash,a.created_at,
+               l.source_hash,l.parent_artifact_id
+               FROM artifacts a JOIN p2_approvals l ON l.artifact_id=a.artifact_id
+               WHERE a.project_id=? AND a.kind=? AND a.status='approved'
+               ORDER BY a.version DESC""",(project_id,stage)).fetchall()
+        storage=HistoryService(self.db)
+        return [{"artifact_id":r["artifact_id"],"version":r["version"],
+                 "content_hash":r["content_hash"],"source_fingerprint":r["source_hash"],
+                 "parent_artifact_id":r["parent_artifact_id"],
+                 "created_at":r["created_at"],
+                 "content":json.loads(storage.load_artifact(project_id,r["artifact_id"]))}
+                for r in rows]
+
     def repair_prompt(self,project_id,stage,reservation_id,raw):
         try:
             validation=self.validate_import(project_id,stage,reservation_id,raw)

@@ -53,3 +53,7 @@ export const authoring={
  current:(project:string,stage:"topic"|"script_analysis")=>request<Approved>(path(project,stage)+"/current"),
  repair:(project:string,stage:"topic"|"script_analysis",reservation_id:string,raw_json:string)=>request<{prompt:string;errors:Validation["errors"]}>(path(project,stage)+"/repair-prompt",{reservation_id,raw_json})
 };
+
+export type HistoricalRevision={artifact_id:string;version:number;content_hash:string;source_fingerprint:string;parent_artifact_id:string|null;created_at:string;content:Record<string,unknown>};
+export const revisionHistory=(project:string,stage:"topic"|"script_analysis")=>request<HistoricalRevision[]>(
+ "/api/history/projects/"+encodeURIComponent(project)+"/"+(stage==="topic"?"topic":"script-analysis")+"/history");

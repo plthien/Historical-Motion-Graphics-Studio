@@ -1,5 +1,5 @@
 import {useEffect,useState,type ChangeEvent} from "react";
-import {authoring,type PromptState,type CandidateMeta,type CandidateReview,type Approved,type Validation} from "../api";
+import {authoring,revisionHistory,type HistoricalRevision,type PromptState,type CandidateMeta,type CandidateReview,type Approved,type Validation} from "../api";
 
 type Stage="topic"|"script_analysis";
 function download(name:string,text:string){
@@ -15,17 +15,20 @@ export function AuthoringWorkspace({projectId,stage,onChanged}:{projectId:string
  const [repair,setRepair]=useState(""),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [busy,setBusy]=useState(false),[count,setCount]=useState(3),[avoid,setAvoid]=useState("");
  const [selectedIdea,setSelectedIdea]=useState("");
+ const [revisions,setRevisions]=useState<HistoricalRevision[]>([]);
  const [manual,setManual]=useState({title:"",hook:"",historical_period:"",region:"",story_angle:"",novelty_questions:["What remains uncertain?"],factual_risks:["Verify primary evidence independently"]});
- const refresh=async()=>{const [pr,candidates,current]=await Promise.allSettled([
- authoring.promptGet(projectId,stage),authoring.candidates(projectId,stage),authoring.current(projectId,stage)]);
+ const refresh=async()=>{const [pr,candidates,current,history]=await Promise.allSettled([
+ authoring.promptGet(projectId,stage),authoring.candidates(projectId,stage),authoring.current(projectId,stage),revisionHistory(projectId,stage)]);
  setPrompt(pr.status==="fulfilled"?pr.value:null);setCandidateList(candidates.status==="fulfilled"?candidates.value:[]);
  setApproved(current.status==="fulfilled"?current.value:null);
+ setRevisions(history.status==="fulfilled"?history.value:[]);
  };
  useEffect(()=>{let live=true;setPrompt(null);setReview(null);setRaw("");setValidation(null);setRepair("");
- Promise.allSettled([authoring.promptGet(projectId,stage),authoring.candidates(projectId,stage),authoring.current(projectId,stage)])
- .then(([p,c,a])=>{if(!live)return;setPrompt(p.status==="fulfilled"?p.value:null);
+ Promise.allSettled([authoring.promptGet(projectId,stage),authoring.candidates(projectId,stage),authoring.current(projectId,stage),revisionHistory(projectId,stage)])
+ .then(([p,c,a,h])=>{if(!live)return;setPrompt(p.status==="fulfilled"?p.value:null);
  setCandidateList(c.status==="fulfilled"?c.value:[]);
- setApproved(a.status==="fulfilled"?a.value:null);});
+ setApproved(a.status==="fulfilled"?a.value:null);
+ setRevisions(h.status==="fulfilled"?h.value:[]);});
  return()=>{live=false};},[projectId,stage]);
  async function action(fn:()=>Promise<void>){setBusy(true);setError("");setNotice("");
  try{await fn()}catch(e){setError(e instanceof Error?e.message:String(e))}finally{setBusy(false)}}
@@ -124,6 +127,12 @@ export function AuthoringWorkspace({projectId,stage,onChanged}:{projectId:string
     <details><summary>View exact approved content</summary><pre>{inspect(approved.content)}</pre></details>
     {approved.stale&&<p role="alert">Current approved version is immutable but stale. Create a new prompt from current source before approval.</p>}
    </div>}
+   <div className="historyList"><h4>Immutable approved revision history</h4>
+    {revisions.length===0?<p>No approved revisions yet.</p>:revisions.map(v=><details key={v.artifact_id}>
+       <summary>Version {v.version} · SHA256 {v.content_hash.slice(0,16)}… · {v.created_at}</summary>
+       <p>Artifact ID: {v.artifact_id}</p>
+       <pre>{inspect(v.content)}</pre></details>)}
+   </div>
   </section>
   {notice&&<p role="status" className="success">{notice}</p>}
   {error&&<p role="alert" className="error">{error}</p>}

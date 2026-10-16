@@ -36,7 +36,7 @@ def test_fresh_channel_project_status_persist_restart(tmp_path):
         stages=status.json()["stages"]
         assert [s["key"] for s in stages]==list(STAGE_KEYS)
         assert len(stages)==7
-        assert stages[0]["status"]=="ready"
+        assert stages[0]["status"]=="blocked" and stages[0]["blocked_reason"]=="CHANNEL_DNA_REQUIRED"
         assert stages[1]["blocked_reason"]=="TOPIC_NOT_APPROVED"
         assert all(x["status"]=="blocked" and x["blocked_reason"].startswith("NOT_IMPLEMENTED_P") for x in stages[2:])
         assert client.get("/api/history/projects/"+project["project_id"]).status_code==200
