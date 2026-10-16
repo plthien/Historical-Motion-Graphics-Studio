@@ -289,8 +289,8 @@ class HistoryAuthoring:
         from .service import HistoryService
         content=json.loads(HistoryService(self.db).load_artifact(project_id,record["artifact_id"]))
         ch=dna(cn,project(cn,project_id)["channel_id"])
-        stale=not ch or record["channel_dna_hash"]!=ch["content_hash"]
-        if stage=="script_analysis":
+        stale=bool(record["source_hash"] is not None and (not ch or record["channel_dna_hash"]!=ch["content_hash"]))
+        if stage=="script_analysis" and record["source_hash"] is not None:
             t=head(cn,project_id,"topic")
             stale=stale or not t or t["artifact_id"]!=record["parent_artifact_id"]
             if t and record["parent_artifact_id"]==t["artifact_id"]:
