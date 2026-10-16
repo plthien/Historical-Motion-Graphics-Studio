@@ -12,8 +12,8 @@ from app.history.authoring import HistoryAuthoring
 
 def create(db):return TestClient(create_app(db))
 def send(c,path,body):r=c.post(path,json=body);assert r.status_code in (200,201),r.text;return r.json()
-def channel(c):
-    return send(c,"/api/history/channels",{"name":"Ancient History","language":"English","niche":"Ancient humans","history_dna":{}})
+def channel(c,language="English"):
+    return send(c,"/api/history/channels",{"name":"Ancient History","language":language,"niche":"Ancient humans","history_dna":{}})
 DNA={"schema_version":"HistoryChannelDNA.v1","language":"English","audience":"Curious adults",
      "historical_niche":"Ancient human survival",
      "narration_style":"Conversational dry humor with natural speech",
@@ -25,10 +25,10 @@ TOPIC={"title":"The Ancient Hunt That Created a New Problem","hook":"They caught
        "story_angle":"An imagined but plausible cause-and-effect chain about food storage and conflict",
        "novelty_questions":["Which downstream problem follows a successful hunt?"],
        "factual_risks":["Exact event is fictional, not attested by archaeology"]}
-def setup(c):
-    ch=channel(c)
+def setup(c,language="English"):
+    ch=channel(c,language)
     assert c.get(f"/api/history/channels/{ch['channel_id']}/dna").json() is None
-    saved=c.put(f"/api/history/channels/{ch['channel_id']}/dna",json={"document":DNA,"expected_revision":0})
+    saved=c.put(f"/api/history/channels/{ch['channel_id']}/dna",json={"document":dict(DNA,language=language),"expected_revision":0})
     assert saved.status_code==200,saved.text
     p=send(c,"/api/history/projects",{"channel_id":ch["channel_id"],"name":"Hunt","history_context":{"style":"lightly comedic"}})
     return ch,p
@@ -299,3 +299,73 @@ def test_invalid_utf8_json_http_and_claim_period_conflict(tmp_path):
                 {"reservation_id":sp["reservation_id"],"raw_json":json.dumps(bad)})
         assert not out["valid"]
         assert any(e["code"]=="CHRONOLOGY_MISMATCH" for e in out["errors"])
+
+@pytest.mark.parametrize("language", ["English", "Japanese", "Vietnamese"])
+def test_script_prompt_uses_frozen_channel_dna_language(tmp_path,language):
+    from app.history.validation import digest
+    db=tmp_path/"script_language.db"
+    with create(db) as c:
+        ch,p=setup(c,language=language)
+        _,topic=approve_topic(c,p)
+        base=f"/api/history/projects/{p['project_id']}/script-analysis"
+        reserved=send(c,base+"/prompt",{"section_count":2})
+        assert len(reserved["source_fingerprint"])==64
+        assert reserved["reserved_ids"]["parent_artifact_id"]==topic["artifact_id"]
+        assert reserved["reserved_ids"]["parent_hash"]==topic["content_hash"]
+        assert reserved["stage"]=="script_analysis" and reserved["state"]=="pending"
+        instructions=json.loads(reserved["prompt"].split("\n",1)[1])
+        task=instructions["task"]
+        assert f"exact spoken script in {language}" in task
+        assert f"full_script and every section.exact_text must be in {language}" in task
+        assert "spoken English" not in task if language!="English" else "in English" in task
+        assert instructions["frozen_input_explained"]["dna"]["language"]==language
+        assert instructions["frozen_input_explained"]["approved_topic_artifact_id"]==topic["artifact_id"]
+        assert instructions["required_output"]["schema_version"]=="ScriptHistoricalAnalysis.v1"
+        assert instructions["reservation_id"]==reserved["reservation_id"]
+        assert instructions["source_fingerprint"]==reserved["source_fingerprint"]
+        assert digest({"source":instructions["frozen_input_explained"],
+                       "reservation_id":reserved["reservation_id"],
+                       "ids":reserved["reserved_ids"]})==reserved["source_fingerprint"]
+        assert c.get(base+"/prompt").json()==reserved
+
+
+def test_script_language_change_rebuild_preserves_old_prompt_and_cas(tmp_path):
+    db=tmp_path/"script_language_change.db"
+    with create(db) as c:
+        ch,p=setup(c)
+        _,topic=approve_topic(c,p)
+        base=f"/api/history/projects/{p['project_id']}/script-analysis"
+        old=send(c,base+"/prompt",{"section_count":2})
+        old_text=old["prompt"]
+        candidate=send(c,base+"/import",{"reservation_id":old["reservation_id"],
+                                         "raw_json":script_json(old)})
+        changed=dict(DNA,language="Japanese")
+        saved=c.put(f"/api/history/channels/{ch['channel_id']}/dna",
+                    json={"document":changed,"expected_revision":1})
+        assert saved.status_code==200 and saved.json()["revision"]==2
+        old_get=c.get(base+"/prompt")
+        assert old_get.status_code==200
+        assert old_get.json()["prompt"]==old_text
+        assert old_get.json()["reservation_id"]==old["reservation_id"]
+        assert old_get.json()["is_current"] is False
+        assert c.post(base+"/approve",json={"candidate_id":candidate["candidate_id"],
+                                            "expected_revision":0}).status_code==409
+        assert c.post(base+"/prompt",json={"section_count":2}).status_code==409
+        # A newly approved topic is required because the old topic is stale under revised DNA.
+        fresh_topic=send(c,f"/api/history/projects/{p['project_id']}/topic/manual",
+                         {"topic":dict(TOPIC),"expected_revision":1})
+        assert fresh_topic["artifact_id"]!=topic["artifact_id"]
+        rebuilt=send(c,base+"/prompt",{"section_count":2})
+        task=json.loads(rebuilt["prompt"].split("\n",1)[1])["task"]
+        assert "exact spoken script in Japanese" in task
+        assert "spoken English" not in task
+        assert rebuilt["source_fingerprint"]!=old["source_fingerprint"]
+        assert rebuilt["reservation_id"]!=old["reservation_id"]
+        assert rebuilt["reserved_ids"]["parent_artifact_id"]==fresh_topic["artifact_id"]
+        assert c.get(base+"/prompt").json()==rebuilt
+        assert c.post(base+"/approve",json={"candidate_id":candidate["candidate_id"],
+                                            "expected_revision":0}).status_code==409
+    with sqlite3.connect(db) as cn:
+        stored=cn.execute("SELECT prompt_text FROM p2_prompts WHERE reservation_id=?",
+                          (old["reservation_id"],)).fetchone()
+        assert stored is not None and stored[0]==old_text

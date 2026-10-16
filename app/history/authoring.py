@@ -134,8 +134,16 @@ class HistoryAuthoring:
             fingerprint=digest({"source":source,"reservation_id":rid,"ids":ids})
             filename=("topic_ideas.v1.json" if stage=="topic" else "script_historical_analysis.v1.json")
             schema=json.loads((Path(__file__).resolve().parents[2]/"contracts/history/schemas"/filename).read_text(encoding="utf8"))
-            task=("Propose historically informed video topic ideas. Fictional reconstructions must be labeled. Avoid duplicate or overdone topics."
-                  if stage=="topic" else "Write one combined exact spoken English script and factual/hypothetical historical claims analysis for the approved selected topic.")
+            language=source["dna"]["language"]
+            task=(
+                "Propose historically informed video topic ideas. Fictional reconstructions must be labeled. Avoid duplicate or overdone topics."
+                if stage=="topic" else (
+                    f"Write one combined exact spoken script in {language} and "
+                    "factual/hypothetical historical claims analysis for the approved selected topic. "
+                    f"The spoken text in full_script and every section.exact_text must be in {language}. "
+                    "Return the result as strict machine-readable JSON."
+                )
+            )
             instructions={"task":task,"frozen_input_explained":source,"reservation_id":rid,"project_id":project_id,
                "source_fingerprint":fingerprint,"reserved_ids":ids,
                "required_output":{"schema_version":("TopicIdeas.v1" if stage=="topic" else "ScriptHistoricalAnalysis.v1"),
