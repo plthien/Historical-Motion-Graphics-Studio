@@ -1,0 +1,115 @@
+name: Historical Studio P2 strict acceptance
+on:
+  push:
+    branches: [feat/p2-history-topic-script-authoring]
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'src/**'
+      - 'tests/history/**'
+      - 'tests/history-ui/**'
+      - 'contracts/history/**'
+      - 'alembic/**'
+      - 'package*.json'
+      - '.github/workflows/history-p2.yml'
+permissions:
+  contents: read
+jobs:
+  p2-linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Exact source SHA
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          echo "P2_EXACT_SHA=$(git rev-parse HEAD)"
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned requirements
+        run: |
+          python -m pip install -r requirements.txt
+          npm ci --no-audit --no-fund
+      - name: Governance and no legacy/model closure
+        run: |
+          python tools/check_history_governance.py
+          python tools/check_history_p1_closure.py
+          python tools/history_p0_source_audit.py --verify
+      - name: P2 strict API/storage/migration and P1 regression
+        run: python -m pytest -q tests/history
+      - name: Node tests and type-safe build
+        run: |
+          npm test
+          npm run build
+      - name: Chromium UI smoke prerequisites
+        run: npx playwright install --with-deps chromium
+      - name: Real manual Topic-to-Script UI flow and screenshots
+        run: npm run test:ui
+      - name: P0 neutral Remotion tests
+        working-directory: experiments/remotion-history-poc
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          npm ci --no-audit --no-fund
+          npm test
+          npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p2-ui-linux-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          path: out/p2-ui/
+          if-no-files-found: ignore
+  p2-windows:
+    runs-on: windows-2022
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Exact source SHA
+        shell: pwsh
+        run: |
+          if ((git rev-parse HEAD) -ne "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}") { throw "P2_SHA_MISMATCH" }
+          Write-Host "P2_EXACT_SHA=$(git rev-parse HEAD)"
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install pinned requirements
+        shell: pwsh
+        run: |
+          python -m pip install -r requirements.txt
+          npm ci --no-audit --no-fund
+      - name: Windows P2 and P1 regression / build / closure
+        shell: pwsh
+        run: |
+          python -m pytest -q tests/history
+          npm test
+          npm run build
+          python tools/check_history_p1_closure.py
+      - name: Windows start/restart/shutdown
+        shell: pwsh
+        run: |
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/windows/start-history.ps1 -CheckOnly
+          if ($LASTEXITCODE -ne 0) {throw "P2_WINDOWS_CHECK_FAILED"}
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/windows/start-history.ps1 -Smoke
+          if ($LASTEXITCODE -ne 0) {throw "P2_WINDOWS_LIFECYCLE_FAILED"}
+      - name: Chromium P2 UI
+        shell: pwsh
+        run: |
+          npx playwright install chromium
+          npm run test:ui
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p2-ui-windows-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          path: out/p2-ui/
+          if-no-files-found: ignore

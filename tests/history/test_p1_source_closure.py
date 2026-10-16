@@ -31,7 +31,7 @@ def test_old_contracts_migrations_workers_and_root_manifest_absent():
     assert not (ROOT/"scripts/windows/start_durable_media_workflow.bat").exists()
     assert not (ROOT/"scripts/windows/start_durable_render.bat").exists()
     migrations=list((ROOT/"alembic/versions").glob("*.py"))
-    assert [p.name for p in migrations]==["001_history_initial.py"]
+    assert sorted(p.name for p in migrations)==["001_history_initial.py","002_history_authoring_p2.py"]
     for p in (ROOT/"contracts").rglob("*"):
         assert not any(term in p.name.lower() for term in ("beat","scene","ytb","youtube","v4"))
     assert not any(p.name.startswith("test_v4") for p in (ROOT/"tests").rglob("*"))
