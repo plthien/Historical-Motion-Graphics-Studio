@@ -240,7 +240,9 @@ report={"schemaVersion":"history_source_ownership_ledger.v2",
 output=args.output
 data=(json.dumps(report,indent=2,ensure_ascii=False)+"\n").encode("utf-8")
 if args.verify:
-    if not output.exists() or output.read_bytes()!=data:
+    # Git may check out tracked JSON with CRLF on Windows; compare canonical LF
+    # while preserving strict content equivalence and rejecting missing entries.
+    if not output.exists() or output.read_bytes().replace(b"\r\n", b"\n")!=data:
         raise SystemExit("P0_LEDGER_OUTDATED: frozen donor inventory differs from checked-in report")
     print(f"P0_LEDGER_VERIFY_PASS paths={len(files)} sha256={hashlib.sha256(data).hexdigest()}")
 else:

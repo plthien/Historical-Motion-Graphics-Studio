@@ -112,6 +112,9 @@ try{
  assert.equal(reloaded.artifact_id,script.artifact_id);
  await page.reload({waitUntil:'networkidle'});
  await page.locator('#project-select').waitFor();
+ // The active tab is intentionally not persisted: a fresh page defaults to Topic.
+ // Reopen Script explicitly before checking persisted Script candidate/head state.
+ await page.locator('.sidebar .navItem').nth(1).click();
  await page.locator('[data-testid="authoring-script_analysis"]').waitFor();
  await page.locator('.sidebar .navItem').first().click();
  const inputs=page.locator('[data-testid="manual-topic"] textarea');
