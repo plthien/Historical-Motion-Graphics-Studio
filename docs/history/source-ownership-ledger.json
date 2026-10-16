@@ -100,7 +100,9 @@
       ".agents/skills/implementation-audit/SKILL.md",
       ".agents/skills/remotion-motion-graphics/SKILL.md",
       ".agents/skills/voice-alignment/SKILL.md",
+      "00_START_HERE.md",
       "AGENTS.md",
+      "docs/00_INDEX.md",
       "docs/history/CODEX_P0_ON_NEW_MAIN_PROMPT.md",
       "docs/history/CODEX_P1_STRICT_CLEAN_CUT_PROMPT.md",
       "docs/history/CODING_RULES.md",
@@ -126,7 +128,6 @@
       "docs/history/phases/README.md"
     ],
     "retiredYtbDocumentation": [
-      "00_START_HERE.md",
       "README.md",
       "alembic/README.md",
       "app/modules/v4/README.md",
@@ -142,7 +143,6 @@
       "contracts/prompts/v4/scene_breakdown_scene/user.md",
       "contracts/prompts/v4/scene_breakdown_visual/system.md",
       "contracts/prompts/v4/scene_breakdown_visual/user.md",
-      "docs/00_INDEX.md",
       "docs/01_V3_PRODUCT_SCOPE.md",
       "docs/02_V3_ARCHITECTURE.md",
       "docs/03_CHANNEL_DNA_V3.md",
@@ -1112,7 +1112,7 @@
   "entries": [
     {
       "path": ".agents/skills/README.md",
-      "currentResponsibility": "Active NEW Historical coding/skill governance: README",
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: README",
       "decision": "PRESERVE",
       "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
@@ -1136,7 +1136,7 @@
     },
     {
       "path": ".agents/skills/clean-cut-migration/SKILL.md",
-      "currentResponsibility": "Active NEW Historical coding/skill governance: SKILL",
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: SKILL",
       "decision": "PRESERVE",
       "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
@@ -1155,7 +1155,7 @@
     },
     {
       "path": ".agents/skills/external-chatgpt-authoring/SKILL.md",
-      "currentResponsibility": "Active NEW Historical coding/skill governance: SKILL",
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: SKILL",
       "decision": "PRESERVE",
       "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
@@ -1173,7 +1173,7 @@
     },
     {
       "path": ".agents/skills/historical-asset-research/SKILL.md",
-      "currentResponsibility": "Active NEW Historical coding/skill governance: SKILL",
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: SKILL",
       "decision": "PRESERVE",
       "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
@@ -1191,7 +1191,7 @@
     },
     {
       "path": ".agents/skills/implementation-audit/SKILL.md",
-      "currentResponsibility": "Active NEW Historical coding/skill governance: SKILL",
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: SKILL",
       "decision": "PRESERVE",
       "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
@@ -1210,7 +1210,7 @@
     },
     {
       "path": ".agents/skills/remotion-motion-graphics/SKILL.md",
-      "currentResponsibility": "Active NEW Historical coding/skill governance: SKILL",
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: SKILL",
       "decision": "PRESERVE",
       "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
@@ -1228,7 +1228,7 @@
     },
     {
       "path": ".agents/skills/voice-alignment/SKILL.md",
-      "currentResponsibility": "Active NEW Historical coding/skill governance: SKILL",
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: SKILL",
       "decision": "PRESERVE",
       "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
@@ -1285,20 +1285,37 @@
     },
     {
       "path": "00_START_HERE.md",
-      "currentResponsibility": "Donor service/module/tool: 00 START HERE",
-      "decision": "DELETE",
-      "newHistoryOwner": null,
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: 00 START HERE",
+      "decision": "PRESERVE",
+      "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
       "directDependencies": [],
       "transitiveDependencies": [],
       "testsProtectingBehavior": [],
       "requiredP1Test": "Rebuild independent History test",
-      "p1CleanCutRisk": "Replace with history-only entrypoints at P1",
-      "p1Action": "Old YTB product entrypoint documentation"
+      "p1CleanCutRisk": "Update real P1 launch commands and retain coding authority",
+      "p1Action": "New History developer governance entrypoint",
+      "documentationAuthority": "ACTIVE_NEW_HISTORY",
+      "documentReferences": [
+        ".agents/skills/README.md",
+        ".agents/skills/clean-cut-migration/SKILL.md",
+        ".agents/skills/external-chatgpt-authoring/SKILL.md",
+        ".agents/skills/historical-asset-research/SKILL.md",
+        ".agents/skills/implementation-audit/SKILL.md",
+        ".agents/skills/remotion-motion-graphics/SKILL.md",
+        ".agents/skills/voice-alignment/SKILL.md",
+        "docs/history/CODEX_P0_ON_NEW_MAIN_PROMPT.md",
+        "docs/history/CODEX_P1_STRICT_CLEAN_CUT_PROMPT.md",
+        "docs/history/CODING_RULES.md",
+        "docs/history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md",
+        "docs/history/agents/README.md",
+        "docs/history/phases/README.md"
+      ],
+      "p1DocumentationAction": "Update real P1 launch commands and retain coding authority"
     },
     {
       "path": "AGENTS.md",
-      "currentResponsibility": "Active NEW Historical coding/skill governance: AGENTS",
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: AGENTS",
       "decision": "PRESERVE",
       "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
@@ -1329,16 +1346,26 @@
     },
     {
       "path": "README.md",
-      "currentResponsibility": "Donor service/module/tool: README",
-      "decision": "DELETE",
-      "newHistoryOwner": null,
+      "currentResponsibility": "New History governance/entrypoint and transitional documentation: README",
+      "decision": "REWRITE",
+      "newHistoryOwner": "history.documentation",
       "dependencyExtractionPreconditions": [],
       "directDependencies": [],
       "transitiveDependencies": [],
       "testsProtectingBehavior": [],
       "requiredP1Test": "Rebuild independent History test",
-      "p1CleanCutRisk": "Replace with history-only entrypoints at P1",
-      "p1Action": "Old YTB product entrypoint documentation"
+      "p1CleanCutRisk": "Retain History identity and rewrite/remove embedded obsolete YTB product sections",
+      "p1Action": "New History transition README with embedded donor YTB material",
+      "documentationAuthority": "ACTIVE_NEW_HISTORY",
+      "documentReferences": [
+        ".agents/skills/README.md",
+        "docs/99_SOURCE_OF_TRUTH.md",
+        "docs/history/CODING_RULES.md",
+        "docs/history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md",
+        "docs/history/agents/README.md",
+        "docs/history/phases/README.md"
+      ],
+      "p1DocumentationAction": "Retain History identity and rewrite/remove embedded obsolete YTB product sections"
     },
     {
       "path": "alembic.ini",
@@ -14040,16 +14067,16 @@
     {
       "path": "docs/00_INDEX.md",
       "currentResponsibility": "Legacy YouTube Studio document: 00 INDEX",
-      "decision": "REWRITE",
-      "newHistoryOwner": "history.documentation",
+      "decision": "PRESERVE",
+      "newHistoryOwner": "history.governance",
       "dependencyExtractionPreconditions": [],
       "directDependencies": [],
       "transitiveDependencies": [],
       "testsProtectingBehavior": [],
       "requiredP1Test": "Rebuild independent History test",
-      "p1CleanCutRisk": "Rewrite as History-only reader index during P1",
-      "p1Action": "Former YTB documentation index, NOT active coding rules",
-      "documentationAuthority": "RETIRED_YTB",
+      "p1CleanCutRisk": "Retain new authority and repair only stale P1 details",
+      "p1Action": "Already converted new History documentation index",
+      "documentationAuthority": "ACTIVE_NEW_HISTORY",
       "documentReferences": [
         ".agents/skills/README.md",
         ".agents/skills/clean-cut-migration/SKILL.md",
@@ -14067,7 +14094,7 @@
         "docs/history/agents/README.md",
         "docs/history/phases/README.md"
       ],
-      "p1DocumentationAction": "Rewrite as History-only reader index during P1"
+      "p1DocumentationAction": "Retain new authority and repair only stale P1 details"
     },
     {
       "path": "docs/01_V3_PRODUCT_SCOPE.md",
