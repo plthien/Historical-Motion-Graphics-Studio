@@ -1,50 +1,54 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,mkdir,writeFile,symlink,rm} from 'node:fs/promises';
+import {mkdtemp,rm,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
-import {motionPlan} from '../src/plan.mjs';
-import {preflight,renderWithPreflight,RENDER_ARGS} from '../scripts/render.mjs';
-
-const temp=()=>mkdtemp(path.join(os.tmpdir(),'p0-preflight-'));
-const imagePlan=path=>{const p=structuredClone(motionPlan);const e=p.setups[2].events.find(x=>x.id==='photo');e.kind='photo';e.assetPath=path;return p;};
-
-test('no-media POC passes mandatory preflight without launching renderer',async()=>{
- const root=await temp();let count=0;
- try{
-  await renderWithPreflight({plan:structuredClone(motionPlan),publicRoot:root,execute:async()=>{count++;},preflightOnly:true});
-  assert.equal(count,0);
-  await renderWithPreflight({plan:structuredClone(motionPlan),publicRoot:root,execute:async()=>{count++;}});
-  assert.equal(count,1);
- }finally{await rm(root,{recursive:true,force:true});}
-});
-test('real local media passes; missing image / directory / forbidden extension fail before renderer',async()=>{
+import {motionPlan,CANONICAL_PLAN_BYTES} from '../src/plan.mjs';
+import {preflight,renderWithPreflight,RENDER_ARGS,CANONICAL_PLAN_SHA256,launchRemotion} from '../scripts/render.mjs';
+import {imageBytes} from './media-fixtures.mjs';
+const temp=()=>mkdtemp(path.join(os.tmpdir(),'p0-render-'));
+const mediaPlan=filename=>{const p=structuredClone(motionPlan);p.setups[2].events[0].kind='photo';p.setups[2].events[0].assetPath=filename;return p;};
+test('canonical P0 render identity and no-media preflight always match',async()=>{
  const root=await temp();let calls=0;
- const execute=async()=>{calls++;};
  try{
-  await mkdir(path.join(root,'media'));await writeFile(path.join(root,'media','valid.png'),'placeholder');
-  await renderWithPreflight({plan:imagePlan('media/valid.png'),publicRoot:root,execute});
+  const approved=JSON.parse(CANONICAL_PLAN_BYTES);
+  const a=await renderWithPreflight({plan:approved,publicRoot:root,execute:async({plan,planSha256})=>{
+     calls++;assert.deepEqual(plan,approved);assert.equal(planSha256,CANONICAL_PLAN_SHA256);
+  }});
   assert.equal(calls,1);
-  for(const name of ['media/missing.png','media','media/valid.svg','../external.png','/etc/passwd','https://site.com/a.png']){
-   await assert.rejects(()=>renderWithPreflight({plan:imagePlan(name),publicRoot:root,execute}),/MOTION_PLAN_INVALID|MOTION_MEDIA_INVALID/,name);
-  }
-  assert.equal(calls,1,'invalid files cannot start Chromium');
+  assert.equal(a.planSha256,CANONICAL_PLAN_SHA256);
+  assert.deepEqual(await preflight(motionPlan,root),{schemaVersion:'history_motion_poc.v1',assetsValidated:0});
  }finally{await rm(root,{recursive:true,force:true});}
 });
-test('symlink out of public root rejected and even valid schema cannot authorize it',async()=>{
- if(process.platform==='win32')return; // symlink elevation policies differ on Windows
- const root=await temp(), external=await temp();let calls=0;
+test('valid alternate media plan can be independently probed but cannot silently render canonical plan',async()=>{
+ const root=await temp();let calls=0;
  try{
-  await writeFile(path.join(external,'file.png'),'fake');
-  await symlink(external,path.join(root,'leak'),'dir');
-  await assert.rejects(()=>renderWithPreflight({plan:imagePlan('leak/file.png'),publicRoot:root,execute:async()=>{calls++;}}),/asset_escape/);
+  await writeFile(path.join(root,'valid.png'),imageBytes('png'));
+  const alt=mediaPlan('valid.png');
+  assert.equal((await preflight(alt,root)).assetsValidated,1);
+  await assert.rejects(()=>renderWithPreflight({plan:alt,publicRoot:root,execute:async()=>{calls++;}}),/P0_PLAN_IDENTITY_MISMATCH/);
   assert.equal(calls,0);
- }finally{await rm(root,{recursive:true,force:true});await rm(external,{recursive:true,force:true});}
+ }finally{await rm(root,{recursive:true,force:true});}
 });
-test('invalid public root fails explicitly; actual render entry uses preflight',async()=>{
- const root=path.join(os.tmpdir(),'p0-nonexistent-root-'+process.pid);
- await assert.rejects(()=>preflight(motionPlan,root),/invalid_root/);
- const args=RENDER_ARGS.join(' ');
- assert.match(args,/remotion render/);
+test('invalid alternate, corrupt content and mutated snapshot never start the renderer',async()=>{
+ const root=await temp();let calls=0;
+ try{
+  const alt=structuredClone(motionPlan);alt.setups[0].events[0].text='Other headline';
+  await assert.rejects(()=>renderWithPreflight({plan:alt,publicRoot:root,execute:async()=>{calls++;}}),/P0_PLAN_IDENTITY_MISMATCH/);
+  alt.setups[0].events[0].durationFrames=-3;
+  await assert.rejects(()=>renderWithPreflight({plan:alt,publicRoot:root,execute:async()=>{calls++;}}),/P0_PLAN_IDENTITY_MISMATCH/);
+  await writeFile(path.join(root,'bad.png'),'corrupt');
+  await assert.rejects(()=>preflight(mediaPlan('bad.png'),root),/MOTION_MEDIA_INVALID/);
+  assert.equal(calls,0);
+ }finally{await rm(root,{recursive:true,force:true});}
+});
+test('canonical fixture is deeply immutable; CLI Root and Player both import it',async()=>{
+ assert.ok(Object.isFrozen(motionPlan)&&Object.isFrozen(motionPlan.setups[0].events[0]));
+ assert.throws(()=>{motionPlan.setups[0].events[0].text='MUTATED';},TypeError);
+ assert.equal(JSON.stringify(motionPlan),CANONICAL_PLAN_BYTES);
  assert.equal(RENDER_ARGS.includes('HistoryPOC'),true);
+ await assert.rejects(()=>launchRemotion({plan:motionPlan,planSha256:'wrong',publicRoot:'whatever'}),/P0_PLAN_IDENTITY_MISMATCH/);
+});
+test('invalid root fails closed before starting real Chromium',async()=>{
+ await assert.rejects(()=>preflight(motionPlan,path.join(os.tmpdir(),'p0-not-exist-'+process.pid)),/invalid_root/);
 });
