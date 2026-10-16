@@ -1,5 +1,8 @@
 import {useCallback,useEffect,useState,type FormEvent} from "react";
 import {api,STAGES,type Channel,type Project,type ProjectStatus} from "./features/history/api";
+import {ChannelDNAEditor} from "./features/history/authoring/ChannelDNAEditor";
+import {TopicWorkspace} from "./features/history/topic/TopicWorkspace";
+import {ScriptHistoricalAnalysisWorkspace} from "./features/history/script/ScriptHistoricalAnalysisWorkspace";
 const CHANNEL_KEY="history.channel.v1", PROJECT_KEY="history.project.v1";
 function saved(k:string){try{return localStorage.getItem(k)||""}catch{return ""}}
 function keep(k:string,v:string){try{if(v)localStorage.setItem(k,v);else localStorage.removeItem(k)}catch{}}
@@ -32,14 +35,15 @@ export default function App(){
  }
  const channel=channels.find(c=>c.channel_id===channelId), project=projects.find(p=>p.project_id===projectId);
  const current=status?.stages.find(s=>s.key===stageKey);
+ async function refreshStatus(){if(projectId){try{setStatus(await api.status(projectId));}catch(e){setMessage(err(e));}}}
  return <div className="studio">
   <aside className="sidebar"><div className="brand"><span className="brandIcon">H</span><div><strong>HISTORY</strong><small>MOTION GRAPHICS STUDIO</small></div></div>
    <p className="sideCaption">WORKSPACE</p><div className="navPill">◈ &nbsp;Production Cockpit</div>
    <p className="sideCaption">SEVEN HISTORY STAGES</p><nav aria-label="History stages">{STAGES.map((s,i)=><button key={s.key} type="button" className={"navItem "+(stageKey===s.key?"selected":"")} onClick={()=>setStageKey(s.key)}><span className="index">{String(i+1).padStart(2,"0")}</span>{s.label}<span className="lock">○</span></button>)}</nav>
-   <div className="sideFoot"><b>P1 FOUNDATION ONLY</b><p>Generation, voice alignment and production rendering belong to later phases. No internal LLM API.</p></div>
+   <div className="sideFoot"><b>P2 AUTHORING ACTIVE</b><p>Topic and Script authoring work by manual External ChatGPT prompt and JSON import. Voice and rendering remain future phases.</p></div>
   </aside>
-  <main className="main"><header className="topbar"><span>HISTORY STUDIO &nbsp; / &nbsp; WORKSPACE</span><span className="topStatus">LOCAL FIRST • P1</span></header>
-   <div className="page"><section className="heading"><div><p className="eyebrow">HISTORICAL MOTION GRAPHICS STUDIO</p><h1>Production Cockpit</h1><p>Create and reopen real History channels and projects. The seven future stages remain correctly blocked.</p></div><span className="phase">P1 INITIAL FOUNDATION</span></section>
+  <main className="main"><header className="topbar"><span>HISTORY STUDIO &nbsp; / &nbsp; WORKSPACE</span><span className="topStatus">LOCAL FIRST • P2</span></header>
+   <div className="page"><section className="heading"><div><p className="eyebrow">HISTORICAL MOTION GRAPHICS STUDIO</p><h1>Production Cockpit</h1><p>Create History channels and projects, configure ChannelDNA, then manually author Topic and Script JSON. The five later stages remain blocked.</p></div><span className="phase">P2 MANUAL AUTHORING</span></section>
     {message&&<div role="alert" className="error"><b>Request failed:</b> {message}<button type="button" aria-label="Dismiss error" onClick={()=>setMessage("")}>×</button></div>}
     {loading&&<p role="status">Loading saved History channels…</p>}
     <section className="overview" aria-label="Channel and project">
@@ -47,6 +51,7 @@ export default function App(){
       <label htmlFor="channel-select">Selected Channel</label><select id="channel-select" value={channelId} onChange={e=>{setChannelId(e.target.value);setProjectId("")}}><option value="">Choose a channel</option>{channels.map(c=><option value={c.channel_id} key={c.channel_id}>{c.name}</option>)}</select>
       <p className="detail">{channel?channel.language+" · "+channel.niche+" · Rev "+channel.revision:"No channels yet."}</p>
       <form onSubmit={addChannel}><h3>Create new Channel</h3><div className="dual"><input required maxLength={100} aria-label="Channel name" placeholder="Channel name" value={name} onChange={e=>setName(e.target.value)}/><input required maxLength={32} aria-label="Language" value={language} onChange={e=>setLanguage(e.target.value)}/></div><input required maxLength={120} aria-label="History niche" value={niche} onChange={e=>setNiche(e.target.value)}/><button disabled={busy||loading}>+ Create Channel</button></form>
+      {channelId&&<ChannelDNAEditor channelId={channelId} language={channel?.language||language} niche={channel?.niche||niche} onSaved={refreshStatus}/>}
      </article>
      <article className="panel"><div className="panelHead"><h2>▤ &nbsp; Project</h2><small>02 / WORKSPACE</small></div>
       <label htmlFor="project-select">Selected Project</label><select id="project-select" disabled={!channelId} value={projectId} onChange={e=>setProjectId(e.target.value)}><option value="">Choose a project</option>{projects.map(p=><option value={p.project_id} key={p.project_id}>{p.name}</option>)}</select>
@@ -56,12 +61,14 @@ export default function App(){
     </section>
     <div className="sectionHead"><div><p className="eyebrow">SEVEN-STAGE HISTORY PIPELINE</p><h2>Project readiness</h2></div><small>{status?"Live backend status":"Select a project"}</small></div>
     <section className="stages" aria-label="Project stages">{STAGES.map((s,i)=>{const state=status?.stages.find(x=>x.key===s.key);return <button key={s.key} type="button" className={"stage "+(stageKey===s.key?"focused":"")} onClick={()=>setStageKey(s.key)}>
-      <div className="stageLine"><b>{String(i+1).padStart(2,"0")}</b><span>○ {state?.status==="approved"?"APPROVED":"BLOCKED"}</span></div><h3>{s.label}</h3><p>{state?.blocked_reason||"Select a project to load readiness"}</p><small>No actions available in P1 →</small>
+      <div className="stageLine"><b>{String(i+1).padStart(2,"0")}</b><span>○ {state?.status==="approved"?"APPROVED":state?.status==="stale"?"STALE":state?.status==="ready"?"READY":"BLOCKED"}</span></div><h3>{s.label}</h3><p>{state?.blocked_reason||"Select a project to load readiness"}</p><small>{s.key==="topic"||s.key==="script_analysis"?"Manual authoring →":"Future phase — unavailable →"}</small>
      </button>})}</section>
     <section className="panel inspector"><div className="panelHead"><div><p className="eyebrow">STAGE INSPECTOR</p><h2>{current?.label||STAGES.find(s=>s.key===stageKey)?.label}</h2></div><small>READ ONLY</small></div>
-     <p>{!project?"Select a saved project to load stage status from the actual History API.":current?.status==="approved"?"An approved History stage head exists.":"This future stage is unavailable: "+(current?.blocked_reason||"not loaded")+". Implementation is scheduled for a later phase."}</p>
-     <button disabled title="No backend stage endpoint in P1" className="disabled">Start stage — unavailable in P1</button>
-    </section><footer>History-only foundation • No old YTB business runtime • No automatic ChatGPT • Remotion production planned for P6</footer>
+     {projectId&&stageKey==="topic"?<TopicWorkspace key={projectId+":topic"} projectId={projectId} onChanged={refreshStatus}/>:
+      projectId&&stageKey==="script_analysis"?<ScriptHistoricalAnalysisWorkspace key={projectId+":script"} projectId={projectId} onChanged={refreshStatus}/>:
+      <><p>{!project?"Select a saved project to load stage status from the actual History API.":"This future stage is unavailable: "+(current?.blocked_reason||"not loaded")+". Implementation belongs to a later phase."}</p>
+      <button disabled title="No backend endpoint implemented for this future stage" className="disabled">Unavailable — future phase</button></>}
+    </section><footer>History-only P2 • Manual External ChatGPT prompts and validated JSON files • No internal model API • No Voice/Render service</footer>
    </div>
   </main>
  </div>;
