@@ -1,17 +1,18 @@
 # Historical Motion Graphics Studio — Active Documentation Index
 
-## ONLY implementation authority
+Only the following files direct implementation:
 
-1. [Root AGENTS.md](../AGENTS.md) — mandatory entrypoint.
-2. [History Coding Rules](history/CODING_RULES.md) — **ONLY active coding rulebook**. The old `32_CODING_RULES.md` was deleted.
-3. [Strict Clean-Cut Plan v3](history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md) — P1 removes all YTB code/data/DB support.
-4. [P0–P8 Detailed Phase Plans](history/phases/README.md) — exact phase contracts and gates.
-5. [New Skills Directory](../.agents/skills/README.md) — **ONLY authorized coding skills** in `.agents/skills/*/SKILL.md`.
-6. [New Agent Roles](history/agents/README.md) — reviewers/implementers for each phase.
-7. [Codex P0](history/CODEX_P0_ON_NEW_MAIN_PROMPT.md) / [Codex P1](history/CODEX_P1_STRICT_CLEAN_CUT_PROMPT.md) entrypoints.
+1. [AGENTS.md](../AGENTS.md) — root entrypoint.
+2. [History Coding Rules](history/CODING_RULES.md) — **ONLY** new coding rules.
+3. [Strict Clean-Cut Plan v3](history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md).
+4. [P0–P8 Detailed Phase Plans](history/phases/README.md).
+5. [Frozen P1 Acceptance Gates](history/P1_ACCEPTANCE_GATES.md).
+6. [NEW History Skills](../.agents/skills/README.md).
+7. [NEW Architecture / Backend / Frontend / QA Agents](history/agents/README.md).
+8. [P0 technical proof](../experiments/remotion-history-poc/README.md), retained as an isolated experiment.
 
-## Donor source documentation is NOT coding guidance
+Current P1 features: real Channel/Project API/UI, fresh History SQLite, immutable artifact/CAS foundations, seven disabled future stages. Production videos, voice, archival media and manual External ChatGPT JSON workflows are future phases; their unavailable UI controls must not mislead users.
 
-All other `docs/*_V3*`, `docs/99_SOURCE_OF_TRUTH.md`, `docs/66_IMPLEMENTER_REVIEWER_RELEASE_PROTOCOL.md`, legacy V4 Readmes, old YTB integration specs and project history are **read-only background for selective code extraction**. They do NOT provide alternate coding rules, skills, stage contracts or authority. Do not implement based on outdated Scene/Beat/image-per-beat/LLM API instructions. The old LLM implementation-plan and Codex prompts have been removed.
+Retired donor YouTube Studio source-of-truth, old Scene/Beat specifications, old image-per-Beat prompts and old coding instructions are **not authoritative**. Do not restore them in the active application.
 
-**No root MANIFEST.json, no manifest refresh/verification; no direct push to main; no internal LLM API.**
+No root MANIFEST.json/manifest generator/check, no internal LLM API, no old database/data migration or compatibility, and no direct main writes. See [README](../README.md) for real Windows startup.

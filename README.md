@@ -1,124 +1,62 @@
-# Historical Motion Graphics Studio — Repository Transition
+# Historical Motion Graphics Studio — P1 Foundation
 
-**IMPORTANT: The codebase is still the donated YouTube AI Studio baseline until P1 hard-cutover is implemented and accepted. This README must NOT be interpreted as proof that a working History Studio exists.**
+**This repository contains one History-only application.** The former YouTube Studio product was removed at source level in P1. Historical Motion Graphics Studio is a locally hosted application for planning sourced historical motion videos. **P1 supports real Channel and Project persistence and displays seven honest blocked stages, not yet a completed video production tool.**
 
-**The ONLY current development instructions are [AGENTS.md](AGENTS.md), [History Coding Rules](docs/history/CODING_RULES.md), [NEW skills](.agents/skills/README.md), [History phase plans](docs/history/phases/README.md) and [Strict Clean-Cut v3](docs/history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md).** Former YouTube Studio docs, old coding rules, internal LLM provider prompts and image-per-Beat policies are donor/historical context only. No LLM API, no old YTB DB/data/support, and no direct push to main. Do not resurrect `MANIFEST.json` or its auto-refresh/check steps.
-
-## Donor codebase snapshot (NOT the target historical pipeline)
-
-The description below documents the YTB Studio implementation uploaded to `main` as migration source. It is **not** an instruction to implement or preserve its workflows. P1 removes legacy production code entirely.
-
----
-
-# YouTube AI Studio V3
-
-A local-first, schema-driven YouTube production application. Creative authoring is performed in external ChatGPT conversations; the application builds authoritative prompts that request named JSON files, imports strict JSON results, publishes canonical artifacts, and runs the deterministic/media production pipeline.
-
-## Active pipeline
-
-```text
-Channel → Project → Channel DNA
-→ Topic Ideas prompt/import
-→ combined Script & Analysis prompt/import
-→ Voice from Script only
-  → approved Narration Audio + NarrationWordTimingMap
-→ deterministic Style Bible
-→ Visual References V2 durable generation/review
-  → immutable Visual Reference Set + Approval Set publication snapshots
-→ backend deterministic micro-Scene + legal Beat-boundary planning after approved Voice
-→ Scene Breakdown Step 1 partition/semantic-state prompt/import
-  → exact backend materialization + locked Scene Plan candidate
-→ Scene Breakdown Step 2 Visual prompt/import
-  → draft Scene Plan 2.0 + Visual Plan 3.0
-→ Scene Breakdown approval atomically publishes:
-  approved Scene Plan 2.0 + approved Visual Plan 3.0 + approved Prompt Bundle 3.0 + BeatTimingMap
-→ Scene Assets V2 durable generation/review
-  → approved Scene Asset Manifest 4.0 publication snapshot
-→ Assembly 3.0 and subtitles
-→ Render through the Dedicated Durable Render Host
-→ Final Video
-```
-
-Prompt Bundle remains an immutable backend artifact and immediate Scene Assets input, but it is compiled automatically during Scene Breakdown approval and is hidden from Studio navigation. Every visual beat follows the same media-provider image generation and candidate-review path.
-
-Scene Assets V2, Visual References V2, and Voice use separate domain working-state tables and one shared Durable Media Workflow Host for process scheduling. Render uses its own SQLite-backed `RenderOperation` scheduling/lease state and a separate Dedicated Durable Render Host so long-running FFmpeg/FFprobe work cannot starve the shared media domains. All four durable execution domains survive API/UI/host restarts through persisted state. Redis, RQ, and a platform Backend Worker are not active runtime dependencies.
-
-The backend makes no internal LLM or web-research calls. It does not expose LLM provider settings, research jobs, creative generation jobs, or compatibility routes.
-
-## Repository layout
-
-- `app/modules/platform/`: Channel, Project, Topic Ideas import, combined Script & Analysis import, and media foundations.
-- `app/modules/media/durable_workflow/`: neutral durable coordinator/provider/host mechanics shared by Scene Assets V2, Visual References V2, and Voice without shared physical workflow tables.
-- `app/modules/v4/`: deterministic creative projections, Visual References V2, Scene Assets V2, production stages, durable Render execution engine, and Windows process ownership helpers.
-- `app/render_coordinator_runner.py`: Dedicated Durable Render Host coordinator and fenced SQLite execution ownership.
-- `app/core/external_authoring.py`: shared prompt packaging, reserved Artifact ID extraction, strict JSON parsing, true upstream-source checks, and validation response helpers.
-- `app/services/external_authoring_reservations.py`: minimal pending/consumed database reservations for reload-safe JSON import.
-- `contracts/prompts/`: copyable external ChatGPT prompt authority.
-- `contracts/schemas/`: strict import, canonical artifact, settings, job, and production contracts.
-- `src/`: React Studio and prompt/import workspaces.
-- `docs/99_SOURCE_OF_TRUTH.md`: current runtime authority.
+**Authority:** [AGENTS.md](AGENTS.md) → [new History Coding Rules](docs/history/CODING_RULES.md) → [Strict Clean-Cut Plan v3](docs/history/HISTORY_STUDIO_STRICT_CLEAN_CUT_PLAN_V3.md) → [P0–P8](docs/history/phases/README.md) → [new skills](.agents/skills/README.md) → [new agents](docs/history/agents/README.md). Old YTB guidance is not permitted authority.
 
 ## Windows quick start
 
-Extract the release to a short path such as `D:\yas3`. The release ZIP uses the short root folder `yas3` to remain compatible with Windows Explorer path limits.
+Install Python **3.12 x64**, Node.js **22**, npm and Git. Double-click **start.bat**. The launcher creates a dedicated virtual environment, installs pinned Python dependencies and reproducible frontend dependencies, verifies **fresh isolated History SQLite**, starts only FastAPI and Vite, opens http://127.0.0.1:5173 and shuts down the processes it owns when terminated.
 
-Double-click `start.bat`. On the first run, the launcher automatically:
+Manual developer mode from the root:
 
-- creates `.venv` with Python 3.12 x64 when it is missing;
-- installs pinned Python dependencies from `requirements.txt`;
-- installs pinned frontend dependencies with `npm ci`;
-- records dependency fingerprints and skips installation on later runs until `requirements.txt` or `package-lock.json` changes.
+\`\`\`powershell
+py -3.12 -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+npm ci
+.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+\`\`\`
 
-Python 3.12 x64 and Node.js LTS must already be installed. FFmpeg and FFprobe must be resolvable by the Dedicated Durable Render launcher. Redis/RQ is not installed, required, or started. After setup, the launcher opens four terminals:
+In another terminal:
 
-- Backend API: `http://127.0.0.1:8000`
-- Durable Media Workflow Host for Scene Assets V2 + Visual References V2 + Voice
-- Dedicated Durable Render Host for SQLite-scheduled FFmpeg/FFprobe execution
-- Frontend: `http://127.0.0.1:5173`
+\`\`\`powershell
+npm run dev
+\`\`\`
 
-The Render host claims due operations under durable owner/token/expiry fencing. On Windows, child media processes are assigned to an owned Job Object with kill-on-close semantics, so a host crash cannot leave an unfenced FFmpeg process tree running. `start.bat` always uses `.venv\Scripts\python.exe`; it does not depend on whichever Python happens to be active in the terminal.
+The frontend is on **http://127.0.0.1:5173**, the API is on **http://127.0.0.1:8000** and FastAPI documents are at **http://127.0.0.1:8000/docs**. The Vite dev server proxies /api and /health to the local API.
 
-## Development setup
+Default storage: **\`history_data/history_app.db\`** with immutable artifacts in \`history_data/artifacts/\`. An optional \`HISTORY_DB_PATH\` configures a **History-only DB**, not an old YTB database. Existing foreign/legacy SQLite files fail closed with \`HISTORY_LEGACY_STORAGE_UNSUPPORTED\`, without migration or mutation. Never point to an old application database, and never delete old user data.
 
-Use a fresh Python 3.12 x64 virtual environment, then install `requirements.txt`. Run:
+## Working in P1
 
-```bash
-alembic upgrade head
-python tools/validate_contracts.py
-python tools/audit_no_redis_rq.py
-pytest tests/platform tests/v4
-```
+Create/list/select channels and projects, reopen an existing project after restart, inspect live status for exactly seven stages:
 
-Frontend commands are defined in `package.json`. Development databases and generated artifacts are disposable.
+1. Topic Ideas — P2
+2. Script & Historical Analysis — P2
+3. Voice & Alignment — P3
+4. Historical Assets — P4
+5. Visual Director — P5
+6. Motion Timeline — later phase
+7. Render & Delivery — later phase
 
-## Voice provider configuration
+These seven stages are **not functional video production services in P1**. Their panels display \`NOT_IMPLEMENTED_P*\` from real API status and disable unavailable actions. No fake generation button.
 
-Voice depends on the approved Script, not Scene Plan. Voice and Style Bible / Visual References may proceed in parallel after Script & Analysis, while Scene Breakdown requires an approved Voice pair.
+## API and testing
 
-Production Voice generation supports two explicit providers:
+Endpoints: \`GET /health\`, \`GET/POST /api/history/channels\`, \`GET/POST /api/history/projects\`, \`GET /api/history/projects/{project_id}\`, \`GET /api/history/projects/{project_id}/status\`. The persisted data model contains History channels/projects, stage heads, immutable artifact metadata and authoring reservations. Basic strict JSON parsing and transactional CAS utilities are independently tested; the authoring workflow itself begins in P2.
 
-- `elevenlabs`: uses the Channel-owned Professional Voice Clone profile and one preset:
-  - `economy -> eleven_flash_v2_5`
-  - `quality_cloned_voice -> eleven_multilingual_v2`
-- `kokoro_local`: uses the local Kokoro runtime and an explicit voice ID from the runtime catalog. Kokoro voices are not stored in the Channel Voice Profile.
+\`\`\`powershell
+.venv\Scripts\python.exe -m pytest -q tests/history
+npm test
+npm run build
+\`\`\`
 
-Final paced WAV is audio truth for every generation provider. ElevenLabs Forced Alignment on the final paced WAV is the only timing truth; it is not provider-selectable. Draft Voice candidates do not move current Project Voice pointers and invalidate nothing downstream; Voice approval is the source-of-truth cutover and downstream invalidation point. BeatTimingMap is Scene-owned and published on Scene approval, and Assembly consumes BeatTimingMap rather than deriving Beat timing itself.
+CI runs the History backend/frontend, runtime OpenAPI and legacy-data-safety checks, P0 Remotion tests and Windows startup/restart smoke. See \`.github/workflows/history-p1.yml\`.
 
-## Quality gates
+## Boundaries
 
-- strict JSON parsing with duplicate-key rejection;
-- preallocated reserved Artifact IDs, frozen Topic avoid lists, reload-safe upload, one-time reservation consumption, and true upstream-source rejection;
-- full Topic review fields with editable Script POV/avoid handoff, pacing-mode recommendation, user-overridable FAST/MEDIUM/SLOW video pacing, per-section narration WPM, and duration-aware section planning;
-- strict JSON Schema and Pydantic validation;
-- immutable artifact hashes, lineage, and paired CAS publication;
-- deterministic Style Bible and automatic all-beat Prompt Bundle compilation;
-- durable Scene Assets/Visual References/Voice ownership and recovery regression;
-- dedicated SQLite Durable Render ownership, execution fencing, Final Video CAS/lineage regression, and Windows Job Object lifecycle coverage;
-- production-stage regression through Scene Assets, Voice, Assembly, and Render;
-- static/runtime OpenAPI parity;
-- closure scans proving zero internal LLM/research runtime and zero active Redis/RQ/queue-dispatch runtime;
-- Linux backend + frontend candidate gates and the Windows Render candidate gate on the same exact HEAD;
-- source/archive path safety and user-data exclusion audit (no root release MANIFEST.json).
-
-Read `00_START_HERE.md` before every implementation task.
-# ytb-ai-studio
+- **No LLM API, local LLM or automatic ChatGPT browser.** Future authoring is manual External ChatGPT prompt/export/import.
+- **No legacy YTB compatibility, Scene/Beat/PromptBundle pipelines, data import, worker hosts or old SQLite migration chain.**
+- **No production TTS, forced alignment, archives, Motion Timeline editing or Remotion render API in P1**. The [P0 Remotion proof](experiments/remotion-history-poc/README.md) remains isolated; production video implementation is P6/P7.
+- **No root MANIFEST.json, generator or verification workflow.**
+- Future visual reference quality gate and historical attribution/rights are specified in the [P6 phase plan](docs/history/phases/P6_PRODUCTION_REMOTION_VIDEO.md).
