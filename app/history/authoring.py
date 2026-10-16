@@ -164,7 +164,8 @@ class HistoryAuthoring:
             p=self._prompt_row(cn,project_id,stage,reservation_id)
             self._assert_prompt(cn,p)
             val,errors=validate_payload(stage,raw,p)
-            return {"valid":not errors,"errors":errors,"summary":{"stage":stage,"items":len(val.get("ideas",val.get("sections",[]))) if isinstance(val,dict) else 0},"value":val if not errors else None}
+            items=(val.get("ideas") if stage=="topic" else val.get("sections")) if isinstance(val,dict) else []
+            return {"valid":not errors,"errors":errors,"summary":{"stage":stage,"items":len(items) if isinstance(items,list) else 0},"value":val if not errors else None}
 
     def import_candidate(self,project_id,stage,reservation_id,raw):
         # Revalidation INSIDE single write transaction, no side effects on invalid import.
